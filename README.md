@@ -55,11 +55,11 @@ Disk currently supports file management of the following types:
 
 Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) and therefore allows you to store files in three primary directories:
 
-### Documents Directory `.documents`
+#### Documents Directory `.documents`
 
 *"Only documents and other data that is **user-generated, or that cannot otherwise be recreated by your application**, should be stored in the <Application_Home>/Documents directory and will be automatically backed up by iCloud."*
 
-### Caches Directory `.caches`
+#### Caches Directory `.caches`
 
 *"Data that **can be downloaded again or regenerated** should be stored in the <Application_Home>/Library/Caches directory. Examples of files you should put in the Caches directory include database cache files and downloadable content, such as that used by magazine, newspaper, and map applications.*
 
@@ -67,7 +67,7 @@ Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/i
 
 *Note that the system may delete the Caches/ directory to free up disk space, so your app must be able to re-create or download these files as needed."*
 
-### Temporary Directory `.temporary`
+#### Temporary Directory `.temporary`
 
 *"Data that is used only temporarily should be stored in the <Application_Home>/tmp directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device."*
 
