@@ -1,0 +1,6 @@
+framework module Disk {
+  umbrella header "Disk-umbrella.h"
+
+  export *
+  module * { export * }
+}
