@@ -32,13 +32,13 @@ Disk currently supports file management of the following types:
 
 *These are generally the only types you'll ever need to deal with when persisting data on iOS.*
 
-Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) and so allows for three directories to store files:
+Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) and therefore allows you to store files in three primary directories:
 
-**Documents Directory `.documents`**
+### Documents Directory `.documents`
 
 *"Only documents and other data that is **user-generated, or that cannot otherwise be recreated by your application**, should be stored in the <Application_Home>/Documents directory and will be automatically backed up by iCloud."*
 
-**Caches Directory `.caches`**
+### Caches Directory `.caches`
 
 *"Data that **can be downloaded again or regenerated** should be stored in the <Application_Home>/Library/Caches directory. Examples of files you should put in the Caches directory include database cache files and downloadable content, such as that used by magazine, newspaper, and map applications.*
 
@@ -46,16 +46,16 @@ Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/i
 
 *Note that the system may delete the Caches/ directory to free up disk space, so your app must be able to re-create or download these files as needed."*
 
-**Temporary Directory `.temporary`**
+### Temporary Directory `.temporary`
 
 *"Data that is used only temporarily should be stored in the <Application_Home>/tmp directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device."*
 
 
-### Using Disk is easy.
+## Using Disk is easy.
 
-#### Structs (must conform to [Codable](https://developer.apple.com/documentation/swift/codable))
+### Structs (must conform to [Codable](https://developer.apple.com/documentation/swift/codable))
 
-Let's say have a data model called Message...
+Let's say have a data model called `Message`...
 ```swift
 struct Message: Codable {
     let title: String
@@ -75,7 +75,7 @@ let retrievedMessage = Disk.retrieve("message", from: .caches, as: Message.self)
 If you Option + click `retrievedMessage` then Xcode will show its type as `Message`. Pretty neat, huh?
 <img src="https://user-images.githubusercontent.com/7799382/28501124-286520d8-6f8a-11e7-8ddb-53e956f8425a.png" alt="example">
 
-So what happened in the background? Disk first converts `message` to JSON data and stores it as .json file to the caches directory. Then when we retrieve the `message` from disk, Disk automatically converts the JSON data to our `Codable` struct type.
+So what happened in the background? Disk first converts `message` to JSON data and stores it as .json file to the caches directory. Then when we retrieve the `message`, Disk automatically converts the JSON data to our `Codable` struct type.
 
 **What about arrays of structs?**
 
@@ -93,9 +93,7 @@ Disk.store(messages, to: .caches, as: "many-messages")
 let retrievedMessages = Disk.retrieve("many-messages", from: .caches, as: [Message].self)
 ```
 
-*See [Networking with Disk](#networking-with-disk) for more info.*
-
-#### Images
+### Images
 
 Disk automatically converts `UIImage`s to .png or .jpg files. 
 
@@ -123,7 +121,7 @@ Disk.store(images, to: .documents, as: "album")
 let retrievedImages = Disk.retrieve("album", from: .documents, as: [UIImage].self)
 ```
 
-#### Data
+### Data
 
 If you're trying to save data like .mp4 video data for example, then Disk's methods for `Data` will help you work with the file system to persist large files.
 
@@ -147,7 +145,7 @@ Disk.store(data, to: .documents, as: "videos")
 ```swift
 let retrievedVideos = Disk.retrieve("videos", from: .documents, as: [Data].self)
 ```
-#### Helper Methods
+### Helper Methods
 
 * Clear an entire directory
 ```swift
@@ -194,7 +192,7 @@ end
 
 And `import Disk` in the files you'd like to use it.
 
-### Debugging
+## Debugging
 
 Disk is *declarative*, meaning that it throws fatalErrors with detailed explanations of why an operation can't be completed. Disk is smart, so it will handle most of the rookie mistakes on its own, but it only ever throws an error when you try doing something representative of a flaw in your persistence game plan.
 
