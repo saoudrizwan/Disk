@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import Disk
+@testable import Disk
 
 class DiskTests: XCTestCase {
     
