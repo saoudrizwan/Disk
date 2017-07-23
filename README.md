@@ -19,6 +19,27 @@
 
 Disk is a **powerful** and **simple** file management library built with <a href="https://developer.apple.com/icloud/documentation/data-storage/index.html" target="_blank">Apple's Data Storage guidelines</a> in mind. Disk uses the new `Codable` protocol introduced in Swift 4 to its utmost advantage and gives you the power to persist JSON data without ever having to worry about encoding/decoding. Disk also helps you store images and other data types to disk with as little as one line of code.
 
+## Compatibility
+
+Disk requires **iOS 10+** and is compatible with **Swift 4** projects.
+
+## Installation
+
+* Installation for <a href="https://guides.cocoapods.org/using/using-cocoapods.html" target="_blank">CocoaPods</a>:
+
+```ruby
+platform :ios, '10.0'
+target 'ProjectName' do
+use_frameworks!
+
+    pod 'Disk'
+
+end
+```
+* Or embed the Disk framework into your project
+
+And `import Disk` in the files you'd like to use it.
+
 ## Usage
 
 Disk currently supports file management of the following types:
@@ -170,27 +191,6 @@ All files saved to the user's home directory are backed up by default.
 Disk.backup("message", in: .caches)
 ```
 You should generally never use the `.doNotBackup(:in:)` and `.backup(:in:)` methods unless you're absolutely positive you want to persist data no matter what state the user's device is in.
-
-## Compatibility
-
-Disk requires **iOS 10+** and is compatible with **Swift 4** projects.
-
-## Installation
-
-* Installation for <a href="https://guides.cocoapods.org/using/using-cocoapods.html" target="_blank">CocoaPods</a>:
-
-```ruby
-platform :ios, '10.0'
-target 'ProjectName' do
-use_frameworks!
-
-    pod 'Disk'
-
-end
-```
-* Or embed the Disk framework into your project
-
-And `import Disk` in the files you'd like to use it.
 
 ## Debugging
 
