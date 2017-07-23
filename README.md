@@ -72,7 +72,7 @@ Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/i
 *"Data that is used only temporarily should be stored in the <Application_Home>/tmp directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device."*
 
 
-## Using Disk is easy.
+### Using Disk is easy.
 
 ### Structs (must conform to [Codable](https://developer.apple.com/documentation/swift/codable))
 
