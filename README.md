@@ -182,6 +182,14 @@ if Disk.fileExists("videos", in: .documents) {
     // ...
 }
 ```
+* Move a file to another directory
+```swift
+Disk.move("images", in: .documents, to: .caches)
+```
+* Rename a file
+```swift
+Disk.rename("currentName", in: .documents, to: "newName")
+```
 * Mark a file with the `do not backup` attribute (this keeps the file on disk even in low storage situations, but prevents it from being backed up by iCloud or iTunes.)
 ```swift
 Disk.doNotBackup("message", in: .caches)
@@ -194,7 +202,12 @@ You should generally never use the `.doNotBackup(:in:)` and `.backup(:in:)` meth
 
 ## Debugging
 
-Disk is *forgiving*, meaning that it will handle most rookie mistakes on its own. However if you make a mistake that Disk thinks is worth telling you, it will print `Disk Error: [details about why an operation failed]` to the console instead of crashing the project at runtime. This should help you better manage your data and change your persistence game plan.
+Disk is *forgiving*, meaning that it will handle most rookie mistakes on its own. However if you make a mistake that Disk thinks is worth telling you, it will print details of the operation to the console instead of crashing the project at runtime. This should help you better manage your data and change your persistence game plan.
+
+Let's say for example that you try to write data to a location where data already exists:
+```
+❗️💾Disk: File with name "posts" already exists in Documents Directory. Removing and replacing with contents of new data...
+```
 
 ## Documentation
 Option + click on any of Disk's methods for detailed documentation.
