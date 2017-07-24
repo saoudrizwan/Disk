@@ -359,8 +359,9 @@
 			baseConfigurationReference = 4DA3DB14354FFC889CAAF097 /* Pods-DiskExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 5M795QY47C;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = DiskExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = saoudrizwan.DiskExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -374,8 +375,9 @@
 			baseConfigurationReference = C03737217FCA613BF44FE5DB /* Pods-DiskExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 5M795QY47C;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = DiskExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = saoudrizwan.DiskExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
