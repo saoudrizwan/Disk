@@ -90,13 +90,13 @@ Disk.store(message, to: .caches, as: "message")
 ```
 ... we might then want to retrieve this message from the caches directory...
 ```swift
-let retrievedMessage = Disk.retrieve("message", from: .caches, as: Message.self)!
+let retrievedMessage = Disk.retrieve("message", from: .caches, as: Message.self)
 ```
 
-If you Option + click `retrievedMessage` then Xcode will show its type as `Message`. Pretty neat, huh?
-<img src="https://user-images.githubusercontent.com/7799382/28501124-286520d8-6f8a-11e7-8ddb-53e956f8425a.png" alt="example">
+If you Option + click `retrievedMessage`, then Xcode will show its type as `Message?`. Pretty neat, huh?
+<img src="https://user-images.githubusercontent.com/7799382/28517945-186e41dc-701b-11e7-9758-fa075ecd7df7.png" alt="example">
 
-So what happened in the background? Disk first converts `message` to JSON data and stores it as a .json file to the caches directory. Then when we retrieve the `message`, Disk automatically converts the JSON data to our `Codable` struct type.
+So what happened in the background? Disk first converts `message` to JSON data and stores it as a .json file to the caches directory. Then when we retrieve the `message`, Disk automatically converts the JSON data to our `Codable` struct type. If Disk runs into any problems, then it prints details about any failed operations and returns `nil` instead.
 
 **What about arrays of structs?**
 
@@ -111,7 +111,7 @@ for i in 0..<5 {
 Disk.store(messages, to: .caches, as: "many-messages")
 ```
 ```swift
-let retrievedMessages = Disk.retrieve("many-messages", from: .caches, as: [Message].self)!
+let retrievedMessages = Disk.retrieve("many-messages", from: .caches, as: [Message].self)
 ```
 
 ### Images
@@ -125,7 +125,7 @@ let image = UIImage(named: "nature.png")
 Disk.store(image, to: .documents, as: "nature")
 ```
 ```swift
-let retrievedImage = Disk.retrieve("nature", from: .documents, as: UIImage.self)!
+let retrievedImage = Disk.retrieve("nature", from: .documents, as: UIImage.self)
 ```
 
 **Array of images**
@@ -139,7 +139,7 @@ var images = [UIImages]()
 Disk.store(images, to: .documents, as: "album")
 ```
 ```swift
-let retrievedImages = Disk.retrieve("album", from: .documents, as: [UIImage].self)!
+let retrievedImages = Disk.retrieve("album", from: .documents, as: [UIImage].self)
 ```
 
 ### Data
@@ -153,7 +153,7 @@ let videoData = Data(contentsOf: videoURL, options: [])
 Disk.store(videoData, to: .documents, as: "anime")
 ```
 ```swift
-let retrievedData = Disk.retrieve("anime", from: .documents, as: Data.self)!
+let retrievedData = Disk.retrieve("anime", from: .documents, as: Data.self)
 ```
 **Array of `Data`**
 ```swift
@@ -164,7 +164,7 @@ var data = [Data]()
 Disk.store(data, to: .documents, as: "videos")
 ```
 ```swift
-let retrievedVideos = Disk.retrieve("videos", from: .documents, as: [Data].self)!
+let retrievedVideos = Disk.retrieve("videos", from: .documents, as: [Data].self)
 ```
 ### Helper Methods
 
@@ -182,6 +182,14 @@ if Disk.fileExists("videos", in: .documents) {
     // ...
 }
 ```
+* Move a file to another directory
+```swift
+Disk.move("images", in: .documents, to: .caches)
+```
+* Rename a file
+```swift
+Disk.rename("currentName", in: .documents, to: "newName")
+```
 * Mark a file with the `do not backup` attribute (this keeps the file on disk even in low storage situations, but prevents it from being backed up by iCloud or iTunes.)
 ```swift
 Disk.doNotBackup("message", in: .caches)
@@ -194,7 +202,13 @@ You should generally never use the `.doNotBackup(:in:)` and `.backup(:in:)` meth
 
 ## Debugging
 
-Disk is *forgiving*, meaning that it will handle most rookie mistakes on its own. However if you make a mistake that Disk thinks is worth telling you, it will print `Disk Error: [details about why an operation failed]` to the console instead of crashing the project at runtime. This should help you better manage your data and change your persistence game plan.
+Disk is *forgiving*, meaning that it will handle most rookie mistakes on its own. However if you make a mistake that Disk thinks is worth telling you, it will print details of the operation to the console instead of crashing the project at runtime. This should help you better manage your data and change your persistence game plan.
+
+Let's say, for example, that you try to write data to a location on the file system where data already exists:
+```
+❗️💾 Disk: File with name "message" already exists in Documents Directory. Removing and replacing with contents of new data...
+```
+In this case, Disk took care of everything for you. You should have first checked if a file exists in the location you wanted to store data to (using `fileExists(:in:)`), and then stored the data.
 
 ## Documentation
 Option + click on any of Disk's methods for detailed documentation.
