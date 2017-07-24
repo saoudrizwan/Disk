@@ -9,7 +9,6 @@
 import Foundation
 
 public extension Disk {
-    
     /// Store Data to disk
     ///
     /// - Parameters:
@@ -17,15 +16,16 @@ public extension Disk {
     ///   - directory: directory to store file with specified data
     ///   - name: name of file to hold specified data
     static func store(_ data: Data, to directory: Directory, as name: String) {
-        let url = getURL(for: directory, path: name)
+        let fileName = validateFileName(name)
+        let url = createURL(for: directory, name: fileName, extension: .none)
         do {
             if FileManager.default.fileExists(atPath: url.path) {
+                printError("File with name \"\(name)\" already exists in \(directory.rawValue). Removing and replacing with contents of new data...")
                 try FileManager.default.removeItem(at: url)
             }
             FileManager.default.createFile(atPath: url.path, contents: data, attributes: nil)
         } catch {
             printError(error.localizedDescription)
-            return
         }
     }
     
@@ -37,9 +37,9 @@ public extension Disk {
     ///   - type: here for Swifty generics magic, use Data.self
     /// - Returns: Data retrived from disk
     static func retrieve(_ name: String, from directory: Directory, as type: Data.Type) -> Data? {
-        let url = getURL(for: directory, path: name)
-        if !FileManager.default.fileExists(atPath: url.path) {
-            printError("File with path \(url.path) does not exist")
+        let fileName = validateFileName(name)
+        guard let url = getExistingFileURL(for: fileName, with: [.none, .json, .png, .jpg], in: directory) else {
+            printError("File with name \"\(name)\" does not exist in \(directory.rawValue)")
             return nil
         }
         if let data = FileManager.default.contents(atPath: url.path) {

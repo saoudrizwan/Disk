@@ -16,18 +16,18 @@ public extension Disk {
     ///   - directory: where to store the struct
     ///   - name: what to name the file where the struct data will be stored
     static func store<T: Encodable>(_ model: T, to directory: Directory, as name: String) {
-        let jsonFileName = name + ".json"
-        let url = getURL(for: directory, path: jsonFileName)
+        let fileName = validateFileName(name)
+        let url = createURL(for: directory, name: fileName, extension: .json)
         let encoder = JSONEncoder()
         do {
             let data = try encoder.encode(model)
             if FileManager.default.fileExists(atPath: url.path) {
+                printError("File with name \"\(name)\" already exists in \(directory.rawValue). Removing and replacing with contents of new data...")
                 try FileManager.default.removeItem(at: url)
             }
             FileManager.default.createFile(atPath: url.path, contents: data, attributes: nil)
         } catch {
             printError(error.localizedDescription)
-            return
         }
     }
     
@@ -36,18 +36,12 @@ public extension Disk {
     /// - Parameters:
     ///   - name: name of the file where struct data is stored
     ///   - directory: directory where struct data is stored
-    ///   - type: struct type (i.e. Message.self)
+    ///   - type: struct type (i.e. Message.self or [Message].self)
     /// - Returns: decoded struct model(s) of data
     static func retrieve<T: Decodable>(_ name: String, from directory: Directory, as type: T.Type) -> T? {
-        var url: URL!
-        let jsonUrl = getURL(for: directory, path: name + ".json")
-        let withoutExtensionUrl = getURL(for: directory, path: name)
-        if FileManager.default.fileExists(atPath: jsonUrl.path) {
-            url = jsonUrl
-        } else if FileManager.default.fileExists(atPath: withoutExtensionUrl.path) {
-            url = withoutExtensionUrl
-        } else {
-            printError("Struct with name \(name) does not exist in \(directory.rawValue)")
+        let fileName = validateFileName(name)
+        guard let url = getExistingFileURL(for: fileName, with: [.json, .none], in: directory) else {
+            printError("Struct with name \"\(name)\" does not exist in \(directory.rawValue)")
             return nil
         }
         if let data = FileManager.default.contents(atPath: url.path) {

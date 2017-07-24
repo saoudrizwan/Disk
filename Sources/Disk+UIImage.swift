@@ -9,7 +9,6 @@
 import Foundation
 
 public extension Disk {
-    
     /// Store image to disk
     ///
     /// - Parameters:
@@ -18,26 +17,27 @@ public extension Disk {
     ///   - name: name to give to image file (don't need to include .png or .jpg extension)
     static func store(_ image: UIImage, to directory: Directory, as name: String) {
         var imageData: Data!
-        var imageFileName: String!
+        var imageFileExtension: FileExtension!
         if let data = UIImagePNGRepresentation(image) {
             imageData = data
-            imageFileName = name + ".png"
+            imageFileExtension = .png
         } else if let data = UIImageJPEGRepresentation(image, 1) {
             imageData = data
-            imageFileName = name + ".jpg"
+            imageFileExtension = .jpg
         } else {
             printError("Could not convert image to PNG or JPEG")
             return
         }
-        let url = getURL(for: directory, path: imageFileName)
+        let fileName = validateFileName(name)
+        let url = createURL(for: directory, name: fileName, extension: imageFileExtension)
         do {
             if FileManager.default.fileExists(atPath: url.path) {
+                printError("File with name \"\(name)\" already exists in \(directory.rawValue). Removing and replacing with contents of new data...")
                 try FileManager.default.removeItem(at: url)
             }
             FileManager.default.createFile(atPath: url.path, contents: imageData, attributes: nil)
         } catch {
             printError(error.localizedDescription)
-            return
         }
     }
     
@@ -49,25 +49,16 @@ public extension Disk {
     ///   - type: here for Swifty generics magic, use UIImage.self
     /// - Returns: UIImage from disk
     static func retrieve(_ name: String, from directory: Directory, as type: UIImage.Type) -> UIImage? {
-        var url: URL!
-        let withoutExtensionUrl = getURL(for: directory, path: name)
-        let pngUrl = getURL(for: directory, path: name + ".png")
-        let jpgUrl = getURL(for: directory, path: name + ".jpg")
-        if FileManager.default.fileExists(atPath: pngUrl.path) {
-            url = pngUrl
-        } else if FileManager.default.fileExists(atPath: jpgUrl.path) {
-            url = jpgUrl
-        } else if FileManager.default.fileExists(atPath: withoutExtensionUrl.path) {
-            url = withoutExtensionUrl
-        } else {
-            printError("Image with name \(name) does not exist in \(directory.rawValue)")
+        let fileName = validateFileName(name)
+        guard let url = getExistingFileURL(for: fileName, with: [.png, .jpg, .none], in: directory) else {
+            printError("Image with name \"\(name)\" does not exist in \(directory.rawValue)")
             return nil
         }
         if let data = FileManager.default.contents(atPath: url.path) {
             if let image = UIImage(data: data) {
                 return image
             } else {
-                printError("Could not convert image from data at \(url.path) to \(type)")
+                printError("Could not convert image from data at \(url.path) to UIImage")
                 return nil
             }
         } else {

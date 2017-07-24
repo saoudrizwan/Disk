@@ -22,6 +22,7 @@ class ViewController: UIViewController {
     // MARK: IBActions
     
     @IBAction func getTapped(_ sender: Any) {
+        // Be sure to check out the comments in the networking function below
         getPostsFromWeb { (posts) in
             print("Posts retrieved from network request successfully!")
             self.posts = posts
@@ -29,18 +30,22 @@ class ViewController: UIViewController {
     }
     
     @IBAction func saveTapped(_ sender: Any) {
-        // Disk is smart about error handling, so when an error does occur, Disk throws
-        //  a fatalError so you can figure out the problem in your persistence game plan
+        // Disk is smart about error handling, so when an error does occur, Disk prints
+        // details about why an operation failed so you can better manage your persistence game plan
         Disk.store(posts, to: .documents, as: "posts")
         
         print("Stored posts to disk!")
     }
     
     @IBAction func retrieveTapped(_ sender: Any) {
+        // If Disk can't retrieve anything named "posts" from the documents directory, then it returns
+        // nil and prints an explanation of why an operation failed if something went wrong, instead of throwing an error.
+       
         guard let retrievedPosts = Disk.retrieve("posts", from: .documents, as: [Post].self) else { return }
         
         // If you Option+Click 'retrievedPosts' above, you'll notice that its type is [Post]
         // without ever having to downcast our return value. Pretty neat, huh?
+        
         var result: String = ""
         for post in retrievedPosts {
             result.append("\(post.id): \(post.title)\n\(post.body)\n\n")
@@ -75,7 +80,8 @@ class ViewController: UIViewController {
                 // ... and retrieve it later as [Post]...
                 // let postsFromDisk = Disk.retrieve("posts", from: .caches, as: [Post].self)!
                 
-                // ... but that's not good practice! Let's return the posts in our completion handler:
+                // ... but that's not good practice! Our networking and persistence logic should be separate.
+                // Let's return the posts in our completion handler:
                 do {
                     let decoder = JSONDecoder()
                     let posts = try decoder.decode([Post].self, from: data)

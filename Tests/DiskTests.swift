@@ -7,13 +7,14 @@
 //
 
 import XCTest
-@testable import Disk
+import Disk
 
 class DiskTests: XCTestCase {
     
     override func tearDown() {
         Disk.clear(.documents)
         Disk.clear(.caches)
+        Disk.clear(.temporary)
     }
     
     func testPerformanceOfStoringALotOfMessages() {
@@ -35,7 +36,6 @@ class DiskTests: XCTestCase {
             let newMessage = Message(title: "Message \(i)", body: "...")
             messages.append(newMessage)
         }
-        
         
         Disk.store(messages, to: .documents, as: "messages")
         
@@ -282,4 +282,124 @@ class DiskTests: XCTestCase {
         XCTAssertFalse(Disk.fileExists("deku", in: .temporary))
     }
     
+    func testRenameObject() {
+        let message = Message(title: "title", body: "body")
+        Disk.store(message, to: .caches, as: "oldName")
+        Disk.rename("oldName", in: .caches, to: "newName")
+        XCTAssertFalse(Disk.fileExists("oldName", in: .caches))
+        XCTAssert(Disk.fileExists("newName", in: .caches))
+        guard let retrievedMessage = Disk.retrieve("newName", from: .caches, as: Message.self) else {
+            XCTFail()
+            return
+        }
+        XCTAssert(message.title == retrievedMessage.title && message.body == retrievedMessage.body)
+    }
+    
+    func testMoveObject() {
+        let message = Message(title: "title", body: "body")
+        Disk.store(message, to: .caches, as: "message")
+        Disk.move("message", in: .caches, to: .temporary)
+        XCTAssertFalse(Disk.fileExists("message", in: .caches))
+        XCTAssert(Disk.fileExists("message", in: .temporary))
+        guard let retrievedMessage = Disk.retrieve("message", from: .temporary, as: Message.self) else {
+            XCTFail()
+            return
+        }
+        XCTAssert(message.title == retrievedMessage.title && message.body == retrievedMessage.body)
+    }
+    
+    func testFolderHandling() {
+        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
+        let allMight = UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
+        let bakugo = UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
+        let images = [deku, allMight, bakugo]
+        
+        Disk.store(images, to: .documents, as: "heroes")
+        
+        // Rename
+        Disk.rename("heroes", in: .documents, to: "villains")
+        XCTAssertFalse(Disk.fileExists("heroes", in: .documents))
+        XCTAssert(Disk.fileExists("villains", in: .documents))
+        
+        // Move
+        Disk.move("villains", in: .documents, to: .caches)
+        XCTAssertFalse(Disk.fileExists("villains", in: .documents))
+        XCTAssert(Disk.fileExists("villains", in: .caches))
+        
+        // Do not backup
+        Disk.doNotBackup("villains", in: .caches)
+        
+        // Retrieve
+        guard let retrievedImages = Disk.retrieve("villains", from: .caches, as: [UIImage].self) else {
+            XCTFail()
+            return
+        }
+        XCTAssert(images.count == retrievedImages.count)
+        
+        // Remove
+        Disk.remove("villains", from: .caches)
+        XCTAssertFalse(Disk.fileExists("villains", in: .caches))
+    }
+    
+    func testWeirdNames() {
+        let weirdName = "user-messages/saoud*.adf3/jpeg.message.png/.json"
+        let weirdName2 = ".adf/"
+        
+        let message = Message(title: "title", body: "body")
+        Disk.store(message, to: .caches, as: weirdName)
+        guard let retrievedMessage = Disk.retrieve(weirdName, from: .caches, as: Message.self) else {
+            XCTFail()
+            return
+        }
+        XCTAssert(message.title == retrievedMessage.title && message.body == retrievedMessage.body)
+        Disk.remove(weirdName, from: .caches)
+        
+        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
+        let allMight = UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
+        let bakugo = UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
+        let images = [deku, allMight, bakugo]
+        Disk.store(images, to: .documents, as: weirdName)
+        
+        // Rename
+        Disk.rename(weirdName, in: .documents, to: weirdName2)
+        XCTAssertFalse(Disk.fileExists(weirdName, in: .documents))
+        XCTAssert(Disk.fileExists(weirdName2, in: .documents))
+        
+        // Move
+        Disk.move(weirdName2, in: .documents, to: .caches)
+        XCTAssertFalse(Disk.fileExists(weirdName2, in: .documents))
+        XCTAssert(Disk.fileExists(weirdName2, in: .caches))
+        
+        // Do not backup
+        Disk.doNotBackup(weirdName2, in: .caches)
+        
+        // Retrieve
+        guard let retrievedImages = Disk.retrieve(weirdName2, from: .caches, as: [UIImage].self) else {
+            XCTFail()
+            return
+        }
+        XCTAssert(images.count == retrievedImages.count)
+        
+        // Remove
+        Disk.remove(weirdName2, from: .caches)
+        XCTAssertFalse(Disk.fileExists("villains", in: .caches))
+    }
+    
+    func testOverwrite() {
+        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
+        let allMight = UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
+        let bakugo = UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
+        
+        let heroes = [deku, allMight, bakugo]
+        let kids = [deku, bakugo]
+        
+        Disk.store(heroes, to: .documents, as: "coolName")
+        Disk.store(kids, to: .documents, as: "coolName")
+        
+        guard let retrievedImages = Disk.retrieve("coolName", from: .documents, as: [UIImage].self) else {
+            XCTFail()
+            return
+        }
+        XCTAssert(kids.count == retrievedImages.count)
+    }
 }
