@@ -24,7 +24,8 @@ public extension Disk {
             }
             FileManager.default.createFile(atPath: url.path, contents: data, attributes: nil)
         } catch {
-            fatalError(error.localizedDescription)
+            printError(error.localizedDescription)
+            return
         }
     }
     
@@ -35,15 +36,17 @@ public extension Disk {
     ///   - directory: directory where data file is stored
     ///   - type: here for Swifty generics magic, use Data.self
     /// - Returns: Data retrived from disk
-    static func retrieve(_ name: String, from directory: Directory, as type: Data.Type) -> Data {
+    static func retrieve(_ name: String, from directory: Directory, as type: Data.Type) -> Data? {
         let url = getURL(for: directory, path: name)
         if !FileManager.default.fileExists(atPath: url.path) {
-            fatalError("File with path \(url.path) does not exist")
+            printError("File with path \(url.path) does not exist")
+            return nil
         }
         if let data = FileManager.default.contents(atPath: url.path) {
             return data
         } else {
-            fatalError("No data at \(url.path)")
+            printError("No data at \(url.path)")
+            return nil
         }
     }
 }

@@ -21,64 +21,6 @@ class ViewController: UIViewController {
     
     // MARK: IBActions
     
-    func adf() {
-        let image = UIImage(named: "nature.png")
-        
-        Disk.store(image, to: .documents, as: "nature")
-        
-        let retrievedImage = Disk.retrieve("nature", from: .documents, as: UIImage.self)
-        
-        
-        var images = [UIImage]()
-        Disk.store(images, to: .documents, as: "album")
-        
-        let retrievedImages = Disk.retrieve("album", from: .documents, as: [UIImage].self)
-        
-        struct Message: Codable {
-            let title: String
-            let body: String
-        }
-        
-        let message = Message(title: "Hello", body: "How are you?")
-        
-        Disk.store(message, to: .caches, as: "message")
-         
-       let retrievedMessage = Disk.retrieve("message", from: .caches, as: Message.self)
-        
-        var messages = [Message]()
-        for i in 0..<5 {
-            messages.append(Message(title: "\(i)", body: "..."))
-        }
-        
-        Disk.store(messages, to: .caches, as: "many-messages")
-        
-        let retrievedMessages = Disk.retrieve("many-messages", from: .caches, as: [Message].self)
-        
-        let videoData = Data(contentsOf: videoURL, options: [])
-        
-        Disk.store(videoData, to: .documents, as: "anime")
-        
-        let retrievedData = Disk.retrieve("anime", from: .documents, as: Data.self)
-        
-        
-        var data = [Data]()
-        
-        Disk.store(data, to: .documents, as: "videos")
-        
-        let retrievedVideos = Disk.retrieve("videos", from: .documents, as: [Data].self)
-        
-        Disk.doNotBackup("videos", in: .documents)
-        Disk.backup("message", in: .caches)
-        
-        Disk.remove("videos", from: .documents)
-        
-        Disk.clear(.caches)
-        
-        if Disk.fileExists("videos", in: .documents) {
-            // ...
-        }
-    }
-    
     @IBAction func getTapped(_ sender: Any) {
         getPostsFromWeb { (posts) in
             print("Posts retrieved from network request successfully!")
@@ -95,7 +37,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func retrieveTapped(_ sender: Any) {
-        let retrievedPosts = Disk.retrieve("posts", from: .documents, as: [Post].self)
+        guard let retrievedPosts = Disk.retrieve("posts", from: .documents, as: [Post].self) else { return }
         
         // If you Option+Click 'retrievedPosts' above, you'll notice that its type is [Post]
         // without ever having to downcast our return value. Pretty neat, huh?
@@ -131,7 +73,7 @@ class ViewController: UIViewController {
                 // Disk.store(data, to: .caches, as: "posts")
                 
                 // ... and retrieve it later as [Post]...
-                // let postsFromDisk = Disk.retrieve("posts", from: .caches, as: [Post].self)
+                // let postsFromDisk = Disk.retrieve("posts", from: .caches, as: [Post].self)!
                 
                 // ... but that's not good practice! Let's return the posts in our completion handler:
                 do {

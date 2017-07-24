@@ -26,7 +26,8 @@ public extension Disk {
             imageData = data
             imageFileName = name + ".jpg"
         } else {
-            fatalError("Could not convert image to PNG or JPEG")
+            printError("Could not convert image to PNG or JPEG")
+            return
         }
         let url = getURL(for: directory, path: imageFileName)
         do {
@@ -35,7 +36,8 @@ public extension Disk {
             }
             FileManager.default.createFile(atPath: url.path, contents: imageData, attributes: nil)
         } catch {
-            fatalError(error.localizedDescription)
+            printError(error.localizedDescription)
+            return
         }
     }
     
@@ -46,7 +48,7 @@ public extension Disk {
     ///   - directory: directory where image is stored
     ///   - type: here for Swifty generics magic, use UIImage.self
     /// - Returns: UIImage from disk
-    static func retrieve(_ name: String, from directory: Directory, as type: UIImage.Type) -> UIImage {
+    static func retrieve(_ name: String, from directory: Directory, as type: UIImage.Type) -> UIImage? {
         var url: URL!
         let withoutExtensionUrl = getURL(for: directory, path: name)
         let pngUrl = getURL(for: directory, path: name + ".png")
@@ -58,16 +60,19 @@ public extension Disk {
         } else if FileManager.default.fileExists(atPath: withoutExtensionUrl.path) {
             url = withoutExtensionUrl
         } else {
-            fatalError("Image with name \(name) does not exist")
+            printError("Image with name \(name) does not exist in \(directory.rawValue)")
+            return nil
         }
         if let data = FileManager.default.contents(atPath: url.path) {
             if let image = UIImage(data: data) {
                 return image
             } else {
-                fatalError("Could not convert image from data at \(url.path) to \(type)")
+                printError("Could not convert image from data at \(url.path) to \(type)")
+                return nil
             }
         } else {
-            fatalError("No data at \(url.path)")
+            printError("No data at \(url.path)")
+            return nil
         }
     }
 }

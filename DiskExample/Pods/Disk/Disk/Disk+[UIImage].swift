@@ -25,7 +25,8 @@ public extension Disk {
                 do {
                     try FileManager.default.removeItem(at: url)
                 } catch {
-                    fatalError(error.localizedDescription)
+                    printError(error.localizedDescription)
+                    return
                 }
             }
         }
@@ -33,7 +34,8 @@ public extension Disk {
         do {
             try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
         } catch {
-            fatalError(error.localizedDescription)
+            printError(error.localizedDescription)
+            return
         }
         for i in 0..<images.count {
             let image = images[i]
@@ -47,7 +49,8 @@ public extension Disk {
                 imageData = data
                 imageFileName = imageName + ".jpg"
             } else {
-                fatalError("Could not convert image to PNG or JPEG")
+                printError("Could not convert image \(i) to PNG or JPEG")
+                continue
             }
             let imageUrl = url.appendingPathComponent(imageFileName, isDirectory: false)
             do {
@@ -56,7 +59,8 @@ public extension Disk {
                 }
                 FileManager.default.createFile(atPath: imageUrl.path, contents: imageData, attributes: nil)
             } catch {
-                fatalError(error.localizedDescription)
+                printError(error.localizedDescription)
+                continue
             }
         }
     }
@@ -69,15 +73,17 @@ public extension Disk {
     ///   - type: here for Swifty generics magic, use UIImage.self
     /// - Returns: [UIImage] from disk
     /// - Throws: Error if Disk could not retrieve images from folder at specified location on disk
-    static func retrieve(_ name: String, from directory: Directory, as type: [UIImage].Type) -> [UIImage] {
+    static func retrieve(_ name: String, from directory: Directory, as type: [UIImage].Type) -> [UIImage]? {
         let url = getURL(for: directory, path: name).appendingPathComponent("/", isDirectory: false)
         var isDirectory: ObjCBool = false
         if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) {
             if !isDirectory.boolValue {
-                fatalError("No folder with images found at \(url.path)")
+                printError("No folder with images found at \(url.path)")
+                return nil
             }
         } else {
-            fatalError("No folder with images found at \(url.path)")
+            printError("No folder with images found at \(url.path)")
+            return nil
         }
         var images = [UIImage]()
         do {
@@ -87,14 +93,17 @@ public extension Disk {
                     if let image = UIImage(data: data) {
                         images.append(image)
                     } else {
-                        fatalError("Could not convert data at \(fileUrl.path) to UIImage")
+                        printError("Could not convert data at \(fileUrl.path) to UIImage")
+                        continue
                     }
                 } else {
-                    fatalError("No data at \(fileUrl.path)")
+                    printError("No data at \(fileUrl.path)")
+                    continue
                 }
             }
         } catch {
-            fatalError(error.localizedDescription)
+            printError(error.localizedDescription)
+            return nil
         }
         return images
     }

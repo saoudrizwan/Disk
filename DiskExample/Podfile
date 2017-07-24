@@ -3,6 +3,6 @@ platform :ios, '10.0'
 target 'DiskExample' do
   use_frameworks!
 
-  pod 'Disk'
+pod 'Disk'
 
 end

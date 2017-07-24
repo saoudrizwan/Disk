@@ -24,17 +24,17 @@ public class Disk {
     
     // MARK: Directory URLs
     
-    public enum Directory {
+    public enum Directory: String {
         // Only documents and other data that is user-generated, or that cannot otherwise be recreated by your application, should be stored in the <Application_Home>/Documents directory and will be automatically backed up by iCloud.
-        case documents
+        case documents = "Documents Directory"
         
         // Data that can be downloaded again or regenerated should be stored in the <Application_Home>/Library/Caches directory. Examples of files you should put in the Caches directory include database cache files and downloadable content, such as that used by magazine, newspaper, and map applications.
         // Use this directory to write any application-specific support files that you want to persist between launches of the application or during application updates. Your application is generally responsible for adding and removing these files. It should also be able to re-create these files as needed because iTunes removes them during a full restoration of the device. In iOS 2.2 and later, the contents of this directory are not backed up by iTunes.
         // Note that the system may delete the Caches/ directory to free up disk space, so your app must be able to re-create or download these files as needed.
-        case caches
+        case caches = "Caches Directory"
         
         // Data that is used only temporarily should be stored in the <Application_Home>/tmp directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device.
-        case temporary
+        case temporary = "Temporary Directory"
     }
     
     // MARK: Class helper methods
@@ -62,6 +62,11 @@ public class Disk {
         } else {
             fatalError("Could not create URL for specified directory")
         }
+    }
+    
+    /// Print a Disk Error whenever a method fails
+    static func printError(_ description: String) {
+        print("Disk Error: \(description)")
     }
     
 }

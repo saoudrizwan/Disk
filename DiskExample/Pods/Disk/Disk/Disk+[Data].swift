@@ -25,7 +25,8 @@ public extension Disk {
                 do {
                     try FileManager.default.removeItem(at: url)
                 } catch {
-                    fatalError(error.localizedDescription)
+                    printError(error.localizedDescription)
+                    return
                 }
             }
         }
@@ -33,7 +34,8 @@ public extension Disk {
         do {
             try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
         } catch {
-            fatalError(error.localizedDescription)
+            printError(error.localizedDescription)
+            return
         }
         for i in 0..<data.count {
             let dataObject = data[i]
@@ -45,7 +47,8 @@ public extension Disk {
                 }
                 FileManager.default.createFile(atPath: dataObjectUrl.path, contents: dataObject, attributes: nil)
             } catch {
-                fatalError(error.localizedDescription)
+                printError(error.localizedDescription)
+                continue
             }
         }
     }
@@ -57,15 +60,17 @@ public extension Disk {
     ///   - directory: directory where folder was created for holding Data objects
     ///   - type: here for Swifty generics magic, use [Data].self
     /// - Returns: [Disk] from disk
-    static func retrieve(_ name: String, from directory: Directory, as type: [Data].Type) -> [Data] {
+    static func retrieve(_ name: String, from directory: Directory, as type: [Data].Type) -> [Data]? {
         let url = getURL(for: directory, path: name)
         var isDirectory: ObjCBool = false
         if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) {
             if !isDirectory.boolValue {
-                fatalError("No folder with data files found at \(url.path)")
+                printError("No folder with data files found at \(url.path)")
+                return nil
             }
         } else {
-            fatalError("No folder with data files found at \(url.path)")
+            printError("No folder with data files found at \(url.path)")
+            return nil
         }
         var objects = [Data]()
         do {
@@ -73,11 +78,13 @@ public extension Disk {
                 if let data = FileManager.default.contents(atPath: fileUrl.path) {
                     objects.append(data)
                 } else {
-                    fatalError("No data at \(url.path)")
+                    printError("No data at \(url.path)")
+                    continue
                 }
             }
         } catch {
-            fatalError(error.localizedDescription)
+            printError(error.localizedDescription)
+            return nil
         }
         return objects
     }
