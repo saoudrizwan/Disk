@@ -116,7 +116,7 @@ let retrievedMessages = Disk.retrieve("many-messages", from: .caches, as: [Messa
 
 ### Images
 
-Disk automatically converts `UIImage`s to .png or .jpg files. 
+Disk automatically converts `UIImage`s to .png or .jpg files.
 
 ```swift
 let image = UIImage(named: "nature.png")
@@ -130,7 +130,7 @@ let retrievedImage = Disk.retrieve("nature", from: .documents, as: UIImage.self)
 
 **Array of images**
 
-Multiple images are saved to a single directory with the given name. Each image is then named 1.png, 2.png, 3.png, etc. 
+Multiple images are saved to a single directory with the given name. Each image is then named 1.png, 2.png, 3.png, etc.
 ```swift
 var images = [UIImages]()
 // ...
@@ -194,7 +194,7 @@ You should generally never use the `.doNotBackup(:in:)` and `.backup(:in:)` meth
 
 ## Debugging
 
-Disk is *forgiving*, meaning that it will handle most rookie mistakes on its own. However if you make a mistake that Disk thinks is worth telling you, it will print `Disk Error: [details about why an operation failed]` to the console instead of crashing the project at runtime. This should help you better manage your data and change your persistence game plan. 
+Disk is *forgiving*, meaning that it will handle most rookie mistakes on its own. However if you make a mistake that Disk thinks is worth telling you, it will print `Disk Error: [details about why an operation failed]` to the console instead of crashing the project at runtime. This should help you better manage your data and change your persistence game plan.
 
 ## Documentation
 Option + click on any of Disk's methods for detailed documentation.
