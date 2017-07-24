@@ -17,7 +17,7 @@
   • <a href="#contribute">Contribute</a>
 </p>
 
-Disk is a **powerful** and **simple** file management library built with <a href="https://developer.apple.com/icloud/documentation/data-storage/index.html" target="_blank">Apple's Data Storage guidelines</a> in mind. Disk uses the new `Codable` protocol introduced in Swift 4 to its utmost advantage and gives you the power to persist JSON data without ever having to worry about encoding/decoding. Disk also helps you store images and other data types to disk with as little as one line of code.
+Disk is a **powerful** and **simple** file management library built with <a href="https://developer.apple.com/icloud/documentation/data-storage/index.html" target="_blank">Apple's Data Storage Guidelines</a> in mind. Disk uses the new `Codable` protocol introduced in Swift 4 to its utmost advantage and gives you the power to persist JSON data without ever having to worry about encoding/decoding. Disk also helps you store images and other data types to disk with as little as one line of code.
 
 ## Compatibility
 
@@ -96,7 +96,7 @@ let retrievedMessage = Disk.retrieve("message", from: .caches, as: Message.self)
 If you Option + click `retrievedMessage` then Xcode will show its type as `Message`. Pretty neat, huh?
 <img src="https://user-images.githubusercontent.com/7799382/28501124-286520d8-6f8a-11e7-8ddb-53e956f8425a.png" alt="example">
 
-So what happened in the background? Disk first converts `message` to JSON data and stores it as .json file to the caches directory. Then when we retrieve the `message`, Disk automatically converts the JSON data to our `Codable` struct type.
+So what happened in the background? Disk first converts `message` to JSON data and stores it as a .json file to the caches directory. Then when we retrieve the `message`, Disk automatically converts the JSON data to our `Codable` struct type.
 
 **What about arrays of structs?**
 
@@ -206,7 +206,7 @@ Disk uses the MIT license. Please file an issue if you have any questions or if 
 
 ## Contribute
 
-Disk is in its infancy, but v0.0.6 provides the barebones of the simplest way to persist data in iOS. Please feel free to send pull requests of any features you think would add to Disk and its philosophy.
+Disk is in its infancy, but v0.0.7 provides the barebones of the simplest way to persist data in iOS. Please feel free to send pull requests of any features you think would add to Disk and its philosophy.
 
 ## Questions?
 
