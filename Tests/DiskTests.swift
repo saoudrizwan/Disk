@@ -402,4 +402,29 @@ class DiskTests: XCTestCase {
         }
         XCTAssert(kids.count == retrievedImages.count)
     }
+    
+    func testDoNotBackup() {
+        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
+        Disk.store(deku, to: .caches, as: "deku")
+        
+        Disk.doNotBackup("deku", in: .caches)
+        
+        if let url = Disk.getURL(for: "deku", in: .caches),
+            let resourceValues = try? url.resourceValues(forKeys: [.isExcludedFromBackupKey]),
+            let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
+            XCTAssert(isExcludedFromBackup)
+        } else {
+            XCTFail()
+        }
+        
+        Disk.backup("deku", in: .caches)
+        
+        if let url = Disk.getURL(for: "deku", in: .caches),
+            let resourceValues = try? url.resourceValues(forKeys: [.isExcludedFromBackupKey]),
+            let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
+            XCTAssertFalse(isExcludedFromBackup)
+        } else {
+            XCTFail()
+        }
+    }
 }
