@@ -206,7 +206,7 @@ Disk is *forgiving*, meaning that it will handle most rookie mistakes on its own
 
 Let's say, for example, that you try to write data to a location on the file system where data already exists:
 ```
-❗️💾Disk: File with name "posts" already exists in Documents Directory. Removing and replacing with contents of new data...
+❗️💾 Disk: File with name "posts" already exists in Documents Directory. Removing and replacing with contents of new data...
 ```
 In this case, Disk took care of everything for you. You should have first checked if a file exists in the location you wanted to store data to (using `fileExists(:in:)`), and then stored the data.
 
