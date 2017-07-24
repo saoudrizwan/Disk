@@ -55,7 +55,10 @@ class DiskTests: XCTestCase {
         }
         Disk.store(messages, to: .documents, as: "messages")
         
-        let retrievedMessages = Disk.retrieve("messages", from: .documents, as: [Message].self)
+        guard let retrievedMessages = Disk.retrieve("messages", from: .documents, as: [Message].self) else {
+            XCTFail()
+            return
+        }
         let aMessageBody = retrievedMessages[0].body
         XCTAssert(aMessageBody == "...")
     }
@@ -66,12 +69,12 @@ class DiskTests: XCTestCase {
             let newMessage = Message(title: "Message \(i)", body: "...")
             messages.append(newMessage)
         }
-        Disk.store(messages, to: .documents, as: "messages")
-        XCTAssert(Disk.fileExists("messages.json", in: .documents))
-        Disk.remove("messages", from: .documents)
+        Disk.store(messages, to: .documents, as: "some-messages")
+        XCTAssert(Disk.fileExists("some-messages", in: .documents))
+        Disk.remove("some-messages", from: .documents)
         
         if var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            url = url.appendingPathComponent("messages.json", isDirectory: false)
+            url = url.appendingPathComponent("some-messages.json", isDirectory: false)
             XCTAssertFalse(FileManager.default.fileExists(atPath: url.path))
         } else {
             XCTFail()
@@ -140,7 +143,10 @@ class DiskTests: XCTestCase {
         XCTAssert(Disk.fileExists("my-images", in: .documents))
         
         
-        let retrievedImages = Disk.retrieve("my-images", from: .documents, as: [UIImage].self)
+        guard let retrievedImages = Disk.retrieve("my-images", from: .documents, as: [UIImage].self) else {
+            XCTFail()
+            return
+        }
         
         XCTAssert(retrievedImages.count == images.count)
     }
@@ -165,7 +171,10 @@ class DiskTests: XCTestCase {
         
         Disk.store(data, to: .documents, as: "my-data")
         
-        let retrievedData = Disk.retrieve("my-data", from: .documents, as: Data.self)
+        guard let retrievedData = Disk.retrieve("my-data", from: .documents, as: Data.self) else {
+            XCTFail()
+            return
+        }
         
         XCTAssert(data == retrievedData)
     }
@@ -213,9 +222,6 @@ class DiskTests: XCTestCase {
             }
         }
         
-        print(retrievedData.count)
-        print(data.count)
-        
         XCTAssert(retrievedData.count == data.count)
         
         for i in 0..<retrievedData.count {
@@ -236,7 +242,10 @@ class DiskTests: XCTestCase {
         
         Disk.store(data, to: .documents, as: "my-data")
         
-        let retrievedDataFromDisk = Disk.retrieve("my-data", from: .documents, as: [Data].self)
+        guard let retrievedDataFromDisk = Disk.retrieve("my-data", from: .documents, as: [Data].self) else {
+            XCTFail()
+            return
+        }
         
         // Test to see if the data stored in the directory is correct
         var retrievedDataFromFileManager = [Data]()
@@ -266,7 +275,7 @@ class DiskTests: XCTestCase {
     func testTemporary() {
         let deku = UIImagePNGRepresentation(UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!)!
         Disk.store(deku, to: .temporary, as: "deku")
-        let retrievedDeku = UIImagePNGRepresentation(Disk.retrieve("deku", from: .temporary, as: UIImage.self))!
+        let retrievedDeku = UIImagePNGRepresentation(Disk.retrieve("deku", from: .temporary, as: UIImage.self)!)!
         XCTAssert(deku == retrievedDeku)
         Disk.doNotBackup("deku", in: .temporary)
         Disk.remove("deku", from: .temporary)

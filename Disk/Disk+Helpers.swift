@@ -21,7 +21,8 @@ public extension Disk {
                 try FileManager.default.removeItem(at: fileUrl)
             }
         } catch {
-            fatalError(error.localizedDescription)
+            printError(error.localizedDescription)
+            return
         }
     }
     
@@ -41,11 +42,15 @@ public extension Disk {
             if FileManager.default.fileExists(atPath: url.path) {
                 do {
                     try FileManager.default.removeItem(at: url)
+                    return
                 } catch {
-                    fatalError(error.localizedDescription)
+                    printError(error.localizedDescription)
+                    return
                 }
             }
         }
+        
+        printError("\(name) does not exist in \(directory.rawValue)")
     }
     
     /// Checks if file exists at specified directory with specified file name
@@ -85,7 +90,8 @@ public extension Disk {
             resourceValues.isExcludedFromBackup = true
             try url.setResourceValues(resourceValues)
         } catch {
-            fatalError(error.localizedDescription)
+            printError(error.localizedDescription)
+            return
         }
     }
     
@@ -102,7 +108,8 @@ public extension Disk {
             resourceValues.isExcludedFromBackup = false
             try url.setResourceValues(resourceValues)
         } catch {
-            fatalError(error.localizedDescription)
+            printError(error.localizedDescription)
+            return
         }
     }
 }

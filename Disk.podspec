@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Disk"
-  s.version      = "0.0.6"
+  s.version      = "0.0.7"
   s.summary      = "Delightful framework for iOS to easily persist structs, images, and data."
   s.description  = <<-DESC
     Easily work with the file system without worrying about any of its intricacies! Store Codable structs, UIImage, [UIImage], Data, [Data] to Apple recommended locations on the user's disk. Retrieve an object from disk as the type you specify, without having to worry about conversion or casting. Remove specific objects from disk, clear entire directories if you need to, or check if an object exists on disk.
