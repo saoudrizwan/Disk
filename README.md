@@ -197,7 +197,7 @@ You should generally never use the `.doNotBackup(:in:)` and `.backup(:in:)` meth
 Disk is *declarative*, meaning that it throws fatalErrors with detailed explanations of why an operation can't be completed. Disk is smart, so it will handle most of the rookie mistakes on its own, but it only ever throws an error when you try doing something representative of a flaw in your persistence game plan.
 
 ## Documentation
-Option + click on any of Dance's methods for detailed documentation.
+Option + click on any of Disk's methods for detailed documentation.
 <img src="https://user-images.githubusercontent.com/7799382/28500816-231ab8c8-6f84-11e7-93cb-875fceeeac65.png" alt="documentation">
 
 ## License
