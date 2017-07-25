@@ -12,20 +12,19 @@ public extension Disk {
     /// Store Data to disk
     ///
     /// - Parameters:
-    ///   - data: Data to store to disk
+    ///   - value: Data to store to disk
     ///   - directory: directory to store file with specified data
     ///   - name: name of file to hold specified data
-    static func store(_ data: Data, to directory: Directory, as name: String) {
-        let fileName = validateFileName(name)
-        let url = createURL(for: directory, name: fileName, extension: .none)
+    /// - Throws: Error if there were any issues writing the given data to disk
+    static func store(_ value: Data, to directory: Directory, as name: String) throws {
         do {
-            if FileManager.default.fileExists(atPath: url.path) {
-                printError("File with name \"\(name)\" already exists in \(directory.rawValue). Removing and replacing with contents of new data...")
-                try FileManager.default.removeItem(at: url)
+            if fileExists(name, in: directory) {
+                try remove(name, from: directory)
             }
-            FileManager.default.createFile(atPath: url.path, contents: data, attributes: nil)
+            let url = createURL(for: name, extension: .none, in: directory)
+            FileManager.default.createFile(atPath: url.path, contents: value, attributes: nil)
         } catch {
-            printError(error.localizedDescription)
+            throw error
         }
     }
     
@@ -36,17 +35,23 @@ public extension Disk {
     ///   - directory: directory where data file is stored
     ///   - type: here for Swifty generics magic, use Data.self
     /// - Returns: Data retrived from disk
-    static func retrieve(_ name: String, from directory: Directory, as type: Data.Type) -> Data? {
-        let fileName = validateFileName(name)
-        guard let url = getExistingFileURL(for: fileName, with: [.none, .json, .png, .jpg], in: directory) else {
-            printError("File with name \"\(name)\" does not exist in \(directory.rawValue)")
-            return nil
-        }
-        if let data = FileManager.default.contents(atPath: url.path) {
-            return data
-        } else {
-            printError("No data at \(url.path)")
-            return nil
+    /// - Throws: Error if there were any issues retrieving the specified file's data
+    static func retrieve(_ name: String, from directory: Directory, as type: Data.Type) throws -> Data {
+        do {
+            let url = try getOneExistingFileURL(for: name, with: [.none, .json, .png, .jpg], in: directory)
+            
+            if let data = FileManager.default.contents(atPath: url.path) {
+                return data
+            } else {
+                throw createDiskError(
+                    .deserialization,
+                    description: "No Data found in \(name) in \(directory.rawValue).",
+                    failureReason: "Data could not be retrieved from \(name) in \(directory.rawValue).",
+                    recoverySuggestion: "Write data to \(name) in \(directory.rawValue) before trying to retrieve it."
+                )
+            }
+        } catch {
+            throw error
         }
     }
 }

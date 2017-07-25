@@ -12,32 +12,35 @@ public extension Disk {
     /// Store image to disk
     ///
     /// - Parameters:
-    ///   - image: image to store to disk
+    ///   - value: image to store to disk
     ///   - directory: directory to store image in
     ///   - name: name to give to image file (don't need to include .png or .jpg extension)
-    static func store(_ image: UIImage, to directory: Directory, as name: String) {
-        var imageData: Data!
-        var imageFileExtension: FileExtension!
-        if let data = UIImagePNGRepresentation(image) {
-            imageData = data
-            imageFileExtension = .png
-        } else if let data = UIImageJPEGRepresentation(image, 1) {
-            imageData = data
-            imageFileExtension = .jpg
-        } else {
-            printError("Could not convert image to PNG or JPEG")
-            return
-        }
-        let fileName = validateFileName(name)
-        let url = createURL(for: directory, name: fileName, extension: imageFileExtension)
+    /// - Throws: Error if there were any issues writing the image to disk
+    static func store(_ value: UIImage, to directory: Directory, as name: String) throws {
         do {
-            if FileManager.default.fileExists(atPath: url.path) {
-                printError("File with name \"\(name)\" already exists in \(directory.rawValue). Removing and replacing with contents of new data...")
-                try FileManager.default.removeItem(at: url)
+            if fileExists(name, in: directory) {
+                try remove(name, from: directory)
             }
+            var imageData: Data
+            var imageFileExtension: FileExtension
+            if let data = UIImagePNGRepresentation(value) {
+                imageData = data
+                imageFileExtension = .png
+            } else if let data = UIImageJPEGRepresentation(value, 1) {
+                imageData = data
+                imageFileExtension = .jpg
+            } else {
+                throw createDiskError(
+                    .serialization,
+                    description: "Could not serialize UIImage to Data.",
+                    failureReason: "UIImage could not serialize to PNG or JPEG data.",
+                    recoverySuggestion: "Make sure image is not corrupt."
+                )
+            }
+            let url = createURL(for: name, extension: imageFileExtension, in: directory)
             FileManager.default.createFile(atPath: url.path, contents: imageData, attributes: nil)
         } catch {
-            printError(error.localizedDescription)
+            throw error
         }
     }
     
@@ -48,22 +51,22 @@ public extension Disk {
     ///   - directory: directory where image is stored
     ///   - type: here for Swifty generics magic, use UIImage.self
     /// - Returns: UIImage from disk
-    static func retrieve(_ name: String, from directory: Directory, as type: UIImage.Type) -> UIImage? {
-        let fileName = validateFileName(name)
-        guard let url = getExistingFileURL(for: fileName, with: [.png, .jpg, .none], in: directory) else {
-            printError("Image with name \"\(name)\" does not exist in \(directory.rawValue)")
-            return nil
-        }
-        if let data = FileManager.default.contents(atPath: url.path) {
-            if let image = UIImage(data: data) {
+    /// - Throws: Error if there were any issues retrieving the specified image
+    static func retrieve(_ name: String, from directory: Directory, as type: UIImage.Type) throws -> UIImage {
+        do {
+            let url = try getOneExistingFileURL(for: name, with: [.png, .jpg, .none], in: directory)
+            if let data = FileManager.default.contents(atPath: url.path), let image = UIImage(data: data) {
                 return image
             } else {
-                printError("Could not convert image from data at \(url.path) to UIImage")
-                return nil
+                throw createDiskError(
+                    .deserialization,
+                    description: "Could not decode UIImage from \(name) in \(directory.rawValue).",
+                    failureReason: "A UIImage could not be created out of the data in \(name) in \(directory.rawValue).",
+                    recoverySuggestion: "Try deserializing \(name) in \(directory.rawValue) manually after retrieving it as Data."
+                )
             }
-        } else {
-            printError("No data at \(url.path)")
-            return nil
+        } catch {
+            throw error
         }
     }
 }

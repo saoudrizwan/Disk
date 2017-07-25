@@ -7,149 +7,117 @@
 //
 
 import XCTest
-import Disk
+@testable import Disk
 
 class DiskTests: XCTestCase {
+    func convertErrorToString(_ error: Error) -> String {
+        return """
+        Domain: \((error as NSError).domain)
+        Code: \((error as NSError).code)
+        Description: \(error.localizedDescription)
+        Failure Reason: \((error as NSError).localizedFailureReason ?? "nil")
+        Suggestions: \((error as NSError).localizedRecoverySuggestion ?? "nil")
+        """
+    }
     
     override func tearDown() {
-        Disk.clear(.documents)
-        Disk.clear(.caches)
-        Disk.clear(.temporary)
-    }
-    
-    func testPerformanceOfStoringALotOfMessages() {
-        var messages = [Message]()
-        
-        for i in 1...1000 {
-            let newMessage = Message(title: "Message \(i)", body: "...")
-            messages.append(newMessage)
-        }
-        
-        self.measure {
-            Disk.store(messages, to: .documents, as: "a-lot-of-messages")
+        do {
+            try Disk.clear(.documents)
+            try Disk.clear(.caches)
+            try Disk.clear(.temporary)
+        } catch {
+            fatalError(convertErrorToString(error))
         }
     }
     
-    func testStoreMessages() {
-        var messages = [Message]()
-        for i in 1...4 {
-            let newMessage = Message(title: "Message \(i)", body: "...")
-            messages.append(newMessage)
-        }
-        
-        Disk.store(messages, to: .documents, as: "messages")
-        
-        if var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            url = url.appendingPathComponent("messages.json", isDirectory: false)
-            XCTAssert(FileManager.default.fileExists(atPath: url.path))
-        } else {
-            XCTFail()
-        }
-    }
     
-    func testRetrieveMessages() {
-        var messages = [Message]()
-        for i in 1...4 {
-            let newMessage = Message(title: "Message \(i)", body: "...")
-            messages.append(newMessage)
-        }
-        Disk.store(messages, to: .documents, as: "messages")
-        
-        guard let retrievedMessages = Disk.retrieve("messages", from: .documents, as: [Message].self) else {
-            XCTFail()
-            return
-        }
-        let aMessageBody = retrievedMessages[0].body
-        XCTAssert(aMessageBody == "...")
-    }
     
-    func testRemoveMessages() {
-        var messages = [Message]()
-        for i in 1...4 {
-            let newMessage = Message(title: "Message \(i)", body: "...")
-            messages.append(newMessage)
+    let messages: [Message] = {
+        var array = [Message]()
+        for i in 1...10 {
+            let element = Message(title: "Message \(i)", body: "...")
+            array.append(element)
         }
-        Disk.store(messages, to: .documents, as: "some-messages")
-        XCTAssert(Disk.fileExists("some-messages", in: .documents))
-        Disk.remove("some-messages", from: .documents)
-        
-        if var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            url = url.appendingPathComponent("some-messages.json", isDirectory: false)
-            XCTAssertFalse(FileManager.default.fileExists(atPath: url.path))
-        } else {
-            XCTFail()
-        }
-    }
+        return array
+    }()
     
-    func testStoreImage() {
-        let dekuImage = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        
-        Disk.store(dekuImage, to: .documents, as: "my-image")
-        
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let pngUrl = url.appendingPathComponent("my-image.png", isDirectory: false)
-            let jpgUrl = url.appendingPathComponent("my-image.jpg", isDirectory: false)
-            XCTAssert(FileManager.default.fileExists(atPath: pngUrl.path) || FileManager.default.fileExists(atPath: jpgUrl.path))
-        } else {
-            XCTFail()
+    let images = [
+        UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
+    ]
+    
+    lazy var data: [Data] = self.images.map { UIImagePNGRepresentation($0)! }
+    
+    func testStoreStructs() {
+        do {
+            // 1 struct
+            let message = messages[0]
+            try Disk.store(message, to: .documents, as: "message")
+            XCTAssert(Disk.fileExists("message", in: .documents))
+            let messageUrl = try Disk.getURL(for: "message", in: .documents)
+            print("A message was stored to \(messageUrl.absoluteString)")
+            let retrievedMessage = try Disk.retrieve("message", from: .documents, as: Message.self)
+            XCTAssert(message == retrievedMessage)
+            
+            // Array of structs
+            try Disk.store(messages, to: .documents, as: "messages")
+            XCTAssert(Disk.fileExists("messages", in: .documents))
+            let messagesUrl = try Disk.getURL(for: "messages", in: .documents)
+            print("Messages were stored to \(messagesUrl.absoluteString)")
+            let retrievedMessages = try Disk.retrieve("messages", from: .documents, as: [Message].self)
+            XCTAssert(messages == retrievedMessages)
+        } catch {
+            fatalError(convertErrorToString(error))
         }
-        
     }
     
     func testStoreImages() {
-        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let allMight = UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let bakugo = UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let images = [deku, allMight, bakugo]
-        
-        Disk.store(images, to: .documents, as: "my-images")
-        
-        // Test to see if we create a directory named "my-images" (this directory will hold all our images which will be named 1.png, 2.png, 3.png, etc.)
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let url = url.appendingPathComponent("my-images", isDirectory: true)
+        do {
+            // 1 image
+            let image = images[0]
+            try Disk.store(image, to: .documents, as: "image")
+            XCTAssert(Disk.fileExists("image", in: .documents))
+            let imageUrl = try Disk.getURL(for: "image", in: .documents)
+            print("An image was stored to \(imageUrl.absoluteString)")
+            let retrievedImage = try Disk.retrieve("image", from: .documents, as: UIImage.self)
+            XCTAssert(image == retrievedImage)
             
-            var isDirectory: ObjCBool = false
-            if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) {
-                XCTAssert(isDirectory.boolValue)
-            } else {
-                XCTFail()
-            }
-        }
-        
-        // Test to see if we have png or jpg files in our new directory
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let url = url.appendingPathComponent("my-images", isDirectory: true)
-            if FileManager.default.fileExists(atPath: url.path) {
-                let files = try! FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [])
-                XCTAssert(files.count == images.count)
-                for fileUrl in files {
-                    let ext = fileUrl.pathExtension.lowercased()
-                    print(ext)
-                    XCTAssert(ext == "png" || ext == "jpg")
-                }
-            } else {
-                XCTFail()
-            }
+            // Array of images
+            try Disk.store(images, to: .documents, as: "images")
+            XCTAssert(Disk.fileExists("images", in: .documents))
+            let imagesFolderUrl = try Disk.getURL(for: "images", in: .documents)
+            print("Images were stored to \(imagesFolderUrl.absoluteString)")
+            let retrievedImages = try Disk.retrieve("images", from: .documents, as: [UIImage].self)
+            XCTAssert(images == retrievedImages)
+        } catch {
+            fatalError(convertErrorToString(error))
         }
     }
     
-    func testRetrieveImages() {
-        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let allMight = UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let bakugo = UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let images = [deku, allMight, bakugo]
-        
-        Disk.store(images, to: .documents, as: "my-images")
-        XCTAssert(Disk.fileExists("my-images", in: .documents))
-        
-        
-        guard let retrievedImages = Disk.retrieve("my-images", from: .documents, as: [UIImage].self) else {
-            XCTFail()
-            return
+    func testStoreData() {
+        do {
+            // 1 data object
+            let object = data[0]
+            try Disk.store(object, to: .documents, as: "image")
+            XCTAssert(Disk.fileExists("image", in: .documents))
+            let imageUrl = try Disk.getURL(for: "image", in: .documents)
+            print("An image was stored to \(imageUrl.absoluteString)")
+            let retrievedImage = try Disk.retrieve("image", from: .documents, as: UIImage.self)
+            XCTAssert(image == retrievedImage)
+            
+            // Array of images
+            try Disk.store(images, to: .documents, as: "images")
+            XCTAssert(Disk.fileExists("images", in: .documents))
+            let imagesFolderUrl = try Disk.getURL(for: "images", in: .documents)
+            print("Images were stored to \(imagesFolderUrl.absoluteString)")
+            let retrievedImages = try Disk.retrieve("images", from: .documents, as: [UIImage].self)
+            XCTAssert(images == retrievedImages)
+        } catch {
+            fatalError(convertErrorToString(error))
         }
-        
-        XCTAssert(retrievedImages.count == images.count)
     }
+    
     
     func testStoreSingleData() {
         let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
@@ -426,5 +394,21 @@ class DiskTests: XCTestCase {
         } else {
             XCTFail()
         }
+    }
+    
+    func testStoreSameName() {
+        let one = Message(title: "one", body: "body")
+        let two = Message(title: "two", body: "body")
+        Disk.store(one, to: .caches, as: "message")
+        Disk.store(two, to: .caches, as: "message")
+        
+        XCTAssert(Disk.fileExists("message", in: .caches))
+        
+        guard let retrievedMessage = Disk.retrieve("message", from: .caches, as: Message.self) else {
+            XCTFail()
+            return
+        }
+        XCTAssert(two.title == retrievedMessage.title && two.body == retrievedMessage.body)
+        
     }
 }

@@ -12,22 +12,21 @@ public extension Disk {
     /// Store encodable struct to disk
     ///
     /// - Parameters:
-    ///   - model: the encodable struct to store
+    ///   - value: the Encodable struct to store
     ///   - directory: where to store the struct
     ///   - name: what to name the file where the struct data will be stored
-    static func store<T: Encodable>(_ model: T, to directory: Directory, as name: String) {
-        let fileName = validateFileName(name)
-        let url = createURL(for: directory, name: fileName, extension: .json)
-        let encoder = JSONEncoder()
+    /// - Throws: Error if there were any issues writing the given struct to disk
+    static func store<T: Encodable>(_ value: T, to directory: Directory, as name: String) throws {
         do {
-            let data = try encoder.encode(model)
-            if FileManager.default.fileExists(atPath: url.path) {
-                printError("File with name \"\(name)\" already exists in \(directory.rawValue). Removing and replacing with contents of new data...")
-                try FileManager.default.removeItem(at: url)
+            if fileExists(name, in: directory) {
+                try remove(name, from: directory)
             }
+            let url = createURL(for: name, extension: .json, in: directory)
+            let encoder = JSONEncoder()
+            let data = try encoder.encode(value)
             FileManager.default.createFile(atPath: url.path, contents: data, attributes: nil)
         } catch {
-            printError(error.localizedDescription)
+            throw error
         }
     }
     
@@ -38,24 +37,24 @@ public extension Disk {
     ///   - directory: directory where struct data is stored
     ///   - type: struct type (i.e. Message.self or [Message].self)
     /// - Returns: decoded struct model(s) of data
-    static func retrieve<T: Decodable>(_ name: String, from directory: Directory, as type: T.Type) -> T? {
-        let fileName = validateFileName(name)
-        guard let url = getExistingFileURL(for: fileName, with: [.json, .none], in: directory) else {
-            printError("Struct with name \"\(name)\" does not exist in \(directory.rawValue)")
-            return nil
-        }
-        if let data = FileManager.default.contents(atPath: url.path) {
-            let decoder = JSONDecoder()
-            do {
-                let model = try decoder.decode(type, from: data)
-                return model
-            } catch {
-                printError(error.localizedDescription)
-                return nil
+    /// - Throws: Error if there were any issues retrieving the specified file's data as the specified type
+    static func retrieve<T: Decodable>(_ name: String, from directory: Directory, as type: T.Type) throws -> T {
+        do {
+            let url = try getOneExistingFileURL(for: name, with: [.json, .none], in: directory)
+            if let data = FileManager.default.contents(atPath: url.path) {
+                let decoder = JSONDecoder()
+                let value = try decoder.decode(type, from: data)
+                return value
+            } else {
+                throw createDiskError(
+                    .deserialization,
+                    description: "Did not retrieve Decodable data from \(name) in \(directory.rawValue).",
+                    failureReason: "No data at \(name) in \(directory.rawValue) for JSONDecoder to decode to \(type).",
+                    recoverySuggestion: "Write data to \(name) in \(directory.rawValue) before trying to retrieve and decode it as \(type)."
+                )
             }
-        } else {
-            printError("No data at \(url.path)")
-            return nil
+        } catch {
+            throw error
         }
     }
 }

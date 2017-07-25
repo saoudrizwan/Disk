@@ -12,58 +12,43 @@ public extension Disk {
     /// Store an array of images to disk
     ///
     /// - Parameters:
-    ///   - images: array of images to store
+    ///   - value: array of images to store
     ///   - directory: directory to store images
     ///   - name: name to give folder that will be created to store the images
-    static func store(_ images: [UIImage], to directory: Directory, as name: String) {
-        let fileName = validateFileName(name)
-        let directoryUrl = createURL(for: directory, name: fileName, extension: .directory)
-        // If directory exists with name, then remove it
-        var isDirectory: ObjCBool = false
-        if FileManager.default.fileExists(atPath: directoryUrl.path, isDirectory: &isDirectory) {
-            if isDirectory.boolValue {
-                do {
-                    printError("Folder with name \"\(name)\" already exists in \(directory.rawValue). Removing and replacing with contents of new data...")
-                    try FileManager.default.removeItem(at: directoryUrl)
-                } catch {
-                    printError(error.localizedDescription)
-                    return
-                }
-            }
-        }
-        // Create new directory with name
+    /// - Throws: Error if there were any issues creating a folder and writing the given images to it
+    static func store(_ value: [UIImage], to directory: Directory, as name: String) throws {
         do {
+            if fileExists(name, in: directory) {
+                try remove(name, from: directory)
+            }
+            let directoryUrl = createURL(for: name, extension: .directory, in: directory)
             try FileManager.default.createDirectory(at: directoryUrl, withIntermediateDirectories: false, attributes: nil)
-        } catch {
-            printError(error.localizedDescription)
-            return
-        }
-        // Store images in folder
-        for i in 0..<images.count {
-            let image = images[i]
-            let imageName = "/\(i)"
-            var imageData: Data!
-            var imageFileName: String!
-            if let data = UIImagePNGRepresentation(image) {
-                imageData = data
-                imageFileName = imageName + FileExtension.png.rawValue
-            } else if let data = UIImageJPEGRepresentation(image, 1) {
-                imageData = data
-                imageFileName = imageName + FileExtension.jpg.rawValue
-            } else {
-                printError("Could not convert image \(i) to PNG or JPEG")
-                continue
-            }
-            let imageUrl = directoryUrl.appendingPathComponent(imageFileName, isDirectory: false)
-            do {
-                if FileManager.default.fileExists(atPath: imageUrl.path) {
-                    try FileManager.default.removeItem(at: imageUrl)
+            // Store images in this new directory
+            for i in 0..<value.count {
+                let image = value[i]
+                let imageName = "\(i)"
+                var imageData: Data
+                var imageFileExtension: FileExtension
+                if let data = UIImagePNGRepresentation(image) {
+                    imageData = data
+                    imageFileExtension = .png
+                } else if let data = UIImageJPEGRepresentation(image, 1) {
+                    imageData = data
+                    imageFileExtension = .jpg
+                } else {
+                    throw createDiskError(
+                        .serialization,
+                        description: "Could not serialize UIImage \(i) in the array to Data.",
+                        failureReason: "UIImage \(i) could not serialize to PNG or JPEG data.",
+                        recoverySuggestion: "Make sure there are no corrupt images in the array."
+                    )
                 }
+                let imageFileName = imageName + imageFileExtension.rawValue
+                let imageUrl = directoryUrl.appendingPathComponent(imageFileName, isDirectory: false)
                 FileManager.default.createFile(atPath: imageUrl.path, contents: imageData, attributes: nil)
-            } catch {
-                printError(error.localizedDescription)
-                continue
             }
+        } catch {
+            throw error
         }
     }
     
@@ -72,36 +57,32 @@ public extension Disk {
     /// - Parameters:
     ///   - name: name of folder on disk
     ///   - directory: directory where images folder was created
-    ///   - type: here for Swifty generics magic, use UIImage.self
+    ///   - type: here for Swifty generics magic, use [UIImage].self
     /// - Returns: [UIImage] from disk
-    /// - Throws: Error if Disk could not retrieve images from folder at specified location on disk
-    static func retrieve(_ name: String, from directory: Directory, as type: [UIImage].Type) -> [UIImage]? {
-        let fileName = validateFileName(name)
-        guard let url = getExistingFileURL(for: fileName, with: [.directory], in: directory) else {
-            printError("No folder found with name \"\(name)\" in \(directory.rawValue)")
-            return nil
-        }
-        var images = [UIImage]()
+    /// - Throws: Error if there were any issues retrieving the specified folder of images
+    static func retrieve(_ name: String, from directory: Directory, as type: [UIImage].Type) throws -> [UIImage] {
+        //add / if it doesnt have it already
         do {
+            let url = try getOneExistingFileURL(for: name, with: [.directory], in: directory)
             let fileUrls = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [])
-            for fileUrl in fileUrls {
-                if let data = FileManager.default.contents(atPath: fileUrl.path) {
-                    if let image = UIImage(data: data) {
-                        images.append(image)
-                    } else {
-                        printError("Could not convert data at \(fileUrl.path) to UIImage")
-                        continue
-                    }
+            var images = [UIImage]()
+            for i in 0..<fileUrls.count {
+                let fileUrl = fileUrls[i]
+                if let data = FileManager.default.contents(atPath: fileUrl.path), let image = UIImage(data: data) {
+                    images.append(image)
                 } else {
-                    printError("No data at \(fileUrl.path)")
-                    continue
+                    throw createDiskError(
+                        .deserialization,
+                        description: "Could not decode UIImage \(i) in \(name) in \(directory.rawValue).",
+                        failureReason: "A UIImage could not be created out of the data in file \(i) in \(name) in \(directory.rawValue).",
+                        recoverySuggestion: "Try deserializing \(name) in \(directory.rawValue) manually after retrieving it as [Data]."
+                    )
                 }
             }
+            return images
         } catch {
-            printError(error.localizedDescription)
-            return nil
+            throw error
         }
-        return images
     }
 }
 

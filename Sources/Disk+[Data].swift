@@ -12,46 +12,26 @@ public extension Disk {
     /// Store an array of Data objects to disk
     ///
     /// - Parameters:
-    ///   - data: array of Data to store to disk
+    ///   - value: array of Data to store to disk
     ///   - directory: directory to create folder with data objects
     ///   - name: name to give folder that will be created for data objects
-    static func store(_ data: [Data], to directory: Directory, as name: String) {
-        let fileName = validateFileName(name)
-        let directoryUrl = createURL(for: directory, name: fileName, extension: .directory)
-        // If directory exists with name, then remove it
-        var isDirectory: ObjCBool = false
-        if FileManager.default.fileExists(atPath: directoryUrl.path, isDirectory: &isDirectory) {
-            if isDirectory.boolValue {
-                do {
-                    printError("Folder with name \"\(name)\" already exists in \(directory.rawValue). Removing and replacing with contents of new data...")
-                    try FileManager.default.removeItem(at: directoryUrl)
-                } catch {
-                    printError(error.localizedDescription)
-                    return
-                }
-            }
-        }
-        // Create new directory with name
+    /// - Throws: Error if there were any issues creating a folder and writing the given Data to it
+    static func store(_ value: [Data], to directory: Directory, as name: String) throws {
         do {
-            try FileManager.default.createDirectory(at: directoryUrl, withIntermediateDirectories: false, attributes: nil)
-        } catch {
-            printError(error.localizedDescription)
-            return
-        }
-        // Create files and store in folder
-        for i in 0..<data.count {
-            let dataObject = data[i]
-            let dataObjectName = "/\(i)"
-            let dataObjectUrl = directoryUrl.appendingPathComponent(dataObjectName, isDirectory: false)
-            do {
-                if FileManager.default.fileExists(atPath: dataObjectUrl.path) {
-                    try FileManager.default.removeItem(at: dataObjectUrl)
-                }
-                FileManager.default.createFile(atPath: dataObjectUrl.path, contents: dataObject, attributes: nil)
-            } catch {
-                printError(error.localizedDescription)
-                continue
+            if fileExists(name, in: directory) {
+                try remove(name, from: directory)
             }
+            let directoryUrl = createURL(for: name, extension: .directory, in: directory)
+            try FileManager.default.createDirectory(at: directoryUrl, withIntermediateDirectories: false, attributes: nil)
+            // Store files in this new directory
+            for i in 0..<value.count {
+                let data = value[i]
+                let dataName = "\(i)"
+                let dataUrl = directoryUrl.appendingPathComponent(dataName, isDirectory: false)
+                FileManager.default.createFile(atPath: dataUrl.path, contents: data, attributes: nil)
+            }
+        } catch {
+            throw error
         }
     }
     
@@ -62,28 +42,29 @@ public extension Disk {
     ///   - directory: directory where folder was created for holding Data objects
     ///   - type: here for Swifty generics magic, use [Data].self
     /// - Returns: [Disk] from disk
-    static func retrieve(_ name: String, from directory: Directory, as type: [Data].Type) -> [Data]? {
-        let fileName = validateFileName(name)
-        guard let url = getExistingFileURL(for: fileName, with: [.directory], in: directory) else {
-            printError("No folder found with name \"\(name)\" in \(directory.rawValue)")
-            return nil
-        }
-        var objects = [Data]()
+    /// - Throws: Error if there were any issues retrieving the specified folder of Data files
+    static func retrieve(_ name: String, from directory: Directory, as type: [Data].Type) throws -> [Data] {
         do {
+            let url = try getOneExistingFileURL(for: name, with: [.directory], in: directory)
             let fileUrls = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [])
-            for fileUrl in fileUrls {
+            var dataObjects = [Data]()
+            for i in 0..<fileUrls.count {
+                let fileUrl = fileUrls[i]
                 if let data = FileManager.default.contents(atPath: fileUrl.path) {
-                    objects.append(data)
+                    dataObjects.append(data)
                 } else {
-                    printError("No data at \(url.path)")
-                    continue
+                    throw createDiskError(
+                        .deserialization,
+                        description: "Could not retrieved Data from file \(i) in \(name) in \(directory.rawValue).",
+                        failureReason: "There's no readable Data in file \(i) in \(name) in \(directory.rawValue).",
+                        recoverySuggestion: "Ensure that all the Data written to this folder in the first place has valid Data contents."
+                    )
                 }
             }
+            return dataObjects
         } catch {
-            printError(error.localizedDescription)
-            return nil
+            throw error
         }
-        return objects
     }
 }
 
