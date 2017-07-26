@@ -120,7 +120,7 @@ for i in 0..<5 {
 try Disk.save(messages, to: .caches, as: "many-messages.json")
 ```
 ```swift
-let retrievedMessages = Disk.retrieve("many-messages.json", from: .caches, as: [Message].self)
+let retrievedMessages = try Disk.retrieve("many-messages.json", from: .caches, as: [Message].self)
 ```
 
 ### Images
@@ -172,10 +172,10 @@ If you're trying to save data like .mp4 video data for example, then Disk's meth
 let videoData = Data(contentsOf: videoURL, options: [])
 ```
 ```swift
-Disk.save(videoData, to: .documents, as: "anime.mp4")
+try Disk.save(videoData, to: .documents, as: "anime.mp4")
 ```
 ```swift
-let retrievedData = Disk.retrieve("anime.mp4", from: .documents, as: Data.self)
+let retrievedData = try Disk.retrieve("anime.mp4", from: .documents, as: Data.self)
 ```
 **Array of `Data`**
 Disk saves data files like it does images, as files in a folder.
@@ -184,10 +184,10 @@ var data = [Data]()
 // ...
 ```
 ```swift
-Disk.save(data, to: .documents, as: "videos")
+try Disk.save(data, to: .documents, as: "videos")
 ```
 ```swift
-let retrievedVideos = Disk.retrieve("videos", from: .documents, as: [Data].self)
+let retrievedVideos = try Disk.retrieve("videos", from: .documents, as: [Data].self)
 ```
 If you were to retrieve [Data] from a folder with images and .json files, then those files would be included in the returned value. Continuing the example from the [Array of images](#images) section:
 ```swift
@@ -196,7 +196,7 @@ let files = try Disk.retrieve("Nature", from: .documents, as: [Data].self)
 ... would return `-> [deer.png, lion.png, bird.png, diary.json]`
 
 ### Large files
-It's important that you know when to work with the file system on the background thread. Disk is syncronous, giving you more control over read/write operations on the file system. [Apple says](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/TechniquesforReadingandWritingCustomFiles/TechniquesforReadingandWritingCustomFiles.html) that *"because file operations involve accessing the disk, performing those operations **asynchronously** is almost always preferred."*
+It's important to know when to work with the file system on the background thread. Disk is **synchronous**, giving you more control over read/write operations on the file system. [Apple says](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/TechniquesforReadingandWritingCustomFiles/TechniquesforReadingandWritingCustomFiles.html) that *"because file operations involve accessing the disk, performing those operations **asynchronously** is almost always preferred."*
 
 [Grand Central Dispatch](https://developer.apple.com/documentation/dispatch) is the best way to work with Disk asynchronously. Here's an example:
 ```swift
@@ -244,17 +244,17 @@ try Disk.getURL(for: "album/", in: .documents)
 ```
 * Mark a file/folder with the `do not backup` attribute (this keeps the file/folder on disk even in low storage situations, but prevents it from being backed up by iCloud or iTunes.)
 ```swift
-try Disk.doNotBackup("album", in: .caches)
+try Disk.doNotBackup("album", in: .documents)
 ```
-**"Everything in your app’s home directory is backed up, with the exception of the application bundle itself, the caches directory, and temporary directory."**
+"Everything in your app’s home directory is backed up, **with the exception of the application bundle itself, the caches directory, and temporary directory.**"
 ```swift
-try Disk.backup("album", in: .caches)
+try Disk.backup("album", in: .documents)
 ```
 You should generally never use the `.doNotBackup(:in:)` and `.backup(:in:)` methods unless you're absolutely positive you want to persist data no matter what state the user's device is in.
 
 ## Debugging
 
-Disk is *thorough*, meaning that it will not leave an error to chance. Almost all of Disk's methods throw errors either on behalf of Foundation's [FileManager](https://developer.apple.com/documentation/foundation/filemanager) class or custom Disk Errors that are worth bringing to your attention. These errors have a lot of information, such as a description, failure reason, and recovery suggestion:
+Disk is *thorough*, meaning that it will not leave an error to chance. Almost all of Disk's methods throw errors either on behalf of `Foundation`'s [`FileManager`] class or custom Disk Errors that are worth bringing to your attention. These errors have a lot of information, such as a description, failure reason, and recovery suggestion:
 ```swift
 do {
     if Disk.exists("posts.json", in: .documents) {
@@ -275,7 +275,7 @@ The example above takes care of the most common error when dealing with the file
 
 ## A Word from the Developer
 
-After developing for iOS for 7+ years, I've come across almost every method of data persistence there is to offer (Core Data, Realm, `NSCoding`, `UserDefaults`, etc.) Nothing really fit the bill except `NSCoding` but there were too many hoops to jump through. After Swift 4 was released, I was really excited about the `Codable` protocol because I knew what it had to offer in terms of JSON coding. Working with network responses' JSON data and converting them to usable structs has never been easier. *Disk aims to extend the simplicity of working with data to the file system.*
+After developing for iOS for 7+ years, I've come across almost every method of data persistence there is to offer (Core Data, Realm, `NSCoding`, `UserDefaults`, etc.) Nothing really fit the bill except `NSCoding` but there were too many hoops to jump through. After Swift 4 was released, I was really excited about the `Codable` protocol because I knew what it had to offer in terms of JSON coding. Working with network responses' JSON data and converting them to usable structs has never been easier. **Disk aims to extend the simplicity of working with data to the file system.**
 
 Let's say we get some data back from a network request...
 ```swift
@@ -305,7 +305,7 @@ Best of all, Disk is thorough when it comes to throwing errors, ensuring that yo
 
 ## Documentation
 Alt + click on any of Disk's methods for detailed documentation.
-<img src="https://user-images.githubusercontent.com/7799382/28500816-231ab8c8-6f84-11e7-93cb-875fceeeac65.png" alt="documentation">
+<img src="https://user-images.githubusercontent.com/7799382/28643584-277084aa-720b-11e7-8792-c4f8513aa194.png" alt="documentation">
 
 ## License
 
