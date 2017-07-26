@@ -305,7 +305,7 @@ Best of all, Disk is thorough when it comes to throwing errors, ensuring that yo
 
 ## Documentation
 Alt + click on any of Disk's methods for detailed documentation.
-<img src="https://user-images.githubusercontent.com/7799382/28643584-277084aa-720b-11e7-8792-c4f8513aa194.png" alt="documentation">
+<img src="https://user-images.githubusercontent.com/7799382/28643656-629bab04-720b-11e7-99d1-e8b530c8f362.png" alt="documentation">
 
 ## License
 
