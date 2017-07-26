@@ -10,7 +10,6 @@ import Foundation
 
 extension Disk {
     public enum ErrorCode: Int {
-        case fileAlreadyExists = 0
         case noFileFound = 1
         case tooManyFilesFound = 2
         case serialization = 3
@@ -18,6 +17,8 @@ extension Disk {
         case invalidFileName = 5
         case couldNotFindHomeDirectory = 6
     }
+    
+    public static let errorDomain = "DiskErrorDomain"
     
     /// Create custom error that File Manager can't account for
     static func createError(_ errorCode: ErrorCode, description: String?, failureReason: String?, recoverySuggestion: String?) -> Error {
@@ -27,3 +28,4 @@ extension Disk {
         return NSError(domain: "Disk", code: errorCode.rawValue, userInfo: errorInfo) as Error
     }
 }
+

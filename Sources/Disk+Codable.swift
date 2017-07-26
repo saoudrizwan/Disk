@@ -9,48 +9,46 @@
 import Foundation
 
 public extension Disk {
-    /// Store encodable struct to disk
+    /// Save encodable struct to disk as JSON data
     ///
     /// - Parameters:
     ///   - value: the Encodable struct to store
     ///   - directory: where to store the struct
-    ///   - name: what to name the file where the struct data will be stored
-    /// - Throws: Error if there were any issues writing the given struct to disk
-    static func store<T: Encodable>(_ value: T, to directory: Directory, as name: String) throws {
+    ///   - path: file location to store the data (i.e. "Folder/file.json")
+    /// - Throws: Error if there were any issues writing the encoded struct to disk
+    static func save<T: Encodable>(_ value: T, to directory: Directory, as path: String) throws {
         do {
-            if fileExists(name, in: directory) {
-                try remove(name, from: directory)
-            }
-            let url = createURL(for: name, extension: .json, in: directory)
+            let url = try createURL(for: path, in: directory)
             let encoder = JSONEncoder()
             let data = try encoder.encode(value)
+            try createSubfoldersBeforeCreatingFile(at: url)
             FileManager.default.createFile(atPath: url.path, contents: data, attributes: nil)
         } catch {
             throw error
         }
     }
     
-    /// Retrieve and convert struct from a file on disk
+    /// Retrieve and decode a struct from a file on disk
     ///
     /// - Parameters:
-    ///   - name: name of the file where struct data is stored
+    ///   - path: path of the file holding desired data
     ///   - directory: directory where struct data is stored
     ///   - type: struct type (i.e. Message.self or [Message].self)
-    /// - Returns: decoded struct model(s) of data
-    /// - Throws: Error if there were any issues retrieving the specified file's data as the specified type
-    static func retrieve<T: Decodable>(_ name: String, from directory: Directory, as type: T.Type) throws -> T {
+    /// - Returns: decoded structs of data
+    /// - Throws: Error if there were any issues retrieving the data or decoding it to the specified type
+    static func retrieve<T: Decodable>(_ path: String, from directory: Directory, as type: T.Type) throws -> T {
         do {
-            let url = try getOneExistingFileURL(for: name, with: [.json, .none], in: directory)
+            let url = try getExistingFileURL(for: path, in: directory)
             if let data = FileManager.default.contents(atPath: url.path) {
                 let decoder = JSONDecoder()
                 let value = try decoder.decode(type, from: data)
                 return value
             } else {
-                throw createDiskError(
+                throw createError(
                     .deserialization,
-                    description: "Did not retrieve Decodable data from \(name) in \(directory.rawValue).",
-                    failureReason: "No data at \(name) in \(directory.rawValue) for JSONDecoder to decode to \(type).",
-                    recoverySuggestion: "Write data to \(name) in \(directory.rawValue) before trying to retrieve and decode it as \(type)."
+                    description: "Did not retrieve Decodable data from \(directory.rawValue)/\(path).",
+                    failureReason: "No data at \(directory.rawValue)/\(path) for JSONDecoder to successfully decode to \(type).",
+                    recoverySuggestion: "Encode data to \(directory.rawValue)/\(path) before trying to retrieve and decode it as \(type)."
                 )
             }
         } catch {

@@ -1,11 +1,11 @@
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/7799382/28500818-232faee0-6f84-11e7-9f4f-71ba89c8122e.png" alt="Disk" />
+    <img src="https://user-images.githubusercontent.com/7799382/28520084-01e6384a-7023-11e7-8b18-6c79494494a8.png" alt="Disk" />
 </p>
 
 <p align="center">
     <img src="https://user-images.githubusercontent.com/7799382/28500846-b53d3960-6f84-11e7-9f4b-164133170283.png" alt="Platform: iOS 10+" />
     <a href="https://developer.apple.com/swift" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28500845-b43a66fa-6f84-11e7-8281-6e689d8aaab9.png" alt="Language: Swift 4" /></a>
-    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28508059-ce12944a-6fec-11e7-9c50-7dfb2f3d5429.png" alt="CocoaPods compatible" /></a>
+    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28521525-f437c744-7028-11e7-8ef8-2335381f10eb.png" alt="CocoaPods compatible" /></a>
     <img src="https://user-images.githubusercontent.com/7799382/28500847-b6393648-6f84-11e7-9a7a-f6ae78207416.png" alt="License: MIT" />
 </p>
 
@@ -13,22 +13,23 @@
     <a href="#installation">Installation</a>
   • <a href="#usage">Usage</a>
   • <a href="#debugging">Debugging</a>
+  • <a href="#a-word-from-the-developer">A Word</a>
   • <a href="#license">License</a>
   • <a href="#contribute">Contribute</a>
 </p>
 
-Disk is a **powerful** and **simple** file management library built with <a href="https://developer.apple.com/icloud/documentation/data-storage/index.html" target="_blank">Apple's Data Storage Guidelines</a> in mind. Disk uses the new `Codable` protocol introduced in Swift 4 to its utmost advantage and gives you the power to persist JSON data without ever having to worry about encoding/decoding. Disk also helps you store images and other data types to disk with as little as one line of code.
+Disk is a **powerful** and **simple** file management library built with <a href="https://developer.apple.com/icloud/documentation/data-storage/index.html" target="_blank">Apple's Data Storage Guidelines</a> in mind. Disk uses the new `Codable` protocol introduced in Swift 4 to its utmost advantage and gives you the power to persist JSON data without ever having to worry about encoding/decoding. Disk also helps you save images and other data types to disk with as little as one line of code.
 
 ## Compatibility
 
-Disk requires **iOS 10+** and is compatible with **Swift 4** projects.
+Disk requires **iOS 10+** and is compatible with **Swift 4** projects. Therefore you must use Xcode 9 when working with Disk.
 
 ## Installation
 
 * Installation for <a href="https://guides.cocoapods.org/using/using-cocoapods.html" target="_blank">CocoaPods</a>:
 
 ```ruby
-platform :ios, '10.0'
+platform :ios, '9.0'
 target 'ProjectName' do
 use_frameworks!
 
@@ -53,7 +54,7 @@ Disk currently supports file management of the following types:
 
 *These are generally the only types you'll ever need to deal with when persisting data on iOS.*
 
-Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) and therefore allows you to store files in three primary directories:
+Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) and therefore allows you to save files in three primary directories:
 
 #### Documents Directory `.documents`
 
@@ -71,8 +72,11 @@ Note that the system may delete the Caches/ directory to free up disk space, so 
 
 "Data that is used only temporarily should be stored in the <Application_Home>/tmp directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device."
 
+With all these requirements, it can be hard working with the iOS file system appropriately, which is why Disk was born. Disk makes these following these tedious rules simple and fun.  
 
 ### Using Disk is easy.
+
+Disk handles errors by `throw`ing them. See [Handling Errors Using Do-Catch](https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/ErrorHandling.html)
 
 ### Structs (must conform to [Codable](https://developer.apple.com/documentation/swift/codable))
 
@@ -86,17 +90,22 @@ struct Message: Codable {
 ... and we want to persist a message to disk...
 ```swift
 let message = Message(title: "Hello", body: "How are you?")
-Disk.store(message, to: .caches, as: "message")
 ```
-... we might then want to retrieve this message from the caches directory...
 ```swift
-let retrievedMessage = Disk.retrieve("message", from: .caches, as: Message.self)
+try Disk.save(message, to: .caches, as: "message.json")
 ```
-
-If you Option + click `retrievedMessage`, then Xcode will show its type as `Message?`. Pretty neat, huh?
+... or maybe we want to save it in a folder...
+```swift
+try Disk.save(message, to: .caches, as: "Folder/message.json")
+```
+... we might then want to retrieve this message later...
+```swift
+let retrievedMessage = try Disk.retrieve("Folder/message.json", from: .caches, as: Message.self)
+```
+If you Alt + click `retrievedMessage`, then Xcode will show its type as `Message`. Pretty neat, huh?
 <img src="https://user-images.githubusercontent.com/7799382/28517945-186e41dc-701b-11e7-9758-fa075ecd7df7.png" alt="example">
 
-So what happened in the background? Disk first converts `message` to JSON data and stores it as a .json file to the caches directory. Then when we retrieve the `message`, Disk automatically converts the JSON data to our `Codable` struct type. If Disk runs into any problems, then it prints details about any failed operations and returns `nil` instead.
+So what happened in the background? Disk first converts `message` to JSON data and writes that data to a newly created file at `/Library/Caches/Folder/message.json`. Then when we retrieve the `message`, Disk automatically converts the JSON data to our `Codable` struct type.
 
 **What about arrays of structs?**
 
@@ -108,110 +117,195 @@ for i in 0..<5 {
 }
 ```
 ```swift
-Disk.store(messages, to: .caches, as: "many-messages")
+try Disk.save(messages, to: .caches, as: "many-messages.json")
 ```
 ```swift
-let retrievedMessages = Disk.retrieve("many-messages", from: .caches, as: [Message].self)
+let retrievedMessages = Disk.retrieve("many-messages.json", from: .caches, as: [Message].self)
 ```
 
 ### Images
-
-Disk automatically converts `UIImage`s to .png or .jpg files.
-
 ```swift
 let image = UIImage(named: "nature.png")
 ```
 ```swift
-Disk.store(image, to: .documents, as: "nature")
+try Disk.save(image, to: .documents, as: "Album/nature.png")
 ```
 ```swift
-let retrievedImage = Disk.retrieve("nature", from: .documents, as: UIImage.self)
+let retrievedImage = try Disk.retrieve("Album/nature.png", from: .documents, as: UIImage.self)
 ```
 
 **Array of images**
 
-Multiple images are saved to a single directory with the given name. Each image is then named 1.png, 2.png, 3.png, etc.
+Multiple images are saved to a new folder. Each image is then named 1.png, 2.png, 3.png, etc.
 ```swift
 var images = [UIImages]()
 // ...
 ```
 ```swift
-Disk.store(images, to: .documents, as: "album")
+try Disk.save(images, to: .documents, as: "FolderName/")
 ```
+You don't need to include the "/" after the folder name, but doing so is declarative that you're not writing all the images' data to one file, but rather as several files to a new folder.
 ```swift
-let retrievedImages = Disk.retrieve("album", from: .documents, as: [UIImage].self)
+let retrievedImages = try Disk.retrieve("FolderName", from: .documents, as: [UIImage].self)
 ```
+Let's say you saved a bunch of images to a folder like so:
+```swift
+try Disk.save(deer, to: .documents, as: "Nature/deer.png")
+try Disk.save(lion, to: .documents, as: "Nature/lion.png")
+try Disk.save(bird, to: .documents, as: "Nature/bird.png")
+```
+And maybe you even saved a JSON file to this Nature folder:
+```swift
+try Disk.save(diary, to: .documents, as: "Nature/diary.json")
+```
+Then you could retrieve all the images in the Nature folder like so:
+````swift
+let images = try Disk.retrieve("Nature", from: .documents, as: [UIImage].self)
+```
+... which would return `-> [deer.png, lion.png, bird.png]`
 
 ### Data
 
-If you're trying to save data like .mp4 video data for example, then Disk's methods for `Data` will help you work with the file system to persist large files.
+If you're trying to save data like .mp4 video data for example, then Disk's methods for `Data` will help you work with the file system to persist all data types.
 
 ```swift
 let videoData = Data(contentsOf: videoURL, options: [])
 ```
 ```swift
-Disk.store(videoData, to: .documents, as: "anime")
+Disk.save(videoData, to: .documents, as: "anime.mp4")
 ```
 ```swift
-let retrievedData = Disk.retrieve("anime", from: .documents, as: Data.self)
+let retrievedData = Disk.retrieve("anime.mp4", from: .documents, as: Data.self)
 ```
 **Array of `Data`**
+Disk saves data files like it does images, as files in a folder.
 ```swift
 var data = [Data]()
 // ...
 ```
 ```swift
-Disk.store(data, to: .documents, as: "videos")
+Disk.save(data, to: .documents, as: "videos")
 ```
 ```swift
 let retrievedVideos = Disk.retrieve("videos", from: .documents, as: [Data].self)
 ```
+If you were to retrieve [Data] from a folder with images and .json files, then those files would be included in the returned value. Continuing the example from the [Array of images](#images) section:
+````swift
+let files = try Disk.retrieve("Nature", from: .documents, as: [Data].self)
+```
+... would return `-> [deer.png, lion.png, bird.png, diary.json]`
+
+### Large files
+It's important that you know when to work with the file system on the background thread. Disk is syncronous, giving you more control over read/write operations on the file system. [Apple says](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/TechniquesforReadingandWritingCustomFiles/TechniquesforReadingandWritingCustomFiles.html) that *"because file operations involve accessing the disk, performing those operations **asynchronously** is almost always preferred."*
+
+[Grand Central Dispatch](https://developer.apple.com/documentation/dispatch)
+
+GCD is the best way to work with Disk asynchronously. Here's an example:
+```swift
+activityIndicator.startAnimating()
+DispatchQueue.global(qos: .background).async {
+    do {
+        try Disk.save(largeData, to: .documents, as: "Movies/spiderman.mp4")
+    } catch {
+        // ...
+    }
+    DispatchQueue.main.async {
+        activityIndicator.stopAnimating()
+        // ...
+    }
+}
+```
+
 ### Helper Methods
 
 * Clear an entire directory
 ```swift
-Disk.clear(.caches)
+try Disk.clear(.caches)
 ```
-* Remove a certain file from a directory
+* Remove a file/folder
 ```swift
-Disk.remove("videos", from: .documents)
+try Disk.remove("video.mp4", from: .documents)
 ```
-* Check if file exists with specified name at a directory
+* Check if file/folder exists
 ```swift
-if Disk.fileExists("videos", in: .documents) {
+if Disk.exists("album", in: .documents) {
     // ...
 }
 ```
-* Move a file to another directory
+* Move a file/folder to another directory
 ```swift
-Disk.move("images", in: .documents, to: .caches)
+try Disk.move("album/", in: .documents, to: .caches)
 ```
-* Rename a file
+* Rename a file/folder
 ```swift
-Disk.rename("currentName", in: .documents, to: "newName")
+try Disk.rename("currentName.json", in: .documents, to: "newName.json")
 ```
-* Mark a file with the `do not backup` attribute (this keeps the file on disk even in low storage situations, but prevents it from being backed up by iCloud or iTunes.)
+* Get URL for an existing file/folder
 ```swift
-Disk.doNotBackup("message", in: .caches)
+try Disk.getURL(for: "album/", in: .documents)
 ```
-All files saved to the user's home directory are backed up by default.
+* Mark a file/folder with the `do not backup` attribute (this keeps the file/folder on disk even in low storage situations, but prevents it from being backed up by iCloud or iTunes.)
 ```swift
-Disk.backup("message", in: .caches)
+try Disk.doNotBackup("album", in: .caches)
+```
+**"Everything in your app’s home directory is backed up, with the exception of the application bundle itself, the caches directory, and temporary directory."**
+```swift
+try Disk.backup("album", in: .caches)
 ```
 You should generally never use the `.doNotBackup(:in:)` and `.backup(:in:)` methods unless you're absolutely positive you want to persist data no matter what state the user's device is in.
 
 ## Debugging
 
-Disk is *forgiving*, meaning that it will handle most rookie mistakes on its own. However if you make a mistake that Disk thinks is worth telling you, it will print details of the operation to the console instead of crashing the project at runtime. This should help you better manage your data and change your persistence game plan.
+Disk is *thorough*, meaning that it will not leave an error to chance. Almost all of Disk's methods throw errors either on behalf of Foundation's [FileManager](https://developer.apple.com/documentation/foundation/filemanager) class or custom Disk Errors that are worth bringing to your attention. These errors have a lot of information, such as a description, failure reason, and recovery suggestion:
+```swift
+do {
+    if Disk.exists("posts.json", in: .documents) {
+        try Disk.remove("posts.json", from: .documents)
+    }
+    try Disk.save(self.posts, to: .documents, as: "posts.json")
+} catch let error as NSError {
+    fatalError("""
+        Domain: \(error.domain)
+        Code: \(error.code)
+        Description: \(error.localizedDescription)
+        Failure Reason: \(error.localizedFailureReason ?? "")
+        Suggestions: \(error.localizedRecoverySuggestion ?? "")
+        """)
+}
+```
+The example above takes care of the most common error when dealing with the file system: creating a file where one already exists. In the code above, we first check if posts.json exists, remove it if it does, and then write the new data to the new file.
 
-Let's say, for example, that you try to write data to a location on the file system where data already exists:
+## A Word from the Developer
+
+After developing for iOS for 6+ years, I've come across almost every method of data persistence there is to offer (Core Data, Realm, `NSCoding`, `UserDefaults`, etc.) Nothing really fit the bill except `NSCoding` but there were too many hoops to jump through. After Swift 4 was released, I was really excited about the `Codable` protocol because I knew what it had to offer in terms of JSON coding. Working with network repsponses' JSON data and converting them to usable structs has never been easier. Disk aims to extend the simplicity of working with data to the file system.
+
+Let's say we get some data back from a network request...
+```swift
+let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
+    DispatchQueue.main.async {
+        guard error == nil else { fatalError(error!.localizedDescription) }
+        guard let data = data else { fatalError("No data retrieved") }
+
+        // ... we could directly save this data to disk...
+        try? Disk.save(data, to: .caches, as: "posts.json")
+    }
+}.resume()
 ```
-❗️💾 Disk: File with name "message" already exists in Documents Directory. Removing and replacing with contents of new data...
+```swift
+// ... and retrieve it later as [Post]...
+let posts = try? Disk.retrieve("posts.json", from: .caches, as: [Post].self)
 ```
-In this case, Disk took care of everything for you. You should have first checked if a file exists in the location you wanted to store data to (using `fileExists(:in:)`), and then stored the data.
+
+Disk takes out a lot of the tedious handy work required in coding data to the desired type, and it does it well. Disk also makes necessary but verbose tasks simple too, such as clearing out the caches or temporary directory (as required by <a href="https://developer.apple.com/icloud/documentation/data-storage/index.html" target="_blank">Apple's Data Storage Guidelines</a>):
+
+```swift
+try Disk.clear(.temporary)
+```
+
+Best of all, Disk is thorough when it comes to throwing errors, ensuring that you understand why a problem occurs when it does.
 
 ## Documentation
-Option + click on any of Disk's methods for detailed documentation.
+Alt + click on any of Disk's methods for detailed documentation.
 <img src="https://user-images.githubusercontent.com/7799382/28500816-231ab8c8-6f84-11e7-93cb-875fceeeac65.png" alt="documentation">
 
 ## License
@@ -220,7 +314,7 @@ Disk uses the MIT license. Please file an issue if you have any questions or if 
 
 ## Contribute
 
-Disk is in its infancy, but v0.0.7 provides the barebones of the simplest way to persist data in iOS. Please feel free to send pull requests of any features you think would add to Disk and its philosophy.
+Disk is in its infancy, but v0.0.8 provides the barebones of the simplest way to persist data in iOS. Please feel free to send pull requests of any features you think would add to Disk and its philosophy.
 
 ## Questions?
 

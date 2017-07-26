@@ -7,19 +7,24 @@
 //
 
 import XCTest
-@testable import Disk
+import Disk
 
 class DiskTests: XCTestCase {
+    
+    // MARK: Helpers
+    
+    // Convert Error -> String of descriptions
     func convertErrorToString(_ error: Error) -> String {
         return """
         Domain: \((error as NSError).domain)
         Code: \((error as NSError).code)
         Description: \(error.localizedDescription)
         Failure Reason: \((error as NSError).localizedFailureReason ?? "nil")
-        Suggestions: \((error as NSError).localizedRecoverySuggestion ?? "nil")
+        Suggestions: \((error as NSError).localizedRecoverySuggestion ?? "nil")\n
         """
     }
     
+    // We'll clear out all our directories after each test
     override func tearDown() {
         do {
             try Disk.clear(.documents)
@@ -30,7 +35,7 @@ class DiskTests: XCTestCase {
         }
     }
     
-    
+    // MARK: Dummmy data
     
     let messages: [Message] = {
         var array = [Message]()
@@ -49,366 +54,453 @@ class DiskTests: XCTestCase {
     
     lazy var data: [Data] = self.images.map { UIImagePNGRepresentation($0)! }
     
-    func testStoreStructs() {
+    // MARK: Tests
+    
+    func testSaveStructs() {
         do {
             // 1 struct
-            let message = messages[0]
-            try Disk.store(message, to: .documents, as: "message")
-            XCTAssert(Disk.fileExists("message", in: .documents))
-            let messageUrl = try Disk.getURL(for: "message", in: .documents)
-            print("A message was stored to \(messageUrl.absoluteString)")
-            let retrievedMessage = try Disk.retrieve("message", from: .documents, as: Message.self)
-            XCTAssert(message == retrievedMessage)
+            try Disk.save(messages[0], to: .documents, as: "message.json")
+            XCTAssert(Disk.exists("message.json", in: .documents))
+            let messageUrl = try Disk.getURL(for: "message.json", in: .documents)
+            print("A message was saved as \(messageUrl.absoluteString)")
+            let retrievedMessage = try Disk.retrieve("message.json", from: .documents, as: Message.self)
+            XCTAssert(messages[0] == retrievedMessage)
+            
+            // ... in folder hierarchy
+            try Disk.save(messages[0], to: .documents, as: "Messages/Bob/message.json")
+            XCTAssert(Disk.exists("Messages/Bob/message.json", in: .documents))
+            let messageInFolderUrl = try Disk.getURL(for: "Messages/Bob/message.json", in: .documents)
+            print("A message was saved as \(messageInFolderUrl.absoluteString)")
+            let retrievedMessageInFolder = try Disk.retrieve("Messages/Bob/message.json", from: .documents, as: Message.self)
+            XCTAssert(messages[0] == retrievedMessageInFolder)
             
             // Array of structs
-            try Disk.store(messages, to: .documents, as: "messages")
-            XCTAssert(Disk.fileExists("messages", in: .documents))
-            let messagesUrl = try Disk.getURL(for: "messages", in: .documents)
-            print("Messages were stored to \(messagesUrl.absoluteString)")
-            let retrievedMessages = try Disk.retrieve("messages", from: .documents, as: [Message].self)
+            try Disk.save(messages, to: .documents, as: "messages.json")
+            XCTAssert(Disk.exists("messages.json", in: .documents))
+            let messagesUrl = try Disk.getURL(for: "messages.json", in: .documents)
+            print("Messages were saved as \(messagesUrl.absoluteString)")
+            let retrievedMessages = try Disk.retrieve("messages.json", from: .documents, as: [Message].self)
             XCTAssert(messages == retrievedMessages)
         } catch {
             fatalError(convertErrorToString(error))
         }
     }
     
-    func testStoreImages() {
+    func testSaveImages() {
         do {
             // 1 image
-            let image = images[0]
-            try Disk.store(image, to: .documents, as: "image")
-            XCTAssert(Disk.fileExists("image", in: .documents))
-            let imageUrl = try Disk.getURL(for: "image", in: .documents)
-            print("An image was stored to \(imageUrl.absoluteString)")
-            let retrievedImage = try Disk.retrieve("image", from: .documents, as: UIImage.self)
-            XCTAssert(image == retrievedImage)
+            try Disk.save(images[0], to: .documents, as: "image.png")
+            XCTAssert(Disk.exists("image.png", in: .documents))
+            let imageUrl = try Disk.getURL(for: "image.png", in: .documents)
+            print("An image was saved as \(imageUrl.absoluteString)")
+            let retrievedImage = try Disk.retrieve("image.png", from: .documents, as: UIImage.self)
+            XCTAssert(images[0].size == retrievedImage.size)
+            
+            // ... in folder hierarchy
+            try Disk.save(images[0], to: .documents, as: "Photos/image.png")
+            XCTAssert(Disk.exists("Photos/image.png", in: .documents))
+            let imageInFolderUrl = try Disk.getURL(for: "Photos/image.png", in: .documents)
+            print("An image was saved as \(imageInFolderUrl.absoluteString)")
+            let retrievedInFolderImage = try Disk.retrieve("Photos/image.png", from: .documents, as: UIImage.self)
+            XCTAssert(images[0].size == retrievedInFolderImage.size)
             
             // Array of images
-            try Disk.store(images, to: .documents, as: "images")
-            XCTAssert(Disk.fileExists("images", in: .documents))
-            let imagesFolderUrl = try Disk.getURL(for: "images", in: .documents)
-            print("Images were stored to \(imagesFolderUrl.absoluteString)")
-            let retrievedImages = try Disk.retrieve("images", from: .documents, as: [UIImage].self)
-            XCTAssert(images == retrievedImages)
+            try Disk.save(images, to: .documents, as: "album/")
+            XCTAssert(Disk.exists("album/", in: .documents))
+            let imagesFolderUrl = try Disk.getURL(for: "album/", in: .documents)
+            print("Images were saved as \(imagesFolderUrl.absoluteString)")
+            let retrievedImages = try Disk.retrieve("album/", from: .documents, as: [UIImage].self)
+            for i in 0..<images.count {
+                XCTAssert(images[i].size == retrievedImages[i].size)
+            }
+            
+            // ... in folder hierarchy
+            try Disk.save(images, to: .documents, as: "Photos/summer-album/")
+            XCTAssert(Disk.exists("Photos/summer-album/", in: .documents))
+            let imagesInFolderUrl = try Disk.getURL(for: "Photos/summer-album/", in: .documents)
+            print("Images were saved as \(imagesInFolderUrl.absoluteString)")
+            let retrievedInFolderImages = try Disk.retrieve("Photos/summer-album/", from: .documents, as: [UIImage].self)
+            for i in 0..<images.count {
+                XCTAssert(images[i].size == retrievedInFolderImages[i].size)
+            }
         } catch {
             fatalError(convertErrorToString(error))
         }
     }
     
-    func testStoreData() {
+    func testSaveData() {
         do {
             // 1 data object
-            let object = data[0]
-            try Disk.store(object, to: .documents, as: "image")
-            XCTAssert(Disk.fileExists("image", in: .documents))
-            let imageUrl = try Disk.getURL(for: "image", in: .documents)
-            print("An image was stored to \(imageUrl.absoluteString)")
-            let retrievedImage = try Disk.retrieve("image", from: .documents, as: UIImage.self)
-            XCTAssert(image == retrievedImage)
+            try Disk.save(data[0], to: .documents, as: "file")
+            XCTAssert(Disk.exists("file", in: .documents))
+            let fileUrl = try Disk.getURL(for: "file", in: .documents)
+            print("A file was saved to \(fileUrl.absoluteString)")
+            let retrievedFile = try Disk.retrieve("file", from: .documents, as: Data.self)
+            XCTAssert(data[0] == retrievedFile)
             
-            // Array of images
-            try Disk.store(images, to: .documents, as: "images")
-            XCTAssert(Disk.fileExists("images", in: .documents))
-            let imagesFolderUrl = try Disk.getURL(for: "images", in: .documents)
-            print("Images were stored to \(imagesFolderUrl.absoluteString)")
-            let retrievedImages = try Disk.retrieve("images", from: .documents, as: [UIImage].self)
-            XCTAssert(images == retrievedImages)
+            // ... in folder hierarchy
+            try Disk.save(data[0], to: .documents, as: "Folder/file")
+            XCTAssert(Disk.exists("Folder/file", in: .documents))
+            let fileInFolderUrl = try Disk.getURL(for: "Folder/file", in: .documents)
+            print("A file was saved as \(fileInFolderUrl.absoluteString)")
+            let retrievedInFolderFile = try Disk.retrieve("Folder/file", from: .documents, as: Data.self)
+            XCTAssert(data[0] == retrievedInFolderFile)
+            
+            // Array of data
+            try Disk.save(data, to: .documents, as: "several-files/")
+            XCTAssert(Disk.exists("several-files/", in: .documents))
+            let folderUrl = try Disk.getURL(for: "several-files/", in: .documents)
+            print("Files were saved to \(folderUrl.absoluteString)")
+            let retrievedFiles = try Disk.retrieve("several-files/", from: .documents, as: [Data].self)
+            XCTAssert(data == retrievedFiles)
+            
+            // ... in folder hierarchy
+            try Disk.save(data, to: .documents, as: "Folder/Files/")
+            XCTAssert(Disk.exists("Folder/Files/", in: .documents))
+            let filesInFolderUrl = try Disk.getURL(for: "Folder/Files/", in: .documents)
+            print("Files were saved to \(filesInFolderUrl.absoluteString)")
+            let retrievedInFolderFiles = try Disk.retrieve("Folder/Files/", from: .documents, as: [Data].self)
+            XCTAssert(data == retrievedInFolderFiles)
         } catch {
             fatalError(convertErrorToString(error))
         }
     }
     
-    
-    func testStoreSingleData() {
-        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let data = UIImagePNGRepresentation(deku)!
-        
-        Disk.store(data, to: .documents, as: "my-data")
-        
-        if var url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            url = url.appendingPathComponent("my-data", isDirectory: false)
-            XCTAssert(FileManager.default.fileExists(atPath: url.path))
-        } else {
-            XCTFail()
-        }
-    }
-    
-    func testRetrieveSingleData() {
-        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let data = UIImagePNGRepresentation(deku)!
-        
-        Disk.store(data, to: .documents, as: "my-data")
-        
-        guard let retrievedData = Disk.retrieve("my-data", from: .documents, as: Data.self) else {
-            XCTFail()
-            return
-        }
-        
-        XCTAssert(data == retrievedData)
-    }
-    
-    func testStoreMultipleData() {
-        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let allMight = UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let bakugo = UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        
-        let dekuData = UIImagePNGRepresentation(deku)!
-        let allMightData = UIImagePNGRepresentation(allMight)!
-        let bakugoData = UIImagePNGRepresentation(bakugo)!
-        
-        let data = [dekuData, allMightData, bakugoData]
-        
-        Disk.store(data, to: .documents, as: "my-data")
-        
-        // Test to see if we create a directory named "my-data" (this directory will hold all our files which will be named 1, 2, 3, etc.)
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let url = url.appendingPathComponent("my-data", isDirectory: true)
+    func testSaveAsDataRetrieveAsImage() {
+        do {
+            // save as data
+            let image = images[0]
+            let imageData = UIImagePNGRepresentation(image)!
+            try Disk.save(imageData, to: .documents, as: "file")
+            XCTAssert(Disk.exists("file", in: .documents))
+            let fileUrl = try Disk.getURL(for: "file", in: .documents)
+            print("A file was saved to \(fileUrl.absoluteString)")
             
-            var isDirectory: ObjCBool = false
-            if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) {
-                XCTAssert(isDirectory.boolValue)
-            } else {
-                XCTFail()
+            // Retrieve as image
+            let retrievedFileAsImage = try Disk.retrieve("file", from: .documents, as: UIImage.self)
+            XCTAssert(image.size == retrievedFileAsImage.size)
+            
+            // Array of data
+            let arrayOfImagesData = images.map { UIImagePNGRepresentation($0)! } // -> [Data]
+            try Disk.save(arrayOfImagesData, to: .documents, as: "data-folder/")
+            XCTAssert(Disk.exists("data-folder/", in: .documents))
+            let folderUrl = try Disk.getURL(for: "data-folder/", in: .documents)
+            print("Files were saved to \(folderUrl.absoluteString)")
+            // Retrieve the files as [UIImage]
+            let retrievedFilesAsImages = try Disk.retrieve("data-folder/", from: .documents, as: [UIImage].self)
+            for i in 0..<images.count {
+                XCTAssert(images[i].size == retrievedFilesAsImages[i].size)
             }
+        } catch {
+            fatalError(convertErrorToString(error))
         }
-        
-        // Test to see if the data stored in the directory is correct
-        var retrievedData = [Data]()
-        
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let url = url.appendingPathComponent("my-data", isDirectory: true)
-            if FileManager.default.fileExists(atPath: url.path) {
-                let files = try! FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [])
-                XCTAssert(files.count == data.count)
-                for fileUrl in files {
-                    if let retrieved = FileManager.default.contents(atPath: fileUrl.path) {
-                        retrievedData.append(retrieved)
-                    }
-                }
-            } else {
-                XCTFail()
+    
+    }
+    
+    func testDocuments() {
+        do {
+            // json
+            try Disk.save(messages, to: .documents, as: "messages.json")
+            XCTAssert(Disk.exists("messages.json", in: .documents))
+            
+            // 1 image
+            try Disk.save(images[0], to: .documents, as: "image.png")
+            XCTAssert(Disk.exists("image.png", in: .documents))
+            let retrievedImage = try Disk.retrieve("image.png", from: .documents, as: UIImage.self)
+            XCTAssert(images[0].size == retrievedImage.size)
+            
+            // ... in folder hierarchy
+            try Disk.save(images[0], to: .documents, as: "Folder1/Folder2/Folder3/image.png")
+            XCTAssert(Disk.exists("Folder1", in: .documents))
+            XCTAssert(Disk.exists("Folder1/Folder2/", in: .documents))
+            XCTAssert(Disk.exists("Folder1/Folder2/Folder3/", in: .documents))
+            XCTAssert(Disk.exists("Folder1/Folder2/Folder3/image.png", in: .documents))
+            let retrievedImageInFolders = try Disk.retrieve("Folder1/Folder2/Folder3/image.png", from: .documents, as: UIImage.self)
+            XCTAssert(images[0].size == retrievedImageInFolders.size)
+            
+            // Array of images
+            try Disk.save(images, to: .documents, as: "album")
+            XCTAssert(Disk.exists("album", in: .documents))
+            let retrievedImages = try Disk.retrieve("album", from: .documents, as: [UIImage].self)
+            for i in 0..<images.count {
+                XCTAssert(images[i].size == retrievedImages[i].size)
             }
-        }
-        
-        XCTAssert(retrievedData.count == data.count)
-        
-        for i in 0..<retrievedData.count {
-            XCTAssert(retrievedData[i] == data[i])
+        } catch {
+            fatalError(convertErrorToString(error))
         }
     }
     
-    func testRetrieveMultipleData() {
-        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let allMight = UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let bakugo = UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        
-        let dekuData = UIImagePNGRepresentation(deku)!
-        let allMightData = UIImagePNGRepresentation(allMight)!
-        let bakugoData = UIImagePNGRepresentation(bakugo)!
-        
-        let data = [dekuData, allMightData, bakugoData]
-        
-        Disk.store(data, to: .documents, as: "my-data")
-        
-        guard let retrievedDataFromDisk = Disk.retrieve("my-data", from: .documents, as: [Data].self) else {
-            XCTFail()
-            return
-        }
-        
-        // Test to see if the data stored in the directory is correct
-        var retrievedDataFromFileManager = [Data]()
-        
-        if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            let url = url.appendingPathComponent("my-data", isDirectory: true)
-            if FileManager.default.fileExists(atPath: url.path) {
-                let files = try! FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [])
-                XCTAssert(files.count == data.count)
-                for fileUrl in files {
-                    if let retrieved = FileManager.default.contents(atPath: fileUrl.path) {
-                        retrievedDataFromFileManager.append(retrieved)
-                    }
-                }
-            } else {
-                XCTFail()
+    func testCaches() {
+        do {
+            // json
+            try Disk.save(messages, to: .caches, as: "messages.json")
+            XCTAssert(Disk.exists("messages.json", in: .caches))
+            
+            // 1 image
+            try Disk.save(images[0], to: .caches, as: "image.png")
+            XCTAssert(Disk.exists("image.png", in: .caches))
+            let retrievedImage = try Disk.retrieve("image.png", from: .caches, as: UIImage.self)
+            XCTAssert(images[0].size == retrievedImage.size)
+            
+            // ... in folder hierarchy
+            try Disk.save(images[0], to: .caches, as: "Folder1/Folder2/Folder3/image.png")
+            XCTAssert(Disk.exists("Folder1", in: .caches))
+            XCTAssert(Disk.exists("Folder1/Folder2/", in: .caches))
+            XCTAssert(Disk.exists("Folder1/Folder2/Folder3/", in: .caches))
+            XCTAssert(Disk.exists("Folder1/Folder2/Folder3/image.png", in: .caches))
+            let retrievedImageInFolders = try Disk.retrieve("Folder1/Folder2/Folder3/image.png", from: .caches, as: UIImage.self)
+            XCTAssert(images[0].size == retrievedImageInFolders.size)
+            
+            // Array of images
+            try Disk.save(images, to: .caches, as: "album")
+            XCTAssert(Disk.exists("album", in: .caches))
+            let retrievedImages = try Disk.retrieve("album", from: .caches, as: [UIImage].self)
+            for i in 0..<images.count {
+                XCTAssert(images[i].size == retrievedImages[i].size)
             }
-        }
-        
-        XCTAssert(retrievedDataFromDisk.count == retrievedDataFromFileManager.count)
-        
-        for i in 0..<retrievedDataFromFileManager.count {
-            XCTAssert(retrievedDataFromFileManager[i] == retrievedDataFromDisk[i])
+        } catch {
+            fatalError(convertErrorToString(error))
         }
     }
     
     func testTemporary() {
-        let deku = UIImagePNGRepresentation(UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!)!
-        Disk.store(deku, to: .temporary, as: "deku")
-        let retrievedDeku = UIImagePNGRepresentation(Disk.retrieve("deku", from: .temporary, as: UIImage.self)!)!
-        XCTAssert(deku == retrievedDeku)
-        Disk.doNotBackup("deku", in: .temporary)
-        Disk.remove("deku", from: .temporary)
-        XCTAssertFalse(Disk.fileExists("deku", in: .temporary))
+        do {
+            // json
+            try Disk.save(messages, to: .temporary, as: "messages.json")
+            XCTAssert(Disk.exists("messages.json", in: .temporary))
+            
+            // 1 image
+            try Disk.save(images[0], to: .temporary, as: "image.png")
+            XCTAssert(Disk.exists("image.png", in: .temporary))
+            let retrievedImage = try Disk.retrieve("image.png", from: .temporary, as: UIImage.self)
+            XCTAssert(images[0].size == retrievedImage.size)
+            
+            // ... in folder hierarchy
+            try Disk.save(images[0], to: .temporary, as: "Folder1/Folder2/Folder3/image.png")
+            XCTAssert(Disk.exists("Folder1", in: .temporary))
+            XCTAssert(Disk.exists("Folder1/Folder2/", in: .temporary))
+            XCTAssert(Disk.exists("Folder1/Folder2/Folder3/", in: .temporary))
+            XCTAssert(Disk.exists("Folder1/Folder2/Folder3/image.png", in: .temporary))
+            let retrievedImageInFolders = try Disk.retrieve("Folder1/Folder2/Folder3/image.png", from: .temporary, as: UIImage.self)
+            XCTAssert(images[0].size == retrievedImageInFolders.size)
+            
+            // Array of images
+            try Disk.save(images, to: .temporary, as: "album")
+            XCTAssert(Disk.exists("album", in: .temporary))
+            let retrievedImages = try Disk.retrieve("album", from: .temporary, as: [UIImage].self)
+            for i in 0..<images.count {
+                XCTAssert(images[i].size == retrievedImages[i].size)
+            }
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
     }
     
-    func testRenameObject() {
-        let message = Message(title: "title", body: "body")
-        Disk.store(message, to: .caches, as: "oldName")
-        Disk.rename("oldName", in: .caches, to: "newName")
-        XCTAssertFalse(Disk.fileExists("oldName", in: .caches))
-        XCTAssert(Disk.fileExists("newName", in: .caches))
-        guard let retrievedMessage = Disk.retrieve("newName", from: .caches, as: Message.self) else {
-            XCTFail()
-            return
+    // MARK: Test helper methods
+    
+    func testGetUrl() {
+        do {
+            try Disk.clear(.documents)
+            // 1 struct
+            try Disk.save(messages[0], to: .documents, as: "message.json")
+            let messageUrlPath = try Disk.getURL(for: "message.json", in: .documents).path.replacingOccurrences(of: "file://", with: "")
+            XCTAssert(FileManager.default.fileExists(atPath: messageUrlPath))
+            
+            // Array of images (folder)
+            try Disk.save(images, to: .documents, as: "album")
+            XCTAssert(Disk.exists("album", in: .documents))
+            let folderUrlPath = try Disk.getURL(for: "album/", in: .documents).path.replacingOccurrences(of: "file://", with: "")
+            var isDirectory: ObjCBool = false
+            if FileManager.default.fileExists(atPath: folderUrlPath, isDirectory: &isDirectory) {
+                XCTAssert(isDirectory.boolValue)
+            } else {
+                XCTFail()
+            }
+        } catch {
+            fatalError(convertErrorToString(error))
         }
-        XCTAssert(message.title == retrievedMessage.title && message.body == retrievedMessage.body)
     }
     
-    func testMoveObject() {
-        let message = Message(title: "title", body: "body")
-        Disk.store(message, to: .caches, as: "message")
-        Disk.move("message", in: .caches, to: .temporary)
-        XCTAssertFalse(Disk.fileExists("message", in: .caches))
-        XCTAssert(Disk.fileExists("message", in: .temporary))
-        guard let retrievedMessage = Disk.retrieve("message", from: .temporary, as: Message.self) else {
-            XCTFail()
-            return
+    func testClear() {
+        do {
+            try Disk.save(messages[0], to: .caches, as: "message.json")
+            XCTAssert(Disk.exists("message.json", in: .caches))
+            try Disk.clear(.caches)
+            XCTAssertFalse(Disk.exists("message.json", in: .caches))
+        } catch {
+            fatalError(convertErrorToString(error))
         }
-        XCTAssert(message.title == retrievedMessage.title && message.body == retrievedMessage.body)
     }
     
-    func testFolderHandling() {
-        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let allMight = UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let bakugo = UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let images = [deku, allMight, bakugo]
-        
-        Disk.store(images, to: .documents, as: "heroes")
-        
-        // Rename
-        Disk.rename("heroes", in: .documents, to: "villains")
-        XCTAssertFalse(Disk.fileExists("heroes", in: .documents))
-        XCTAssert(Disk.fileExists("villains", in: .documents))
-        
-        // Move
-        Disk.move("villains", in: .documents, to: .caches)
-        XCTAssertFalse(Disk.fileExists("villains", in: .documents))
-        XCTAssert(Disk.fileExists("villains", in: .caches))
-        
-        // Do not backup
-        Disk.doNotBackup("villains", in: .caches)
-        
-        // Retrieve
-        guard let retrievedImages = Disk.retrieve("villains", from: .caches, as: [UIImage].self) else {
-            XCTFail()
-            return
+    func testRemove() {
+        do {
+            try Disk.save(messages[0], to: .caches, as: "message.json")
+            XCTAssert(Disk.exists("message.json", in: .caches))
+            try Disk.remove("message.json", from: .caches)
+            XCTAssertFalse(Disk.exists("message.json", in: .caches))
+        } catch {
+            fatalError(convertErrorToString(error))
         }
-        XCTAssert(images.count == retrievedImages.count)
-        
-        // Remove
-        Disk.remove("villains", from: .caches)
-        XCTAssertFalse(Disk.fileExists("villains", in: .caches))
     }
     
-    func testWeirdNames() {
-        let weirdName = "user-messages/saoud*.adf3/jpeg.message.png/.json"
-        let weirdName2 = ".adf/"
-        
-        let message = Message(title: "title", body: "body")
-        Disk.store(message, to: .caches, as: weirdName)
-        guard let retrievedMessage = Disk.retrieve(weirdName, from: .caches, as: Message.self) else {
-            XCTFail()
-            return
+    func testExists() {
+        do {
+            try Disk.save(messages[0], to: .caches, as: "message.json")
+            XCTAssert(Disk.exists("message.json", in: .caches))
+            let messageUrl = try Disk.getURL(for: "message.json", in: .caches)
+            XCTAssert(FileManager.default.fileExists(atPath: messageUrl.path))
+            
+            // folder
+            try Disk.save(images, to: .documents, as: "album/")
+            XCTAssert(Disk.exists("album/", in: .documents))
+            XCTAssert(Disk.exists("album", in: .documents))
+        } catch {
+            fatalError(convertErrorToString(error))
         }
-        XCTAssert(message.title == retrievedMessage.title && message.body == retrievedMessage.body)
-        Disk.remove(weirdName, from: .caches)
-        
-        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let allMight = UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let bakugo = UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let images = [deku, allMight, bakugo]
-        Disk.store(images, to: .documents, as: weirdName)
-        
-        // Rename
-        Disk.rename(weirdName, in: .documents, to: weirdName2)
-        XCTAssertFalse(Disk.fileExists(weirdName, in: .documents))
-        XCTAssert(Disk.fileExists(weirdName2, in: .documents))
-        
-        // Move
-        Disk.move(weirdName2, in: .documents, to: .caches)
-        XCTAssertFalse(Disk.fileExists(weirdName2, in: .documents))
-        XCTAssert(Disk.fileExists(weirdName2, in: .caches))
-        
-        // Do not backup
-        Disk.doNotBackup(weirdName2, in: .caches)
-        
-        // Retrieve
-        guard let retrievedImages = Disk.retrieve(weirdName2, from: .caches, as: [UIImage].self) else {
-            XCTFail()
-            return
+    }
+    
+    func testDoNotBackupAndBackup() {
+        do {
+            // Do not backup
+            try Disk.save(messages[0], to: .documents, as: "Messages/message.json")
+            try Disk.doNotBackup("Messages/message.json", in: .documents)
+            let messageUrl = try Disk.getURL(for: "Messages/message.json", in: .documents)
+            if let resourceValues = try? messageUrl.resourceValues(forKeys: [.isExcludedFromBackupKey]),
+                let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
+                XCTAssert(isExcludedFromBackup)
+            } else {
+                XCTFail()
+            }
+            
+            // test on entire directory
+            try Disk.save(images, to: .documents, as: "photos/")
+            try Disk.doNotBackup("photos", in: .documents)
+            let albumUrl = try Disk.getURL(for: "photos", in: .documents)
+            if let resourceValues = try? albumUrl.resourceValues(forKeys: [.isExcludedFromBackupKey]),
+                let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
+                XCTAssert(isExcludedFromBackup)
+            } else {
+                XCTFail()
+            }
+            
+            // Backup
+            try Disk.backup("Messages/message.json", in: .documents)
+            let newMessageUrl = try Disk.getURL(for: "Messages/message.json", in: .documents) // we have to create a new url to access its new resource values
+            if let resourceValues = try? newMessageUrl.resourceValues(forKeys: [.isExcludedFromBackupKey]),
+                let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
+                XCTAssertFalse(isExcludedFromBackup)
+            } else {
+                XCTFail()
+            }
+            
+            // test on entire directory
+            try Disk.backup("photos/", in: .documents)
+            let newAlbumUrl = try Disk.getURL(for: "photos/", in: .documents)
+            if let resourceValues = try? newAlbumUrl.resourceValues(forKeys: [.isExcludedFromBackupKey]),
+                let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
+                XCTAssertFalse(isExcludedFromBackup)
+            } else {
+                XCTFail()
+            }
+        } catch {
+            fatalError(convertErrorToString(error))
         }
-        XCTAssert(images.count == retrievedImages.count)
-        
-        // Remove
-        Disk.remove(weirdName2, from: .caches)
-        XCTAssertFalse(Disk.fileExists("villains", in: .caches))
+    }
+    
+    func testMove() {
+        do {
+            try Disk.save(messages[0], to: .caches, as: "message.json")
+            try Disk.move("message.json", in: .caches, to: .documents)
+            XCTAssertFalse(Disk.exists("message.json", in: .caches))
+            XCTAssert(Disk.exists("message.json", in: .documents))
+            
+            // Array of images in folder hierarchy
+            try Disk.save(images, to: .caches, as: "album/")
+            try Disk.move("album/", in: .caches, to: .documents)
+            XCTAssertFalse(Disk.exists("album/", in: .caches))
+            XCTAssert(Disk.exists("album/", in: .documents))
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
+    }
+    
+    func testRename() {
+        do {
+            try Disk.clear(.caches)
+            try Disk.save(messages[0], to: .caches, as: "oldName.json")
+            try Disk.rename("oldName.json", in: .caches, to: "newName.json")
+            XCTAssertFalse(Disk.exists("oldName.json", in: .caches))
+            XCTAssert(Disk.exists("newName.json", in: .caches))
+            
+            // Array of images in folder
+            try Disk.save(images, to: .caches, as: "oldAlbumName/")
+            try Disk.rename("oldAlbumName/", in: .caches, to: "newAlbumName/")
+            XCTAssertFalse(Disk.exists("oldAlbumName/", in: .caches))
+            XCTAssert(Disk.exists("newAlbumName/", in: .caches))
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
+    }
+    
+    func testWorkingWithFolderWithoutBackSlash() {
+        do {
+            try Disk.save(images, to: .caches, as: "album")
+            try Disk.rename("album", in: .caches, to: "newAlbumName")
+            XCTAssertFalse(Disk.exists("album", in: .caches))
+            XCTAssert(Disk.exists("newAlbumName", in: .caches))
+            
+            try Disk.remove("newAlbumName", from: .caches)
+            XCTAssertFalse(Disk.exists("newAlbumName", in: .caches))
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
     }
     
     func testOverwrite() {
-        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let allMight = UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        let bakugo = UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        
-        let heroes = [deku, allMight, bakugo]
-        let kids = [deku, bakugo]
-        
-        Disk.store(heroes, to: .documents, as: "coolName")
-        Disk.store(kids, to: .documents, as: "coolName")
-        
-        guard let retrievedImages = Disk.retrieve("coolName", from: .documents, as: [UIImage].self) else {
-            XCTFail()
-            return
-        }
-        XCTAssert(kids.count == retrievedImages.count)
-    }
-    
-    func testDoNotBackup() {
-        let deku = UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
-        Disk.store(deku, to: .caches, as: "deku")
-        
-        Disk.doNotBackup("deku", in: .caches)
-        
-        if let url = Disk.getURL(for: "deku", in: .caches),
-            let resourceValues = try? url.resourceValues(forKeys: [.isExcludedFromBackupKey]),
-            let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
-            XCTAssert(isExcludedFromBackup)
-        } else {
-            XCTFail()
-        }
-        
-        Disk.backup("deku", in: .caches)
-        
-        if let url = Disk.getURL(for: "deku", in: .caches),
-            let resourceValues = try? url.resourceValues(forKeys: [.isExcludedFromBackupKey]),
-            let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
-            XCTAssertFalse(isExcludedFromBackup)
-        } else {
-            XCTFail()
+        do {
+            let one = messages[1]
+            let two = messages[2]
+            try Disk.save(one, to: .caches, as: "message.json")
+            try Disk.save(two, to: .caches, as: "message.json")
+            // Array of images in folder
+            let albumOne = [images[0], images[1]]
+            let albumTwo = [images[1], images[2]]
+            try Disk.save(albumOne, to: .caches, as: "album/")
+            try Disk.save(albumTwo, to: .caches, as: "album/")
+        } catch let error as NSError {
+            // We want an NSCocoa error to be thrown when we try writing to the same file location again without first removing it first
+            let alreadyExistsErrorCode = 516
+            XCTAssert(error.code == alreadyExistsErrorCode)
         }
     }
     
-    func testStoreSameName() {
-        let one = Message(title: "one", body: "body")
-        let two = Message(title: "two", body: "body")
-        Disk.store(one, to: .caches, as: "message")
-        Disk.store(two, to: .caches, as: "message")
-        
-        XCTAssert(Disk.fileExists("message", in: .caches))
-        
-        guard let retrievedMessage = Disk.retrieve("message", from: .caches, as: Message.self) else {
-            XCTFail()
-            return
+    func testAutomaticSubFoldersCreation() {
+        do {
+            try Disk.save(messages, to: .caches, as: "Folder1/Folder2/Folder3/messages.json")
+            XCTAssert(Disk.exists("Folder1", in: .caches))
+            XCTAssert(Disk.exists("Folder1/Folder2", in: .caches))
+            XCTAssert(Disk.exists("Folder1/Folder2/Folder3", in: .caches))
+            XCTAssertFalse(Disk.exists("Folder2/Folder3/Folder1", in: .caches))
+            XCTAssert(Disk.exists("Folder1/Folder2/Folder3/messages.json", in: .caches))
+            
+            // Array of images in folder hierarchy
+            try Disk.save(images, to: .documents, as: "Folder1/Folder2/Folder3/album")
+            XCTAssert(Disk.exists("Folder1", in: .documents))
+            XCTAssert(Disk.exists("Folder1/Folder2", in: .documents))
+            XCTAssert(Disk.exists("Folder1/Folder2/Folder3", in: .documents))
+            XCTAssertFalse(Disk.exists("Folder2/Folder3/Folder1", in: .documents))
+            XCTAssert(Disk.exists("Folder1/Folder2/Folder3/album", in: .documents))
+        } catch {
+            fatalError(convertErrorToString(error))
         }
-        XCTAssert(two.title == retrievedMessage.title && two.body == retrievedMessage.body)
-        
+    }
+    
+    func testInvalidName() {
+        do {
+            try Disk.save(messages, to: .documents, as: "//////messages.json/")
+            XCTAssert(Disk.exists("messages.json", in: .documents))
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
     }
 }

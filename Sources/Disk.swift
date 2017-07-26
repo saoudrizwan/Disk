@@ -12,7 +12,7 @@ import Foundation
  💾 Disk v0.1.0
  Easily work with the file system without worrying about any of its intricacies!
  
- - Store Codable structs, UIImage, [UIImage], Data, [Data] to Apple recommended locations on the user's disk, without having to worry about serialization.
+ - Save Codable structs, UIImage, [UIImage], Data, [Data] to Apple recommended locations on the user's disk, without having to worry about serialization.
  - Retrieve an object from disk as the type you specify, without having to worry about deserialization.
  - Remove specific objects from disk, clear entire directories if you need to, check if an object exists on disk, and much more!
  
@@ -38,8 +38,9 @@ public class Disk {
 // MARK: Internal helper methods
 
 extension Disk {
-    /// Creates and returns a URL constructed from specified directory/name.extension
+    /// Creates and returns a URL constructed from specified directory/path
     static func createURL(for path: String?, in directory: Directory) throws -> URL {
+        let filePrefix = "file://"
         var validPath: String? = nil
         if let path = path {
             do {
@@ -59,11 +60,19 @@ extension Disk {
             if let validPath = validPath {
                 temporaryUrl = temporaryUrl.appendingPathComponent(validPath, isDirectory: false)
             }
+            if temporaryUrl.absoluteString.lowercased().prefix(filePrefix.characters.count) != filePrefix {
+                let fixedUrl = filePrefix + temporaryUrl.absoluteString
+                temporaryUrl = URL(string: fixedUrl)!
+            }
             return temporaryUrl
         }
         if var url = FileManager.default.urls(for: searchPathDirectory, in: .userDomainMask).first {
             if let validPath = validPath {
                 url = url.appendingPathComponent(validPath, isDirectory: false)
+            }
+            if url.absoluteString.lowercased().prefix(filePrefix.characters.count) != filePrefix {
+                let fixedUrl = filePrefix + url.absoluteString
+                url = URL(string: fixedUrl)!
             }
             return url
         } else {
@@ -79,53 +88,21 @@ extension Disk {
     /// Iterates through file system to find URLs for all existing files/folder
     static func getExistingFileURL(for path: String?, in directory: Directory) throws -> URL {
         do {
-            var shouldBeFolder = true
-            if let path = path {
-                shouldBeFolder = path.hasSuffix("/")
-            }
             let url = try createURL(for: path, in: directory)
             var isDirectory: ObjCBool = false
             if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) {
-                if !(isDirectory.boolValue && !shouldBeFolder) {
-                    return url
-                }
+                return url
             }
             throw createError(
                 .noFileFound,
-                description: "Could not find an existing \(shouldBeFolder ? "folder" : "file") at \(url.path).",
-                failureReason: "There is no existing \(shouldBeFolder ? "folder" : "file") at \(url.path)",
-                recoverySuggestion: "Check if a \(shouldBeFolder ? "folder" : "file") exists before trying to commit an operation on it."
+                description: "Could not find an existing file or folder at \(url.path).",
+                failureReason: "There is no existing file or folder at \(url.path)",
+                recoverySuggestion: "Check if a file or folder exists before trying to commit an operation on it."
             )
         } catch {
             throw error
         }
     }
-    
-    /// Throwing method that returns one and only one file URL for a specified name
-//    static func getOneExistingFileURL(for name: String, with possibleExtensions: [FileExtension], in directory: Directory) throws -> URL {
-//        do {
-//            let existingFileUrls = try getExistingFileURLs(for: name, with: possibleExtensions, in: directory)
-//            if existingFileUrls.count == 0 {
-//                throw createError(
-//                    .noFileFound,
-//                    description: "No file with the name \"\(name)\" was found in \(directory.rawValue).",
-//                    failureReason: "No file with the name \"\(name)\" was found in \(directory.rawValue).",
-//                    recoverySuggestion: "Check if a file exists before trying to commit an operation on it."
-//                )
-//            } else if existingFileUrls.count != 1 {
-//                throw createError(
-//                    .tooManyFilesFound,
-//                    description: "More than one file/folder with the name \"\(name)\" was found in \(directory.rawValue).",
-//                    failureReason: "Re-store the file using Disk with an available file name.",
-//                    recoverySuggestion: "Don't manually create a file or folder with the same name but different extension as a file or folder you previously created using Disk with the same name."
-//                )
-//            } else {
-//                return existingFileUrls.first!
-//            }
-//        } catch {
-//            throw error
-//        }
-//    }
     
     /// Convert a user generated name to a valid file name
     static func getValidFilePath(from originalString: String) throws -> String {
@@ -133,9 +110,10 @@ extension Disk {
         invalidCharacters.formUnion(.newlines)
         invalidCharacters.formUnion(.illegalCharacters)
         invalidCharacters.formUnion(.controlCharacters)
-        let validFileName = originalString
+        let pathWithoutIllegalCharacters = originalString
             .components(separatedBy: invalidCharacters)
             .joined(separator: "")
+        let validFileName = removeSlashesAtBeginning(of: pathWithoutIllegalCharacters)
         guard validFileName.characters.count > 0  && validFileName != "." else {
             throw createError(
                 .invalidFileName,
@@ -147,31 +125,26 @@ extension Disk {
         return validFileName
     }
     
-    /// Set 'isExcludedFromBackup' BOOL property of a file in the file system
-    static func setIsExcludedFromBackupAttribute(to isExcludedFromBackup: Bool, for path: String?, in directory: Directory) throws {
-        do {
-            let url = try getExistingFileURL(for: path, in: directory)
-            if isFolder(url) {
-                let fileUrls = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [])
-                for fileUrl in fileUrls {
-                    let subFolders = fileUrl.pathcom
-                    try setIsExcludedFromBackupAttribute(to: isExcludedFromBackup, for: fileUrl)
-                }
-            } else {
-                try setIsExcludedFromBackupAttribute(to: isExcludedFromBackup, for: url)
-            }
-        } catch {
-            throw error
+    /// Helper method for getValidFilePath(from:) to remove all "/" at the beginning of a String
+    static func removeSlashesAtBeginning(of string: String) -> String {
+        var string = string
+        if string.prefix(1) == "/" {
+            string.remove(at: string.startIndex)
         }
+        if string.prefix(1) == "/" {
+            string = removeSlashesAtBeginning(of: string)
+        }
+        return string
     }
     
-    /// Helper method for setIsExcludedFromBackupAttribute(to:for:in:)
-    static func setIsExcludedFromBackupAttribute(to isExcludedFromBackup: Bool, for fileUrl: URL) throws {
+    /// Set 'isExcludedFromBackup' BOOL property of a file or directory in the file system
+    static func setIsExcludedFromBackup(to isExcludedFromBackup: Bool, for path: String?, in directory: Directory) throws {
         do {
-            var url = fileUrl
+            let url = try getExistingFileURL(for: path, in: directory)
+            var resourceUrl = url
             var resourceValues = URLResourceValues()
             resourceValues.isExcludedFromBackup = isExcludedFromBackup
-            try url.setResourceValues(resourceValues)
+            try resourceUrl.setResourceValues(resourceValues)
         } catch {
             throw error
         }
@@ -186,5 +159,24 @@ extension Disk {
             }
         }
         return false
+    }
+    
+    /// Create necessary sub folders before creating a file
+    static func createSubfoldersBeforeCreatingFile(at url: URL) throws {
+        do {
+            let subfolderUrl = url.deletingLastPathComponent()
+            var subfolderExists = false
+            var isDirectory: ObjCBool = false
+            if FileManager.default.fileExists(atPath: subfolderUrl.path, isDirectory: &isDirectory) {
+                if isDirectory.boolValue {
+                    subfolderExists = true
+                }
+            }
+            if !subfolderExists {
+                try FileManager.default.createDirectory(at: subfolderUrl, withIntermediateDirectories: true, attributes: nil)
+            }
+        } catch {
+            throw error
+        }
     }
 }

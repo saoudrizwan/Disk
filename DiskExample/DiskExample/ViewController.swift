@@ -30,29 +30,53 @@ class ViewController: UIViewController {
     }
     
     @IBAction func saveTapped(_ sender: Any) {
-        // Disk is smart about error handling, so when an error does occur, Disk prints
-        // details about why an operation failed so you can better manage your persistence game plan
-        Disk.store(posts, to: .documents, as: "posts")
+        // Disk is thorough when it comes to error handling, so make sure you understand why an error occurs when it does.
+        // An easy mistake to make is writing data to a file location where a file already exists.
+        // To prevent this from happening, first check if a file exists, and then write to that location:
+        do {
+            if Disk.exists("posts.json", in: .documents) {
+                try Disk.remove("posts.json", from: .documents)
+            }
+            try Disk.save(self.posts, to: .documents, as: "posts.json")
+        } catch let error as NSError {
+            fatalError("""
+                Domain: \(error.domain)
+                Code: \(error.code)
+                Description: \(error.localizedDescription)
+                Failure Reason: \(error.localizedFailureReason ?? "")
+                Suggestions: \(error.localizedRecoverySuggestion ?? "")
+                """)
+        }
+        // Notice how we use a do, catch, try block when using Disk, this is because almost all of Disk's methods
+        // are throwing functions, meaning they will throw an error if something goes wrong. In almost all cases, these
+        // errors come with a lot of information like a description, failure reason, and recover suggestions.
         
-        print("Stored posts to disk!")
+        // You could alternatively use try! or try? instead of do, catch, try blocks
+        try? Disk.save(self.posts, to: .documents, as: "posts.json") // this will fail since posts.json already exists in this location, and will return a discardable result of nil
+        // try! Disk.save(self.posts, to: .documents, as: "posts.json") // this would fail for the same reason, and crash the app during run time
+        
+        // One more thing - you can save files in folder hierarchies, for example:
+        // try? Disk.save(self.posts, to: .caches, as: "Posts/MyCoolPosts/1.json")
+        // This will automatically create the Posts and MyCoolPosts folders
+        
+        print("Saved posts to disk!")
     }
     
     @IBAction func retrieveTapped(_ sender: Any) {
-        // If Disk can't retrieve anything named "posts" from the documents directory, then it returns
-        // nil and prints an explanation of why an operation failed if something went wrong, instead of throwing an error.
-       
-        guard let retrievedPosts = Disk.retrieve("posts", from: .documents, as: [Post].self) else { return }
-        
-        // If you Option+Click 'retrievedPosts' above, you'll notice that its type is [Post]
-        // without ever having to downcast our return value. Pretty neat, huh?
-        
-        var result: String = ""
-        for post in retrievedPosts {
-            result.append("\(post.id): \(post.title)\n\(post.body)\n\n")
+        // We'll keep things simple here by using try?, but it's good practice to handle Disk with do, catch, try blocks
+        // so you make sure everything is going according to plan.
+        if let retrievedPosts = try? Disk.retrieve("posts.json", from: .documents, as: [Post].self) {
+            // If you Alt+Click 'retrievedPosts' above, you'll notice that its type is [Post]
+            // Pretty neat, huh?
+            
+            var result: String = ""
+            for post in retrievedPosts {
+                result.append("\(post.id): \(post.title)\n\(post.body)\n\n")
+            }
+            self.resultsTextView.text = result
+            
+            print("Retrieved posts from disk!")
         }
-        self.resultsTextView.text = result
-        
-        print("Retrieved posts from disk!")
     }
     
     // MARK: Networking
@@ -74,11 +98,11 @@ class ViewController: UIViewController {
                 guard error == nil else { fatalError(error!.localizedDescription) }
                 guard let data = data else { fatalError("No data retrieved") }
                 
-                // We could directly store this data to disk...
-                // Disk.store(data, to: .caches, as: "posts")
+                // We could directly save this data to disk...
+                // try? Disk.save(data, to: .caches, as: "posts.json")
                 
                 // ... and retrieve it later as [Post]...
-                // let postsFromDisk = Disk.retrieve("posts", from: .caches, as: [Post].self)!
+                // let posts = try? Disk.retrieve("posts.json", from: .caches, as: [Post].self)
                 
                 // ... but that's not good practice! Our networking and persistence logic should be separate.
                 // Let's return the posts in our completion handler:

@@ -9,35 +9,55 @@
 import Foundation
 
 public extension Disk {
-    /// Store image to disk
+    /// Save image to disk
     ///
     /// - Parameters:
     ///   - value: image to store to disk
     ///   - directory: directory to store image in
-    ///   - name: name to give to image file (don't need to include .png or .jpg extension)
+    ///   - path: file location to store the data (i.e. "Folder/file.png")
     /// - Throws: Error if there were any issues writing the image to disk
-    static func store(_ value: UIImage, to directory: Directory, as name: String) throws {
+    static func save(_ value: UIImage, to directory: Directory, as path: String) throws {
         do {
-            if fileExists(name, in: directory) {
-                try remove(name, from: directory)
-            }
             var imageData: Data
-            var imageFileExtension: FileExtension
-            if let data = UIImagePNGRepresentation(value) {
-                imageData = data
-                imageFileExtension = .png
-            } else if let data = UIImageJPEGRepresentation(value, 1) {
-                imageData = data
-                imageFileExtension = .jpg
+            let suffix = path.suffix(4).lowercased()
+            if suffix == ".png" {
+                if let data = UIImagePNGRepresentation(value) {
+                    imageData = data
+                } else {
+                    throw createError(
+                        .serialization,
+                        description: "Could not serialize UIImage to PNG.",
+                        failureReason: "Data conversion failed.",
+                        recoverySuggestion: "Try saving this image as a .jpg or without an extension at all."
+                    )
+                }
+            } else if suffix == ".jpg" {
+                if let data = UIImageJPEGRepresentation(value, 1) {
+                    imageData = data
+                } else {
+                    throw createError(
+                        .serialization,
+                        description: "Could not serialize UIImage to JPEG.",
+                        failureReason: "Data conversion failed.",
+                        recoverySuggestion: "Try saving this image as a .png or without an extension at all."
+                    )
+                }
             } else {
-                throw createDiskError(
-                    .serialization,
-                    description: "Could not serialize UIImage to Data.",
-                    failureReason: "UIImage could not serialize to PNG or JPEG data.",
-                    recoverySuggestion: "Make sure image is not corrupt."
-                )
+                if let data = UIImagePNGRepresentation(value) {
+                    imageData = data
+                } else if let data = UIImageJPEGRepresentation(value, 1) {
+                    imageData = data
+                } else {
+                    throw createError(
+                        .serialization,
+                        description: "Could not serialize UIImage to Data.",
+                        failureReason: "UIImage could not serialize to PNG or JPEG data.",
+                        recoverySuggestion: "Make sure image is not corrupt or try saving without an extension at all."
+                    )
+                }
             }
-            let url = createURL(for: name, extension: imageFileExtension, in: directory)
+            let url = try createURL(for: path, in: directory)
+            try createSubfoldersBeforeCreatingFile(at: url)
             FileManager.default.createFile(atPath: url.path, contents: imageData, attributes: nil)
         } catch {
             throw error
@@ -47,22 +67,22 @@ public extension Disk {
     /// Retrive image from disk
     ///
     /// - Parameters:
-    ///   - name: name of image on disk
+    ///   - path: path where image is stored
     ///   - directory: directory where image is stored
     ///   - type: here for Swifty generics magic, use UIImage.self
     /// - Returns: UIImage from disk
     /// - Throws: Error if there were any issues retrieving the specified image
-    static func retrieve(_ name: String, from directory: Directory, as type: UIImage.Type) throws -> UIImage {
+    static func retrieve(_ path: String, from directory: Directory, as type: UIImage.Type) throws -> UIImage {
         do {
-            let url = try getOneExistingFileURL(for: name, with: [.png, .jpg, .none], in: directory)
+            let url = try getExistingFileURL(for: path, in: directory)
             if let data = FileManager.default.contents(atPath: url.path), let image = UIImage(data: data) {
                 return image
             } else {
-                throw createDiskError(
+                throw createError(
                     .deserialization,
-                    description: "Could not decode UIImage from \(name) in \(directory.rawValue).",
-                    failureReason: "A UIImage could not be created out of the data in \(name) in \(directory.rawValue).",
-                    recoverySuggestion: "Try deserializing \(name) in \(directory.rawValue) manually after retrieving it as Data."
+                    description: "Could not decode UIImage from \(directory.rawValue)/\(path).",
+                    failureReason: "A UIImage could not be created out of the data in  \(directory.rawValue)/\(path).",
+                    recoverySuggestion: "Try deserializing \(directory.rawValue)/\(path) manually after retrieving it as Data."
                 )
             }
         } catch {
