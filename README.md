@@ -72,7 +72,7 @@ Note that the system may delete the Caches/ directory to free up disk space, so 
 
 "Data that is used only temporarily should be stored in the <Application_Home>/tmp directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device."
 
-With all these requirements, it can be hard working with the iOS file system appropriately, which is why Disk was born. Disk makes these following these tedious rules simple and fun.  
+With all these requirements, it can be hard working with the iOS file system appropriately, which is why Disk was born. Disk makes following these tedious rules simple and fun.  
 
 ### Using Disk is easy.
 
@@ -103,7 +103,7 @@ try Disk.save(message, to: .caches, as: "Folder/message.json")
 let retrievedMessage = try Disk.retrieve("Folder/message.json", from: .caches, as: Message.self)
 ```
 If you Alt + click `retrievedMessage`, then Xcode will show its type as `Message`. Pretty neat, huh?
-<img src="https://user-images.githubusercontent.com/7799382/28517945-186e41dc-701b-11e7-9758-fa075ecd7df7.png" alt="example">
+<img src="https://user-images.githubusercontent.com/7799382/28642910-dbea8dca-7208-11e7-8b69-3becf5370551.png" alt="example">
 
 So what happened in the background? Disk first converts `message` to JSON data and writes that data to a newly created file at `/Library/Caches/Folder/message.json`. Then when we retrieve the `message`, Disk automatically converts the JSON data to our `Codable` struct type.
 
