@@ -254,7 +254,7 @@ You should generally never use the `.doNotBackup(:in:)` and `.backup(:in:)` meth
 
 ## Debugging
 
-Disk is *thorough*, meaning that it will not leave an error to chance. Almost all of Disk's methods throw errors either on behalf of `Foundation`'s [`FileManager`] class or custom Disk Errors that are worth bringing to your attention. These errors have a lot of information, such as a description, failure reason, and recovery suggestion:
+Disk is *thorough*, meaning that it will not leave an error to chance. Almost all of Disk's methods throw errors either on behalf of `Foundation`'s `FileManager` class or custom Disk Errors that are worth bringing to your attention. These errors have a lot of information, such as a description, failure reason, and recovery suggestion:
 ```swift
 do {
     if Disk.exists("posts.json", in: .documents) {
