@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/7799382/28500846-b53d3960-6f84-11e7-9f4b-164133170283.png" alt="Platform: iOS 10+" />
+    <img src="https://user-images.githubusercontent.com/7799382/28644637-2fe6f818-720f-11e7-89a4-35250b6665ce.png" alt="Platform: iOS 9.0+" />
     <a href="https://developer.apple.com/swift" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28500845-b43a66fa-6f84-11e7-8281-6e689d8aaab9.png" alt="Language: Swift 4" /></a>
     <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28642054-ec8a4006-7205-11e7-9acd-2ac0cc9f617a.png" alt="CocoaPods compatible" /></a>
     <img src="https://user-images.githubusercontent.com/7799382/28500847-b6393648-6f84-11e7-9a7a-f6ae78207416.png" alt="License: MIT" />
