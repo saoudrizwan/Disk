@@ -190,7 +190,7 @@ Disk.save(data, to: .documents, as: "videos")
 let retrievedVideos = Disk.retrieve("videos", from: .documents, as: [Data].self)
 ```
 If you were to retrieve [Data] from a folder with images and .json files, then those files would be included in the returned value. Continuing the example from the [Array of images](#images) section:
-````swift
+```swift
 let files = try Disk.retrieve("Nature", from: .documents, as: [Data].self)
 ```
 ... would return `-> [deer.png, lion.png, bird.png, diary.json]`
