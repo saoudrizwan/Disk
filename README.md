@@ -213,6 +213,7 @@ DispatchQueue.global(qos: .background).async {
     }
 }
 ```
+Don't forget to handle these sorts of tasks [being interrupted](https://stackoverflow.com/a/18305715/3502608).
 
 ### Helper Methods
 
