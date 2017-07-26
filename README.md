@@ -198,9 +198,7 @@ let files = try Disk.retrieve("Nature", from: .documents, as: [Data].self)
 ### Large files
 It's important that you know when to work with the file system on the background thread. Disk is syncronous, giving you more control over read/write operations on the file system. [Apple says](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/TechniquesforReadingandWritingCustomFiles/TechniquesforReadingandWritingCustomFiles.html) that *"because file operations involve accessing the disk, performing those operations **asynchronously** is almost always preferred."*
 
-[Grand Central Dispatch](https://developer.apple.com/documentation/dispatch)
-
-GCD is the best way to work with Disk asynchronously. Here's an example:
+[Grand Central Dispatch](https://developer.apple.com/documentation/dispatch) is the best way to work with Disk asynchronously. Here's an example:
 ```swift
 activityIndicator.startAnimating()
 DispatchQueue.global(qos: .background).async {
@@ -277,7 +275,7 @@ The example above takes care of the most common error when dealing with the file
 
 ## A Word from the Developer
 
-After developing for iOS for 6+ years, I've come across almost every method of data persistence there is to offer (Core Data, Realm, `NSCoding`, `UserDefaults`, etc.) Nothing really fit the bill except `NSCoding` but there were too many hoops to jump through. After Swift 4 was released, I was really excited about the `Codable` protocol because I knew what it had to offer in terms of JSON coding. Working with network repsponses' JSON data and converting them to usable structs has never been easier. Disk aims to extend the simplicity of working with data to the file system.
+After developing for iOS for 7+ years, I've come across almost every method of data persistence there is to offer (Core Data, Realm, `NSCoding`, `UserDefaults`, etc.) Nothing really fit the bill except `NSCoding` but there were too many hoops to jump through. After Swift 4 was released, I was really excited about the `Codable` protocol because I knew what it had to offer in terms of JSON coding. Working with network responses' JSON data and converting them to usable structs has never been easier. *Disk aims to extend the simplicity of working with data to the file system.*
 
 Let's say we get some data back from a network request...
 ```swift
@@ -288,6 +286,7 @@ let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
 
         // ... we could directly save this data to disk...
         try? Disk.save(data, to: .caches, as: "posts.json")
+
     }
 }.resume()
 ```
@@ -299,7 +298,7 @@ let posts = try? Disk.retrieve("posts.json", from: .caches, as: [Post].self)
 Disk takes out a lot of the tedious handy work required in coding data to the desired type, and it does it well. Disk also makes necessary but verbose tasks simple too, such as clearing out the caches or temporary directory (as required by <a href="https://developer.apple.com/icloud/documentation/data-storage/index.html" target="_blank">Apple's Data Storage Guidelines</a>):
 
 ```swift
-try Disk.clear(.temporary)
+try! Disk.clear(.temporary)
 ```
 
 Best of all, Disk is thorough when it comes to throwing errors, ensuring that you understand why a problem occurs when it does.
