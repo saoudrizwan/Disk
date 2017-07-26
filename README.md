@@ -159,7 +159,7 @@ And maybe you even saved a JSON file to this Nature folder:
 try Disk.save(diary, to: .documents, as: "Nature/diary.json")
 ```
 Then you could retrieve all the images in the Nature folder like so:
-````swift
+```swift
 let images = try Disk.retrieve("Nature", from: .documents, as: [UIImage].self)
 ```
 ... which would return `-> [deer.png, lion.png, bird.png]`
