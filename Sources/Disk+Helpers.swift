@@ -12,7 +12,7 @@ public extension Disk {
     /// Get URL for existing file
     ///
     /// - Parameters:
-    ///   - name: name given to file
+    ///   - path: path of file relative to directory (set nil for entire directory)
     ///   - directory: directory the file is saved in
     /// - Returns: URL pointing to file/folder
     /// - Throws: Error if no file could be found or too many files were found
@@ -44,7 +44,7 @@ public extension Disk {
     /// Remove file from file system
     ///
     /// - Parameters:
-    ///   - name: name given to file when stored
+    ///   - path: path of file relative to directory
     ///   - directory: directory where file is located
     /// - Throws: Error if file could not be removed
     static func remove(_ path: String, from directory: Directory) throws {
@@ -59,7 +59,7 @@ public extension Disk {
     /// Checks if a file exists
     ///
     /// - Parameters:
-    ///   - name: name given to file when stored
+    ///   - path: path of file relative to directory
     ///   - directory: directory where file is located
     /// - Returns: Bool indicating whether file exists
     static func exists(_ path: String, in directory: Directory) -> Bool {
@@ -83,10 +83,10 @@ public extension Disk {
     /// Ideally, you should let iOS handle deletion of files in low storage situations, and you yourself handle missing files appropriately (i.e. retrieving an image from the web again if it does not exist on disk anymore.)
     ///
     /// - Parameters:
-    ///   - name: name given to file when stored
+    ///   - path: path of file relative to directory
     ///   - directory: directory where file is located
     /// - Throws: Error if file could not set its 'isExcludedFromBackup' property
-    static func doNotBackup(_ path: String?, in directory: Directory) throws {
+    static func doNotBackup(_ path: String, in directory: Directory) throws {
         do {
             try setIsExcludedFromBackup(to: true, for: path, in: directory)
         } catch {
@@ -98,10 +98,10 @@ public extension Disk {
     /// This default backing up behaviour allows anything in the .documents and .caches directories to be stored in backups made of the user's device (on iCloud or iTunes)
     ///
     /// - Parameters:
-    ///   - name: name given to file when stored
+    ///   - path: path of file relative to directory
     ///   - directory: directory where file is located
     /// - Throws: Error if file could not set its 'isExcludedFromBackup' property
-    static func backup(_ path: String?, in directory: Directory) throws {
+    static func backup(_ path: String, in directory: Directory) throws {
         do {
             try setIsExcludedFromBackup(to: false, for: path, in: directory)
         } catch {
@@ -112,7 +112,7 @@ public extension Disk {
     /// Move file to a new directory
     ///
     /// - Parameters:
-    ///   - name: name given to file stored
+    ///   - path: path of file relative to directory
     ///   - directory: directory the file is currently in
     ///   - newDirectory: new directory to store file in
     /// - Throws: Error if file could not be moved
@@ -132,7 +132,7 @@ public extension Disk {
     /// Rename a file
     ///
     /// - Parameters:
-    ///   - name: original name given to file
+    ///   - path: path of file relative to directory
     ///   - directory: directory the file is in
     ///   - newName: new name to give to file
     /// - Throws: Error if object could not be renamed
