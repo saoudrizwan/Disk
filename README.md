@@ -18,7 +18,7 @@
   • <a href="#contribute">Contribute</a>
 </p>
 
-Disk is a **powerful** and **simple** file management library built with <a href="https://developer.apple.com/icloud/documentation/data-storage/index.html" target="_blank">Apple's Data Storage Guidelines</a> in mind. Disk uses the new `Codable` protocol introduced in Swift 4 to its utmost advantage and gives you the power to persist JSON data without ever having to worry about encoding/decoding. Disk also helps you save images and other data types to disk with as little as one line of code.
+Disk is a **powerful** and **simple** file management library built with Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) in mind. Disk uses the new `Codable` protocol introduced in Swift 4 to its utmost advantage and gives you the power to persist JSON data without ever having to worry about encoding/decoding. Disk also helps you save images and other data types to disk with as little as one line of code.
 
 ## Compatibility
 
@@ -295,7 +295,7 @@ let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
 let posts = try? Disk.retrieve("posts.json", from: .caches, as: [Post].self)
 ```
 
-Disk takes out a lot of the tedious handy work required in coding data to the desired type, and it does it well. Disk also makes necessary but verbose tasks simple too, such as clearing out the caches or temporary directory (as required by <a href="https://developer.apple.com/icloud/documentation/data-storage/index.html" target="_blank">Apple's Data Storage Guidelines</a>):
+Disk takes out a lot of the tedious handy work required in coding data to the desired type, and it does it well. Disk also makes necessary but verbose tasks simple too, such as clearing out the caches or temporary directory (as required by Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html)):
 
 ```swift
 try! Disk.clear(.temporary)
