@@ -25,7 +25,7 @@ extension Disk {
         let errorInfo: [String: Any] = [NSLocalizedDescriptionKey : description ?? "",
                                         NSLocalizedRecoverySuggestionErrorKey: recoverySuggestion ?? "",
                                         NSLocalizedFailureReasonErrorKey: failureReason ?? ""]
-        return NSError(domain: "Disk", code: errorCode.rawValue, userInfo: errorInfo) as Error
+        return NSError(domain: errorDomain, code: errorCode.rawValue, userInfo: errorInfo) as Error
     }
 }
 

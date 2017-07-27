@@ -19,8 +19,7 @@ public extension Disk {
     static func save(_ value: UIImage, to directory: Directory, as path: String) throws {
         do {
             var imageData: Data
-            let suffix = path.suffix(4).lowercased()
-            if suffix == ".png" {
+            if path.suffix(4).lowercased() == ".png" {
                 if let data = UIImagePNGRepresentation(value) {
                     imageData = data
                 } else {
@@ -31,7 +30,7 @@ public extension Disk {
                         recoverySuggestion: "Try saving this image as a .jpg or without an extension at all."
                     )
                 }
-            } else if suffix == ".jpg" {
+            } else if path.suffix(4).lowercased() == ".jpg" || path.suffix(5).lowercased() == ".jpeg" {
                 if let data = UIImageJPEGRepresentation(value, 1) {
                     imageData = data
                 } else {
