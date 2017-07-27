@@ -33,7 +33,7 @@ platform :ios, '9.0'
 target 'ProjectName' do
 use_frameworks!
 
-    pod 'Disk'
+    pod 'Disk', '~> 0.1.2'
 
 end
 ```
