@@ -76,7 +76,7 @@ With all these requirements, it can be hard working with the iOS file system app
 
 ### Using Disk is easy.
 
-Disk handles errors by `throw`ing them. See [Handling Errors Using Do-Catch](https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/ErrorHandling.html)
+Disk handles errors by `throw`ing them. See [Handling Errors Using Do-Catch](https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/ErrorHandling.html).
 
 ### Structs (must conform to [Codable](https://developer.apple.com/documentation/swift/codable))
 
@@ -178,6 +178,7 @@ try Disk.save(videoData, to: .documents, as: "anime.mp4")
 let retrievedData = try Disk.retrieve("anime.mp4", from: .documents, as: Data.self)
 ```
 **Array of `Data`**
+
 Disk saves data files like it does images, as files in a folder.
 ```swift
 var data = [Data]()
@@ -189,7 +190,7 @@ try Disk.save(data, to: .documents, as: "videos")
 ```swift
 let retrievedVideos = try Disk.retrieve("videos", from: .documents, as: [Data].self)
 ```
-If you were to retrieve [Data] from a folder with images and .json files, then those files would be included in the returned value. Continuing the example from the [Array of images](#images) section:
+If you were to retrieve `[Data]` from a folder with images and .json files, then those files would be included in the returned value. Continuing the example from the [Array of images](#images) section:
 ```swift
 let files = try Disk.retrieve("Nature", from: .documents, as: [Data].self)
 ```
@@ -272,11 +273,11 @@ do {
         """)
 }
 ```
-The example above takes care of the most common error when dealing with the file system: creating a file where one already exists. In the code above, we first check if posts.json exists, remove it if it does, and then write the new data to the new file.
+The example above takes care of the most common error when dealing with the file system: creating a file where one already exists with the same name. In the code above, we first check if posts.json exists, remove it if it does, and then write the new data to the new file.
 
 ## A Word from the Developer
 
-After developing for iOS for 7+ years, I've come across almost every method of data persistence there is to offer (Core Data, Realm, `NSCoding`, `UserDefaults`, etc.) Nothing really fit the bill except `NSCoding`, but there were too many hoops to jump through. After Swift 4 was released, I was really excited about the `Codable` protocol because I knew what it had to offer in terms of JSON coding. Working with network responses' JSON data and converting them to usable structs has never been easier. **Disk aims to extend that simplicity of working with data to the file system.**
+After developing for iOS for 7+ years, I've come across almost every method of data persistence there is to offer (Core Data, Realm, `NSCoding`, `UserDefaults`, etc.) Nothing really fit the bill except `NSCoding`, but there were too many hoops to jump through. After Swift 4 was released, I was really excited about the `Codable` protocol because I knew what it had to offer in terms of JSON coding. Working with network responses' JSON data and converting them to usable structures has never been easier. **Disk aims to extend that simplicity of working with data to the file system.**
 
 Let's say we get some data back from a network request...
 ```swift
@@ -296,7 +297,7 @@ let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
 let posts = try? Disk.retrieve("posts.json", from: .caches, as: [Post].self)
 ```
 
-Disk takes out a lot of the tedious handy work required in coding data to the desired type, and it does it well. Disk also makes necessary but verbose tasks simple too, such as clearing out the caches or temporary directory (as required by Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html)):
+Disk takes out a lot of the tedious handy work required in coding data to the desired type, and it does it well. Disk also makes necessary but tedious tasks simple, such as clearing out the caches or temporary directory (as required by Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html)):
 
 ```swift
 try! Disk.clear(.temporary)
