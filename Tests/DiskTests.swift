@@ -503,4 +503,25 @@ class DiskTests: XCTestCase {
             fatalError(convertErrorToString(error))
         }
     }
+    
+    func testAddDifferentFileTypes() {
+        do {
+            try Disk.save(messages, to: .documents, as: "Folder/messages.json")
+            XCTAssert(Disk.exists("Folder/messages.json", in: .documents))
+            try Disk.save(images[0], to: .documents, as: "Folder/image1.png")
+            XCTAssert(Disk.exists("Folder/image1.png", in: .documents))
+            try Disk.save(images[1], to: .documents, as: "Folder/image2.jpg")
+            XCTAssert(Disk.exists("Folder/image2.jpg", in: .documents))
+            try Disk.save(images[2], to: .documents, as: "Folder/image3.jpeg")
+            XCTAssert(Disk.exists("Folder/image3.jpeg", in: .documents))
+            
+            let files = try Disk.retrieve("Folder", from: .documents, as: [Data].self)
+            XCTAssert(files.count == 4)
+            
+            let album = try Disk.retrieve("Folder", from: .documents, as: [UIImage].self)
+            XCTAssert(album.count == 3)
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
+    }
 }

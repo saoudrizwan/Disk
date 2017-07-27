@@ -31,6 +31,7 @@ public class Disk {
         case caches = "<Application_Home>/Library/Caches"
         
         // Data that is used only temporarily should be stored in the <Application_Home>/tmp directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device.
+        // The system will periodically purge these files when your app is not running; therefore, you cannot rely on these files persisting after your app terminates.
         case temporary = "<Application_Home>/tmp"
     }
 }
