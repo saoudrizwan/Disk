@@ -109,7 +109,7 @@ So what happened in the background? Disk first converts `message` to JSON data a
 
 **What about arrays of structs?**
 
-Thanks to the power of `Codable`, storing and retrieving arrays of structs is just as easy the code above.
+Thanks to the power of `Codable`, storing and retrieving arrays of structs is just as easy as the code above.
 ```swift
 var messages = [Message]()
 for i in 0..<5 {
