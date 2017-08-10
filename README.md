@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/7799382/28520084-01e6384a-7023-11e7-8b18-6c79494494a8.png" alt="Disk" />
+    <img src="https://user-images.githubusercontent.com/7799382/29153673-a8eef618-7d43-11e7-850a-29897254f3d4.png" alt="Disk" />
 </p>
 
 <p align="center">
@@ -297,7 +297,7 @@ let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
 let posts = try? Disk.retrieve("posts.json", from: .caches, as: [Post].self)
 ```
 
-Disk takes out a lot of the tedious handy work required in coding data to the desired type, and it does it well. Disk also makes necessary but tedious tasks simple, such as clearing out the caches or temporary directory (as required by Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html)):
+Disk takes out a lot of the tedious handy work required in coding data to the desired type, and it does it well. Disk also makes necessary but grueling tasks simple, such as clearing out the caches or temporary directory (as required by Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html)):
 
 ```swift
 try! Disk.clear(.temporary)
@@ -307,7 +307,7 @@ Best of all, Disk is thorough when it comes to throwing errors, ensuring that yo
 
 ## Documentation
 Alt + click on any of Disk's methods for detailed documentation.
-<img src="https://user-images.githubusercontent.com/7799382/28643656-629bab04-720b-11e7-99d1-e8b530c8f362.png" alt="documentation">
+<img src="https://user-images.githubusercontent.com/7799382/29153708-e49f0842-7d43-11e7-8eb3-4b2d13b56b70.png" alt="documentation">
 
 ## License
 
