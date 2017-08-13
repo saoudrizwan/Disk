@@ -294,7 +294,7 @@ let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
 ```
 ```swift
 // ... and retrieve it later as [Post]...
-let posts = try? Disk.retrieve("posts.json", from: .caches, as: [Post].self)
+let posts = try Disk.retrieve("posts.json", from: .caches, as: [Post].self)
 ```
 
 Disk takes out a lot of the tedious handy work required in coding data to the desired type, and it does it well. Disk also makes necessary but grueling tasks simple, such as clearing out the caches or temporary directory (as required by Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html)):
