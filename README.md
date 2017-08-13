@@ -179,7 +179,7 @@ let retrievedData = try Disk.retrieve("anime.mp4", from: .documents, as: Data.se
 ```
 **Array of `Data`**
 
-Disk saves data files like it does images, as files in a folder.
+Disk saves arrays of `Data` objects like it does arrays of images, as files in a folder.
 ```swift
 var data = [Data]()
 // ...
