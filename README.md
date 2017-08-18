@@ -37,6 +37,13 @@ use_frameworks!
 
 end
 ```
+
+* Installation for <a href="https://github.com/Carthage/Carthage" target="_blank">Carthage</a>:
+
+ ```ruby
+ github "saoudrizwan/Disk"
+ ```
+
 * Or embed the Disk framework into your project
 
 And `import Disk` in the files you'd like to use it.
