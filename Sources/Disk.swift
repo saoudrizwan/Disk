@@ -39,7 +39,7 @@ public class Disk {
 // MARK: Internal helper methods
 
 extension Disk {
-    /// Creates and returns a URL constructed from specified directory/path
+    /// Create and returns a URL constructed from specified directory/path
     static func createURL(for path: String?, in directory: Directory) throws -> URL {
         let filePrefix = "file://"
         var validPath: String? = nil
@@ -86,7 +86,7 @@ extension Disk {
         }
     }
     
-    /// Iterates through file system to find URLs for all existing files/folder
+    /// Iterate through file system to find URL for existing file/folder
     static func getExistingFileURL(for path: String?, in directory: Directory) throws -> URL {
         do {
             let url = try createURL(for: path, in: directory)

@@ -64,7 +64,7 @@ class ViewController: UIViewController {
     
     @IBAction func retrieveTapped(_ sender: Any) {
         // We'll keep things simple here by using try?, but it's good practice to handle Disk with do, catch, try blocks
-        // so you make sure everything is going according to plan.
+        // so you can make sure everything is going according to plan.
         if let retrievedPosts = try? Disk.retrieve("posts.json", from: .documents, as: [Post].self) {
             // If you Alt+Click 'retrievedPosts' above, you'll notice that its type is [Post]
             // Pretty neat, huh?

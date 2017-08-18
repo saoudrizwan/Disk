@@ -14,8 +14,8 @@ public extension Disk {
     /// - Parameters:
     ///   - path: path of file relative to directory (set nil for entire directory)
     ///   - directory: directory the file is saved in
-    /// - Returns: URL pointing to file/folder
-    /// - Throws: Error if no file could be found or too many files were found
+    /// - Returns: URL pointing to file
+    /// - Throws: Error if no file could be found
     static func getURL(for path: String?, in directory: Directory) throws -> URL {
         do {
             let url = try getExistingFileURL(for: path, in: directory)
@@ -28,7 +28,7 @@ public extension Disk {
     /// Clear directory by removing all files
     ///
     /// - Parameter directory: directory to clear
-    /// - Throws: Error if File Manager cannot remove a file
+    /// - Throws: Error if FileManager cannot remove a file
     static func clear(_ directory: Directory) throws {
         do {
             let url = try createURL(for: nil, in: directory)
@@ -41,7 +41,7 @@ public extension Disk {
         }
     }
     
-    /// Remove file from file system
+    /// Remove file from the file system
     ///
     /// - Parameters:
     ///   - path: path of file relative to directory
@@ -65,14 +65,6 @@ public extension Disk {
     static func exists(_ path: String, in directory: Directory) -> Bool {
         if let _ = try? getExistingFileURL(for: path, in: directory) {
             return true
-        } else {
-            let suffix = path.suffix(1).lowercased()
-            if suffix != "/" {
-                let folderPath = path + "/"
-                if let _ = try? getExistingFileURL(for: folderPath, in: directory) {
-                    return true
-                }
-            }
         }
         return false
     }

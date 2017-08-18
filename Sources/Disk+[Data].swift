@@ -19,7 +19,7 @@ public extension Disk {
     static func save(_ value: [Data], to directory: Directory, as path: String) throws {
         do {
             let folderUrl = try createURL(for: path, in: directory)
-            try createSubfoldersBeforeCreatingFile(at: folderUrl) // if we do this first, we don't have to pass true to 'withIntermediateDirectories' below
+            try createSubfoldersBeforeCreatingFile(at: folderUrl)
             try FileManager.default.createDirectory(at: folderUrl, withIntermediateDirectories: false, attributes: nil)
             for i in 0..<value.count {
                 let data = value[i]
