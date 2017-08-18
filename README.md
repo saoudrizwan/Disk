@@ -5,7 +5,8 @@
 <p align="center">
     <img src="https://user-images.githubusercontent.com/7799382/28644637-2fe6f818-720f-11e7-89a4-35250b6665ce.png" alt="Platform: iOS 9.0+" />
     <a href="https://developer.apple.com/swift" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28500845-b43a66fa-6f84-11e7-8281-6e689d8aaab9.png" alt="Language: Swift 4" /></a>
-    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29478294-035f9dd0-8421-11e7-994f-d39c76519c85.png" alt="CocoaPods compatible" /></a>
+    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29480095-d265263c-842a-11e7-9745-e4f2efcdc836.png" alt="CocoaPods compatible" /></a>
+    <a href="https://github.com/Carthage/Carthage" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29480484-75d0ead4-842d-11e7-8c20-e42d6ae3554f.png" alt="Carthage compatible" /></a>
     <img src="https://user-images.githubusercontent.com/7799382/28500847-b6393648-6f84-11e7-9a7a-f6ae78207416.png" alt="License: MIT" />
 </p>
 
@@ -33,16 +34,16 @@ platform :ios, '9.0'
 target 'ProjectName' do
 use_frameworks!
 
-    pod 'Disk', '~> 0.1.3'
+    pod 'Disk', '~> 0.1.4'
 
 end
 ```
 
 * Installation for <a href="https://github.com/Carthage/Carthage" target="_blank">Carthage</a>:
 
-```ruby
-github "saoudrizwan/Disk"
-```
+ ```ruby
+ github "saoudrizwan/Disk"
+ ```
 
 * Or embed the Disk framework into your project
 
@@ -313,7 +314,7 @@ try! Disk.clear(.temporary)
 Best of all, Disk is thorough when it comes to throwing errors, ensuring that you understand why a problem occurs when it does.
 
 ## Documentation
-Alt + click on any of Disk's methods for detailed documentation.
+Option + click on any of Disk's methods for detailed documentation.
 <img src="https://user-images.githubusercontent.com/7799382/29153708-e49f0842-7d43-11e7-8eb3-4b2d13b56b70.png" alt="documentation">
 
 ## License
@@ -322,7 +323,7 @@ Disk uses the MIT license. Please file an issue if you have any questions or if 
 
 ## Contribute
 
-Disk is in its infancy, but v0.1.3 provides the barebones of the simplest way to persist data in iOS. Please feel free to send pull requests of any features you think would add to Disk and its philosophy.
+Disk is in its infancy, but v0.1.4 provides the barebones of the simplest way to persist data in iOS. Please feel free to send pull requests of any features you think would add to Disk and its philosophy.
 
 ## Questions?
 
