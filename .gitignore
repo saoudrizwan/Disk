@@ -19,7 +19,6 @@ xcuserdata
 ## Other
 *.xccheckout
 *.moved-aside
-*.xcuserstate
 
 ## Obj-C/Swift specific
 *.hmap
