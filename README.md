@@ -80,7 +80,7 @@ Disk handles errors by `throw`ing them. See [Handling Errors Using Do-Catch](htt
 
 ### Structs (must conform to [Codable](https://developer.apple.com/documentation/swift/codable))
 
-Let's say have a data model called `Message`...
+Let's say we have a data model called `Message`...
 ```swift
 struct Message: Codable {
     let title: String
@@ -179,7 +179,7 @@ let retrievedData = try Disk.retrieve("anime.mp4", from: .documents, as: Data.se
 ```
 **Array of `Data`**
 
-Disk saves data files like it does images, as files in a folder.
+Disk saves arrays of `Data` objects like it does arrays of images, as files in a folder.
 ```swift
 var data = [Data]()
 // ...
@@ -294,7 +294,7 @@ let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
 ```
 ```swift
 // ... and retrieve it later as [Post]...
-let posts = try? Disk.retrieve("posts.json", from: .caches, as: [Post].self)
+let posts = try Disk.retrieve("posts.json", from: .caches, as: [Post].self)
 ```
 
 Disk takes out a lot of the tedious handy work required in coding data to the desired type, and it does it well. Disk also makes necessary but grueling tasks simple, such as clearing out the caches or temporary directory (as required by Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html)):
