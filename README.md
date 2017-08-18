@@ -306,7 +306,7 @@ try! Disk.clear(.temporary)
 Best of all, Disk is thorough when it comes to throwing errors, ensuring that you understand why a problem occurs when it does.
 
 ## Documentation
-Alt + click on any of Disk's methods for detailed documentation.
+Option + click on any of Disk's methods for detailed documentation.
 <img src="https://user-images.githubusercontent.com/7799382/29153708-e49f0842-7d43-11e7-8eb3-4b2d13b56b70.png" alt="documentation">
 
 ## License
