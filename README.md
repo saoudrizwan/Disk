@@ -80,7 +80,7 @@ Disk handles errors by `throw`ing them. See [Handling Errors Using Do-Catch](htt
 
 ### Structs (must conform to [Codable](https://developer.apple.com/documentation/swift/codable))
 
-Let's say have a data model called `Message`...
+Let's say we have a data model called `Message`...
 ```swift
 struct Message: Codable {
     let title: String
