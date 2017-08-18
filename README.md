@@ -1,11 +1,11 @@
-<p align="center">
+at<p align="center">
     <img src="https://user-images.githubusercontent.com/7799382/29153673-a8eef618-7d43-11e7-850a-29897254f3d4.png" alt="Disk" />
 </p>
 
 <p align="center">
     <img src="https://user-images.githubusercontent.com/7799382/28644637-2fe6f818-720f-11e7-89a4-35250b6665ce.png" alt="Platform: iOS 9.0+" />
     <a href="https://developer.apple.com/swift" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28500845-b43a66fa-6f84-11e7-8281-6e689d8aaab9.png" alt="Language: Swift 4" /></a>
-    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29478294-035f9dd0-8421-11e7-994f-d39c76519c85.png" alt="CocoaPods compatible" /></a>
+    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29480095-d265263c-842a-11e7-9745-e4f2efcdc836.png" alt="CocoaPods compatible" /></a>
     <img src="https://user-images.githubusercontent.com/7799382/28500847-b6393648-6f84-11e7-9a7a-f6ae78207416.png" alt="License: MIT" />
 </p>
 
@@ -33,7 +33,7 @@ platform :ios, '9.0'
 target 'ProjectName' do
 use_frameworks!
 
-    pod 'Disk', '~> 0.1.3'
+    pod 'Disk', '~> 0.1.4'
 
 end
 ```
@@ -315,7 +315,7 @@ Disk uses the MIT license. Please file an issue if you have any questions or if 
 
 ## Contribute
 
-Disk is in its infancy, but v0.1.3 provides the barebones of the simplest way to persist data in iOS. Please feel free to send pull requests of any features you think would add to Disk and its philosophy.
+Disk is in its infancy, but v0.1.4 provides the barebones of the simplest way to persist data in iOS. Please feel free to send pull requests of any features you think would add to Disk and its philosophy.
 
 ## Questions?
 
