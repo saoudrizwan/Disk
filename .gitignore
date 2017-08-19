@@ -16,9 +16,9 @@ DerivedData
 !default.perspectivev3
 
 ## Other
-*.xccheckout
-*.xcuserstate
-*.xcbkptlist
+.xccheckout
+.xcuserstate
+.xcbkptlist
 *.moved-aside
 
 ## Obj-C/Swift specific
