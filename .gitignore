@@ -17,6 +17,8 @@ DerivedData
 
 ## Other
 *.xccheckout
+*.xcuserstate
+*.xcbkptlist
 *.moved-aside
 
 ## Obj-C/Swift specific
