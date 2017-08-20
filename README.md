@@ -19,7 +19,7 @@
   • <a href="#contribute">Contribute</a>
 </p>
 
-Disk is a **powerful** and **simple** file management library built with Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) in mind. Disk uses the new `Codable` protocol introduced in Swift 4 to its utmost advantage and gives you the power to persist `struct`s without ever having to worry about encoding/decoding. Disk also helps you save images and other data types to disk with as little as one line of code.
+Disk is a **powerful** and **simple** file management library built with Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) in mind. Disk uses the new `Codable` protocol introduced in Swift 4 to its utmost advantage and gives you the power to persist structs without ever having to worry about encoding/decoding. Disk also helps you save images and other data types to disk with as little as one line of code.
 
 ## Compatibility
 
