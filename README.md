@@ -19,7 +19,7 @@
   • <a href="#contribute">Contribute</a>
 </p>
 
-Disk is a **powerful** and **simple** file management library built with Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) in mind. Disk uses the new `Codable` protocol introduced in Swift 4 to its utmost advantage and gives you the power to persist JSON data without ever having to worry about encoding/decoding. Disk also helps you save images and other data types to disk with as little as one line of code.
+Disk is a **powerful** and **simple** file management library built with Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) in mind. Disk uses the new `Codable` protocol introduced in Swift 4 to its utmost advantage and gives you the power to persist structs without ever having to worry about encoding/decoding. Disk also helps you save images and other data types to disk with as little as one line of code.
 
 ## Compatibility
 
@@ -210,7 +210,7 @@ It's important to know when to work with the file system on the background threa
 [Grand Central Dispatch](https://developer.apple.com/documentation/dispatch) is the best way to work with Disk asynchronously. Here's an example:
 ```swift
 activityIndicator.startAnimating()
-DispatchQueue.global(qos: .background).async {
+DispatchQueue.global(qos: .userInitiated).async {
     do {
         try Disk.save(largeData, to: .documents, as: "Movies/spiderman.mp4")
     } catch {
@@ -308,7 +308,7 @@ let posts = try Disk.retrieve("posts.json", from: .caches, as: [Post].self)
 Disk takes out a lot of the tedious handy work required in coding data to the desired type, and it does it well. Disk also makes necessary but grueling tasks simple, such as clearing out the caches or temporary directory (as required by Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html)):
 
 ```swift
-try! Disk.clear(.temporary)
+try Disk.clear(.temporary)
 ```
 
 Best of all, Disk is thorough when it comes to throwing errors, ensuring that you understand why a problem occurs when it does.
