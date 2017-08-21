@@ -151,7 +151,7 @@ let retrievedImage = try Disk.retrieve("Album/nature.png", from: .documents, as:
 
 **Array of images**
 
-Multiple images are saved to a new folder. Each image is then named 1.png, 2.png, 3.png, etc.
+Multiple images are saved to a new folder. Each image is then named 0.png, 1.png, 2.png, etc.
 ```swift
 var images = [UIImages]()
 // ...
