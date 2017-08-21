@@ -19,7 +19,7 @@ DerivedData
 *.xccheckout
 *.moved-aside
 *.xcuserstate
-*.xcscmblueprint
+*.xcbaseline
 *.xcbkptlist
 
 ## Obj-C/Swift specific
