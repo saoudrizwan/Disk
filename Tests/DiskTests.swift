@@ -90,9 +90,9 @@ class DiskTests: XCTestCase {
         do {
             // Append a single struct to an empty location
             try Disk.append(messages[0], to: "single-message.json", in: .documents)
-            let retrievedSingleMessage = try Disk.retrieve("single-message.json", from: .documents, as: Message.self)
+            let retrievedSingleMessage = try Disk.retrieve("single-message.json", from: .documents, as: [Message].self)
             XCTAssert(Disk.exists("single-message.json", in: .documents))
-            XCTAssert(retrievedSingleMessage == messages[0])
+            XCTAssert(retrievedSingleMessage[0] == messages[0])
             
             // Append an array of structs to an empty location
             try Disk.append(messages, to: "multiple-messages.json", in: .documents)
