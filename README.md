@@ -133,7 +133,7 @@ let retrievedMessages = try Disk.retrieve("messages.json", from: .caches, as: [M
 
 **Appending structs**
 
-Disk also allows you to append a struct or array of structs to an existing file with data of the same type.
+Disk also allows you to append a struct or array of structs to a file with data of the same type.
 ```swift
 try Disk.append(newMessage, to: "messages.json", in: .caches)
 ```
@@ -181,10 +181,11 @@ let images = try Disk.retrieve("Nature", from: .documents, as: [UIImage].self)
 
 **Appending images**
 
-Unlike how appending a struct simply modifies an existing JSON file, appending an image with Disk adds that image as a separate file to a folder.
+Unlike how appending a struct simply modifies an existing JSON file, appending an image adds that image as an independent file to a folder.
 ```swift
 try Disk.append(goat, to: "Nature", in: .documents)
 ```
+**Note:** it's recommended to manually save an independent image using the `save(:to:as:)` function in order to know the name of that image file in case you want to retrieve that specific image later. Using the `append(to:in:)` function results in creating a file with an auto-generated name (i.e. if you append an image to a folder with images already present (1.png, 2.png, 3.png), then the new image will be named 4.png.) If the image name is not important, then using `append(to:in:)` is fine. Appending arrays of images is similar in behavior.
 
 ### Data
 
@@ -220,7 +221,7 @@ let files = try Disk.retrieve("Nature", from: .documents, as: [Data].self)
 
 **Appending `Data`**
 
-Appending `Data` is similar to appending an image with Disk—a new file is created and added to the specified folder.
+Appending `Data` is similar to appending an image—a new file is created and added to the specified folder.
 ```swift
 try Disk.append(newDataObject, to: "Folder/", in: .documents)
 ```
