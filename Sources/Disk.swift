@@ -1,22 +1,34 @@
+// The MIT License (MIT)
 //
-//  Disk.swift
-//  Disk
+// Copyright (c) 2017 Saoud Rizwan <hello@saoudmr.com>
 //
-//  Created by Saoud Rizwan http://saoudmr.com
-//  Copyright © 2017 Saoud Rizwan. All rights reserved.
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
 import Foundation
 
 /**
- 💾 Disk v0.1.4
+ 💾 Disk v0.2.0
  Easily work with the file system without worrying about any of its intricacies!
  
  - Save Codable structs, UIImage, [UIImage], Data, [Data] to Apple recommended locations on the user's disk, without having to worry about serialization.
  - Retrieve an object from disk as the type you specify, without having to worry about deserialization.
  - Remove specific objects from disk, clear entire directories if you need to, check if an object exists on disk, and much more!
- 
- Data persistence has never been easier in Swift, and I hope Disk makes it evermore delightful!
  */
 public class Disk {
     fileprivate init() { }
@@ -78,7 +90,7 @@ extension Disk {
             return url
         } else {
             throw createError(
-                .couldNotFindHomeDirectory,
+                .couldNotAccessUserDomainMask,
                 description: "Could not create URL for \(directory.rawValue)/\(validPath ?? "")",
                 failureReason: "Could not get access to the file system's user domain mask.",
                 recoverySuggestion: "Use a different directory."
@@ -86,12 +98,11 @@ extension Disk {
         }
     }
     
-    /// Iterate through file system to find URL for existing file/folder
+    /// Find an existing file's URL or throw an error if it doesn't exist
     static func getExistingFileURL(for path: String?, in directory: Directory) throws -> URL {
         do {
             let url = try createURL(for: path, in: directory)
-            var isDirectory: ObjCBool = false
-            if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) {
+            if FileManager.default.fileExists(atPath: url.path) {
                 return url
             }
             throw createError(
