@@ -185,7 +185,7 @@ Unlike how appending a struct simply modifies an existing JSON file, appending a
 ```swift
 try Disk.append(goat, to: "Nature", in: .documents)
 ```
-**Note:** it's recommended to manually save an independent image using the `save(:to:as:)` function in order to know the name of that image file in case you want to retrieve that specific image later. Using the `append(to:in:)` function results in creating a file with an auto-generated name (i.e. if you append an image to a folder with images already present (1.png, 2.png, 3.png), then the new image will be named 4.png.) If the image name is not important, then using `append(to:in:)` is fine. Appending arrays of images is similar in behavior.
+**Note:** it's recommended to manually save an independent image using the `save(:to:as:)` function in order to specify a name for that image file in case you want to retrieve it later. Using the `append(to:in:)` function results in creating a file with an auto-generated name (i.e. if you append an image to a folder with images already present (0.png, 1.png, 2.png), then the new image will be named 3.png.) If the image name is not important, then using `append(to:in:)` is fine. Appending arrays of images is similar in behavior.
 
 ### Data
 
