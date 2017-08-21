@@ -131,12 +131,13 @@ try Disk.save(messages, to: .caches, as: "messages.json")
 let retrievedMessages = try Disk.retrieve("messages.json", from: .caches, as: [Message].self)
 ```
 
-**Appending structs** (Thank you for the suggestion [@benpackard](https://github.com/saoudrizwan/Disk/issues/4))
+**Appending structs** *(Thank you for the suggestion [@benpackard](https://github.com/saoudrizwan/Disk/issues/4))*
 
 Disk also allows you to append a struct or array of structs to a file with data of the same type.
 ```swift
 try Disk.append(newMessage, to: "messages.json", in: .caches)
 ```
+**Note:** you may append a struct to an empty file, but then in order to properly retrieve that struct again, you must retrieve it as an array.
 
 ### Images
 ```swift
