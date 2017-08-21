@@ -213,7 +213,7 @@ try Disk.save(data, to: .documents, as: "videos")
 ```swift
 let retrievedVideos = try Disk.retrieve("videos", from: .documents, as: [Data].self)
 ```
-If you were to retrieve `[Data]` from a folder with images and .json files, then those files would be included in the returned value. Continuing the example from the [Array of images](#images) section:
+If you were to retrieve `[Data]` from a folder with images and JSON files, then those files would be included in the returned value. Continuing the example from the [Array of images](#images) section:
 ```swift
 let files = try Disk.retrieve("Nature", from: .documents, as: [Data].self)
 ```
@@ -221,7 +221,7 @@ let files = try Disk.retrieve("Nature", from: .documents, as: [Data].self)
 
 **Appending `Data`**
 
-Appending `Data` is similar to appending an image—a new file is created and added to the specified folder.
+Appending `Data` or an array of `Data` is similar to appending an image or array of images—new files are created and added to the specified folder.
 ```swift
 try Disk.append(newDataObject, to: "Folder/", in: .documents)
 ```
