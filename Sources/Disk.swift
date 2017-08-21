@@ -23,7 +23,7 @@
 import Foundation
 
 /**
- 💾 Disk v0.2.0
+ 💾 Disk v0.2.1
  Easily work with the file system without worrying about any of its intricacies!
  
  - Save Codable structs, UIImage, [UIImage], Data, [Data] to Apple recommended locations on the user's disk, without having to worry about serialization.
