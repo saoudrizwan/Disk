@@ -5,8 +5,8 @@
 <p align="center">
     <img src="https://user-images.githubusercontent.com/7799382/28644637-2fe6f818-720f-11e7-89a4-35250b6665ce.png" alt="Platform: iOS 9.0+" />
     <a href="https://developer.apple.com/swift" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28500845-b43a66fa-6f84-11e7-8281-6e689d8aaab9.png" alt="Language: Swift 4" /></a>
-    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29480095-d265263c-842a-11e7-9745-e4f2efcdc836.png" alt="CocoaPods compatible" /></a>
-    <a href="https://github.com/Carthage/Carthage" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29480484-75d0ead4-842d-11e7-8c20-e42d6ae3554f.png" alt="Carthage compatible" /></a>
+    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29512092-1f2b1d9a-8616-11e7-891d-91f111425cbe.png" alt="CocoaPods compatible" /></a>
+    <a href="https://github.com/Carthage/Carthage" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29512091-1e85aacc-8616-11e7-9851-d13dd1700a36.png" alt="Carthage compatible" /></a>
     <img src="https://user-images.githubusercontent.com/7799382/28500847-b6393648-6f84-11e7-9a7a-f6ae78207416.png" alt="License: MIT" />
 </p>
 
@@ -34,7 +34,7 @@ platform :ios, '9.0'
 target 'ProjectName' do
 use_frameworks!
 
-    pod 'Disk', '~> 0.1.4'
+    pod 'Disk', '~> 0.2.0'
 
 end
 ```
@@ -113,7 +113,7 @@ let retrievedMessage = try Disk.retrieve("Folder/message.json", from: .caches, a
 If you Alt + click `retrievedMessage`, then Xcode will show its type as `Message`. Pretty neat, huh?
 <img src="https://user-images.githubusercontent.com/7799382/28643842-0ab38230-720c-11e7-8bf4-33ce329068d1.png" alt="example">
 
-So what happened in the background? Disk first converts `message` to JSON data and writes that data to a newly created file at `/Library/Caches/Folder/message.json`. Then when we retrieve the `message`, Disk automatically converts the JSON data to our `Codable` struct type.
+So what happened in the background? Disk first converts `message` to JSON data and [atomically writes](https://stackoverflow.com/a/8548318/3502608) that data to a newly created file at `/Library/Caches/Folder/message.json`. Then when we retrieve the `message`, Disk automatically converts the JSON data to our `Codable` struct type.
 
 **What about arrays of structs?**
 
@@ -125,10 +125,17 @@ for i in 0..<5 {
 }
 ```
 ```swift
-try Disk.save(messages, to: .caches, as: "many-messages.json")
+try Disk.save(messages, to: .caches, as: "messages.json")
 ```
 ```swift
-let retrievedMessages = try Disk.retrieve("many-messages.json", from: .caches, as: [Message].self)
+let retrievedMessages = try Disk.retrieve("messages.json", from: .caches, as: [Message].self)
+```
+
+**Appending structs**
+
+Disk also allows you to append a struct or array of structs to an existing file with data of the same type.
+```swift
+try Disk.append(newMessage, to: "messages.json", in: .documents)
 ```
 
 ### Images
@@ -172,6 +179,13 @@ let images = try Disk.retrieve("Nature", from: .documents, as: [UIImage].self)
 ```
 ... which would return `-> [deer.png, lion.png, bird.png]`
 
+**Appending images**
+
+Unlike how appending a struct simply modifies an existing JSON file, appending an image with Disk adds that image as a separate file to a folder.
+```swift
+try Disk.append(goat, to: "Nature", in: .documents)
+```
+
 ### Data
 
 If you're trying to save data like .mp4 video data for example, then Disk's methods for `Data` will help you work with the file system to persist all data types.
@@ -203,6 +217,13 @@ If you were to retrieve `[Data]` from a folder with images and .json files, then
 let files = try Disk.retrieve("Nature", from: .documents, as: [Data].self)
 ```
 ... would return `-> [deer.png, lion.png, bird.png, diary.json]`
+
+**Appending `Data`**
+
+Appending `Data` is similar to appending an image with Disk—a new file is created and added to the specified folder.
+```swift
+try Disk.append(newDataObject, to: "Folder/", in: .documents)
+```
 
 ### Large files
 It's important to know when to work with the file system on the background thread. Disk is **synchronous**, giving you more control over read/write operations on the file system. [Apple says](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/TechniquesforReadingandWritingCustomFiles/TechniquesforReadingandWritingCustomFiles.html) that *"because file operations involve accessing the disk, performing those operations **asynchronously** is almost always preferred."*
@@ -270,7 +291,6 @@ do {
     if Disk.exists("posts.json", in: .documents) {
         try Disk.remove("posts.json", from: .documents)
     }
-    try Disk.save(self.posts, to: .documents, as: "posts.json")
 } catch let error as NSError {
     fatalError("""
         Domain: \(error.domain)
@@ -281,7 +301,7 @@ do {
         """)
 }
 ```
-The example above takes care of the most common error when dealing with the file system: creating a file where one already exists with the same name. In the code above, we first check if posts.json exists, remove it if it does, and then write the new data to the new file.
+The example above takes care of the most common error when dealing with the file system: removing a file that doesn't exist.
 
 ## A Word from the Developer
 
@@ -305,7 +325,7 @@ let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
 let posts = try Disk.retrieve("posts.json", from: .caches, as: [Post].self)
 ```
 
-Disk takes out a lot of the tedious handy work required in coding data to the desired type, and it does it well. Disk also makes necessary but grueling tasks simple, such as clearing out the caches or temporary directory (as required by Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html)):
+Disk takes out a lot of the tedious handy work required in coding data to the desired type, and it does it well. Disk also makes necessary but monotonous tasks simple, such as clearing out the caches or temporary directory (as required by Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html)):
 
 ```swift
 try Disk.clear(.temporary)
@@ -323,7 +343,7 @@ Disk uses the MIT license. Please file an issue if you have any questions or if 
 
 ## Contribute
 
-Disk is in its infancy, but v0.1.4 provides the barebones of the simplest way to persist data in iOS. Please feel free to send pull requests of any features you think would add to Disk and its philosophy.
+Disk is in its infancy, but v0.2.0 provides the barebones of the simplest way to persist data in iOS. Please feel free to send pull requests of any features you think would add to Disk and its philosophy.
 
 ## Questions?
 
