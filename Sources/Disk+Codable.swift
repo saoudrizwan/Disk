@@ -54,7 +54,7 @@ public extension Disk {
             if let url = try? getExistingFileURL(for: path, in: directory) {
                 let oldData = try Data(contentsOf: url)
                 if !(oldData.count > 0) {
-                    try save(value, to: directory, as: path)
+                    try save([value], to: directory, as: path)
                 } else {
                     let decoder = JSONDecoder()
                     let new: [T]
@@ -71,7 +71,7 @@ public extension Disk {
                     try newData.write(to: url, options: .atomic)
                 }
             } else {
-                try save(value, to: directory, as: path)
+                try save([value], to: directory, as: path)
             }
         } catch {
             throw error
