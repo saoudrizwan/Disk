@@ -86,6 +86,61 @@ class DiskTests: XCTestCase {
         }
     }
     
+    func testAppendStructs() {
+        do {
+            // Append a single struct to an empty location
+            try Disk.append(messages[0], to: "single-message.json", in: .documents)
+            let retrievedSingleMessage = try Disk.retrieve("single-message.json", from: .documents, as: Message.self)
+            XCTAssert(Disk.exists("single-message.json", in: .documents))
+            XCTAssert(retrievedSingleMessage == messages[0])
+            
+            // Append an array of structs to an empty location
+            try Disk.append(messages, to: "multiple-messages.json", in: .documents)
+            let retrievedMultipleMessages = try Disk.retrieve("multiple-messages.json", from: .documents, as: [Message].self)
+            XCTAssert(Disk.exists("multiple-messages.json", in: .documents))
+            XCTAssert(retrievedMultipleMessages == messages)
+            
+            // Append a single struct to a single struct
+            try Disk.save(messages[0], to: .documents, as: "messages.json")
+            XCTAssert(Disk.exists("messages.json", in: .documents))
+            try Disk.append(messages[1], to: "messages.json", in: .documents)
+            let retrievedMessages = try Disk.retrieve("messages.json", from: .documents, as: [Message].self)
+            XCTAssert(retrievedMessages[0] == messages[0] && retrievedMessages[1] == messages[1])
+            
+            // Append an array of structs to a single struct
+            try Disk.save(messages[5], to: .caches, as: "one-message.json")
+            try Disk.append(messages, to: "one-message.json", in: .caches)
+            let retrievedOneMessage = try Disk.retrieve("one-message.json", from: .caches, as: [Message].self)
+            XCTAssert(retrievedOneMessage.count == messages.count + 1)
+            XCTAssert(retrievedOneMessage[0] == messages[5])
+            XCTAssert(retrievedOneMessage.last! == messages.last!)
+            
+            // Append a single struct to an array of structs
+            try Disk.save(messages, to: .documents, as: "many-messages.json")
+            try Disk.append(messages[1], to: "many-messages.json", in: .documents)
+            let retrievedManyMessages = try Disk.retrieve("many-messages.json", from: .documents, as: [Message].self)
+            XCTAssert(retrievedManyMessages.count == messages.count + 1)
+            XCTAssert(retrievedManyMessages[0] == messages[0])
+            XCTAssert(retrievedManyMessages.last! == messages[1])
+            
+            let array = [messages[0], messages[1], messages[2]]
+            try Disk.save(array, to: .documents, as: "a-few-messages.json")
+            XCTAssert(Disk.exists("a-few-messages.json", in: .documents))
+            try Disk.append(messages[3], to: "a-few-messages.json", in: .documents)
+            let retrievedFewMessages = try Disk.retrieve("a-few-messages.json", from: .documents, as: [Message].self)
+            XCTAssert(retrievedFewMessages[0] == array[0] && retrievedFewMessages[1] == array[1] && retrievedFewMessages[2] == array[2] && retrievedFewMessages[3] == messages[3])
+            
+            // Append an array of structs to an array of structs
+            try Disk.save(messages, to: .documents, as: "array-of-structs.json")
+            try Disk.append(messages, to: "array-of-structs.json", in: .documents)
+            let retrievedArrayOfStructs = try Disk.retrieve("array-of-structs.json", from: .documents, as: [Message].self)
+            XCTAssert(retrievedArrayOfStructs.count == (messages.count * 2))
+            XCTAssert(retrievedArrayOfStructs[0] == messages[0] && retrievedArrayOfStructs.last! == messages.last!)
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
+    }
+    
     func testSaveImages() {
         do {
             // 1 image
@@ -94,7 +149,7 @@ class DiskTests: XCTestCase {
             let imageUrl = try Disk.getURL(for: "image.png", in: .documents)
             print("An image was saved as \(imageUrl.absoluteString)")
             let retrievedImage = try Disk.retrieve("image.png", from: .documents, as: UIImage.self)
-            XCTAssert(images[0].size == retrievedImage.size)
+            XCTAssert(images[0].dataEquals(retrievedImage))
             
             // ... in folder hierarchy
             try Disk.save(images[0], to: .documents, as: "Photos/image.png")
@@ -102,7 +157,7 @@ class DiskTests: XCTestCase {
             let imageInFolderUrl = try Disk.getURL(for: "Photos/image.png", in: .documents)
             print("An image was saved as \(imageInFolderUrl.absoluteString)")
             let retrievedInFolderImage = try Disk.retrieve("Photos/image.png", from: .documents, as: UIImage.self)
-            XCTAssert(images[0].size == retrievedInFolderImage.size)
+            XCTAssert(images[0].dataEquals(retrievedInFolderImage))
             
             // Array of images
             try Disk.save(images, to: .documents, as: "album/")
@@ -111,7 +166,7 @@ class DiskTests: XCTestCase {
             print("Images were saved as \(imagesFolderUrl.absoluteString)")
             let retrievedImages = try Disk.retrieve("album/", from: .documents, as: [UIImage].self)
             for i in 0..<images.count {
-                XCTAssert(images[i].size == retrievedImages[i].size)
+                XCTAssert(images[i].dataEquals(retrievedImages[i]))
             }
             
             // ... in folder hierarchy
@@ -121,8 +176,47 @@ class DiskTests: XCTestCase {
             print("Images were saved as \(imagesInFolderUrl.absoluteString)")
             let retrievedInFolderImages = try Disk.retrieve("Photos/summer-album/", from: .documents, as: [UIImage].self)
             for i in 0..<images.count {
-                XCTAssert(images[i].size == retrievedInFolderImages[i].size)
+                XCTAssert(images[i].dataEquals(retrievedInFolderImages[i]))
             }
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
+    }
+    
+    func testAppendImages() {
+        do {
+            // Append a single image to an empty folder
+            try Disk.append(images[0], to: "EmptyFolder/", in: .documents)
+            XCTAssert(Disk.exists("EmptyFolder/0.png", in: .documents))
+            let retrievedImage = try Disk.retrieve("EmptyFolder", from: .documents, as: [UIImage].self)
+            XCTAssert(Disk.exists("EmptyFolder/0.png", in: .documents))
+            XCTAssert(retrievedImage.count == 1)
+            XCTAssert(retrievedImage[0].dataEquals(images[0]))
+
+            // Append an array of images to an empty folder
+            try Disk.append(images, to: "EmptyFolder2/", in: .documents)
+            XCTAssert(Disk.exists("EmptyFolder2/0.png", in: .documents))
+            var retrievedImages = try Disk.retrieve("EmptyFolder2", from: .documents, as: [UIImage].self)
+            XCTAssert(retrievedImages.count == images.count)
+            for i in 0..<retrievedImages.count {
+                let image = retrievedImages[i]
+                XCTAssert(image.dataEquals(images[i]))
+            }
+            
+            // Append a single image to an existing folder with images
+            try Disk.save(images, to: .documents, as: "Folder/")
+            XCTAssert(Disk.exists("Folder/", in: .documents))
+            try Disk.append(images[1], to: "Folder/", in: .documents)
+            retrievedImages = try Disk.retrieve("Folder/", from: .documents, as: [UIImage].self)
+            XCTAssert(retrievedImages.count == images.count + 1)
+            XCTAssert(Disk.exists("Folder/3.png", in: .documents))
+            XCTAssert(retrievedImages.last!.dataEquals(images[1]))
+            
+            // Append an array of images to an existing folder with images
+            try Disk.append(images, to: "Folder/", in: .documents)
+            retrievedImages = try Disk.retrieve("Folder/", from: .documents, as: [UIImage].self)
+            XCTAssert(retrievedImages.count == images.count * 2 + 1)
+            XCTAssert(retrievedImages.last!.dataEquals(images.last!))
         } catch {
             fatalError(convertErrorToString(error))
         }
@@ -166,6 +260,44 @@ class DiskTests: XCTestCase {
         }
     }
     
+    func testAppendData() {
+        do {
+            // Append a single data object to an empty folder
+            try Disk.append(data[0], to: "EmptyFolder/", in: .documents)
+            XCTAssert(Disk.exists("EmptyFolder/0", in: .documents))
+            let retrievedObject = try Disk.retrieve("EmptyFolder", from: .documents, as: [Data].self)
+            XCTAssert(Disk.exists("EmptyFolder/0", in: .documents))
+            XCTAssert(retrievedObject.count == 1)
+            XCTAssert(retrievedObject[0] == data[0])
+            
+            // Append an array of data objects to an empty folder
+            try Disk.append(data, to: "EmptyFolder2/", in: .documents)
+            XCTAssert(Disk.exists("EmptyFolder2/0", in: .documents))
+            var retrievedObjects = try Disk.retrieve("EmptyFolder2", from: .documents, as: [Data].self)
+            XCTAssert(retrievedObjects.count == data.count)
+            for i in 0..<retrievedObjects.count {
+                let object = retrievedObjects[i]
+                XCTAssert(object == data[i])
+            }
+            
+            // Append a single data object to an existing folder with files
+            try Disk.save(data, to: .documents, as: "Folder/")
+            XCTAssert(Disk.exists("Folder/", in: .documents))
+            try Disk.append(data[1], to: "Folder/", in: .documents)
+            retrievedObjects = try Disk.retrieve("Folder/", from: .documents, as: [Data].self)
+            XCTAssert(retrievedObjects.count == data.count + 1)
+            XCTAssert(retrievedObjects.last! == data[1])
+            
+            // Append an array of data objects to an existing folder with files
+            try Disk.append(data, to: "Folder/", in: .documents)
+            retrievedObjects = try Disk.retrieve("Folder/", from: .documents, as: [Data].self)
+            XCTAssert(retrievedObjects.count == data.count * 2 + 1)
+            XCTAssert(retrievedObjects.last! == data.last!)
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
+    }
+    
     func testSaveAsDataRetrieveAsImage() {
         do {
             // save as data
@@ -178,7 +310,7 @@ class DiskTests: XCTestCase {
             
             // Retrieve as image
             let retrievedFileAsImage = try Disk.retrieve("file", from: .documents, as: UIImage.self)
-            XCTAssert(image.size == retrievedFileAsImage.size)
+            XCTAssert(image.dataEquals(retrievedFileAsImage))
             
             // Array of data
             let arrayOfImagesData = images.map { UIImagePNGRepresentation($0)! } // -> [Data]
@@ -189,7 +321,7 @@ class DiskTests: XCTestCase {
             // Retrieve the files as [UIImage]
             let retrievedFilesAsImages = try Disk.retrieve("data-folder/", from: .documents, as: [UIImage].self)
             for i in 0..<images.count {
-                XCTAssert(images[i].size == retrievedFilesAsImages[i].size)
+                XCTAssert(images[i].dataEquals(retrievedFilesAsImages[i]))
             }
         } catch {
             fatalError(convertErrorToString(error))
@@ -207,7 +339,7 @@ class DiskTests: XCTestCase {
             try Disk.save(images[0], to: .documents, as: "image.png")
             XCTAssert(Disk.exists("image.png", in: .documents))
             let retrievedImage = try Disk.retrieve("image.png", from: .documents, as: UIImage.self)
-            XCTAssert(images[0].size == retrievedImage.size)
+            XCTAssert(images[0].dataEquals(retrievedImage))
             
             // ... in folder hierarchy
             try Disk.save(images[0], to: .documents, as: "Folder1/Folder2/Folder3/image.png")
@@ -216,14 +348,14 @@ class DiskTests: XCTestCase {
             XCTAssert(Disk.exists("Folder1/Folder2/Folder3/", in: .documents))
             XCTAssert(Disk.exists("Folder1/Folder2/Folder3/image.png", in: .documents))
             let retrievedImageInFolders = try Disk.retrieve("Folder1/Folder2/Folder3/image.png", from: .documents, as: UIImage.self)
-            XCTAssert(images[0].size == retrievedImageInFolders.size)
+            XCTAssert(images[0].dataEquals(retrievedImageInFolders))
             
             // Array of images
             try Disk.save(images, to: .documents, as: "album")
             XCTAssert(Disk.exists("album", in: .documents))
             let retrievedImages = try Disk.retrieve("album", from: .documents, as: [UIImage].self)
             for i in 0..<images.count {
-                XCTAssert(images[i].size == retrievedImages[i].size)
+                XCTAssert(images[i].dataEquals(retrievedImages[i]))
             }
         } catch {
             fatalError(convertErrorToString(error))
@@ -240,7 +372,7 @@ class DiskTests: XCTestCase {
             try Disk.save(images[0], to: .caches, as: "image.png")
             XCTAssert(Disk.exists("image.png", in: .caches))
             let retrievedImage = try Disk.retrieve("image.png", from: .caches, as: UIImage.self)
-            XCTAssert(images[0].size == retrievedImage.size)
+            XCTAssert(images[0].dataEquals(retrievedImage))
             
             // ... in folder hierarchy
             try Disk.save(images[0], to: .caches, as: "Folder1/Folder2/Folder3/image.png")
@@ -249,14 +381,14 @@ class DiskTests: XCTestCase {
             XCTAssert(Disk.exists("Folder1/Folder2/Folder3/", in: .caches))
             XCTAssert(Disk.exists("Folder1/Folder2/Folder3/image.png", in: .caches))
             let retrievedImageInFolders = try Disk.retrieve("Folder1/Folder2/Folder3/image.png", from: .caches, as: UIImage.self)
-            XCTAssert(images[0].size == retrievedImageInFolders.size)
+            XCTAssert(images[0].dataEquals(retrievedImageInFolders))
             
             // Array of images
             try Disk.save(images, to: .caches, as: "album")
             XCTAssert(Disk.exists("album", in: .caches))
             let retrievedImages = try Disk.retrieve("album", from: .caches, as: [UIImage].self)
             for i in 0..<images.count {
-                XCTAssert(images[i].size == retrievedImages[i].size)
+                XCTAssert(images[i].dataEquals(retrievedImages[i]))
             }
         } catch {
             fatalError(convertErrorToString(error))
@@ -273,7 +405,7 @@ class DiskTests: XCTestCase {
             try Disk.save(images[0], to: .temporary, as: "image.png")
             XCTAssert(Disk.exists("image.png", in: .temporary))
             let retrievedImage = try Disk.retrieve("image.png", from: .temporary, as: UIImage.self)
-            XCTAssert(images[0].size == retrievedImage.size)
+            XCTAssert(images[0].dataEquals(retrievedImage))
             
             // ... in folder hierarchy
             try Disk.save(images[0], to: .temporary, as: "Folder1/Folder2/Folder3/image.png")
@@ -282,14 +414,14 @@ class DiskTests: XCTestCase {
             XCTAssert(Disk.exists("Folder1/Folder2/Folder3/", in: .temporary))
             XCTAssert(Disk.exists("Folder1/Folder2/Folder3/image.png", in: .temporary))
             let retrievedImageInFolders = try Disk.retrieve("Folder1/Folder2/Folder3/image.png", from: .temporary, as: UIImage.self)
-            XCTAssert(images[0].size == retrievedImageInFolders.size)
+            XCTAssert(images[0].dataEquals(retrievedImageInFolders))
             
             // Array of images
             try Disk.save(images, to: .temporary, as: "album")
             XCTAssert(Disk.exists("album", in: .temporary))
             let retrievedImages = try Disk.retrieve("album", from: .temporary, as: [UIImage].self)
             for i in 0..<images.count {
-                XCTAssert(images[i].size == retrievedImages[i].size)
+                XCTAssert(images[i].dataEquals(retrievedImages[i]))
             }
         } catch {
             fatalError(convertErrorToString(error))

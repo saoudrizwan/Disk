@@ -10,6 +10,7 @@
 		104611781F27B27E00BBDB3A /* Disk+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104611771F27B27E00BBDB3A /* Disk+Errors.swift */; };
 		109256561F24576700B3C32A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 109256551F24576700B3C32A /* Images.xcassets */; };
 		1092565A1F247F7700B3C32A /* Disk+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109256591F247F7700B3C32A /* Disk+Helpers.swift */; };
+		10A951BE1F4AC0E200A83A78 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A951BC1F4ABE2900A83A78 /* UIImage+Extension.swift */; };
 		10F3C6EB1F23D984006D42EF /* Disk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10F3C6E11F23D984006D42EF /* Disk.framework */; };
 		10F3C6F01F23D984006D42EF /* DiskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F3C6EF1F23D984006D42EF /* DiskTests.swift */; };
 		10F3C6F21F23D984006D42EF /* Disk.h in Headers */ = {isa = PBXBuildFile; fileRef = 10F3C6E41F23D984006D42EF /* Disk.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -36,6 +37,7 @@
 		104611771F27B27E00BBDB3A /* Disk+Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Disk+Errors.swift"; sourceTree = "<group>"; };
 		109256551F24576700B3C32A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		109256591F247F7700B3C32A /* Disk+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Disk+Helpers.swift"; sourceTree = "<group>"; };
+		10A951BC1F4ABE2900A83A78 /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
 		10F3C6E11F23D984006D42EF /* Disk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Disk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		10F3C6E41F23D984006D42EF /* Disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Disk.h; sourceTree = "<group>"; };
 		10F3C6E51F23D984006D42EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -109,8 +111,9 @@
 			isa = PBXGroup;
 			children = (
 				10F3C6EF1F23D984006D42EF /* DiskTests.swift */,
-				10F3C6F11F23D984006D42EF /* Info.plist */,
+				10A951BC1F4ABE2900A83A78 /* UIImage+Extension.swift */,
 				10F3C7071F23DAF2006D42EF /* Message.swift */,
+				10F3C6F11F23D984006D42EF /* Info.plist */,
 				109256551F24576700B3C32A /* Images.xcassets */,
 			);
 			path = Tests;
@@ -242,6 +245,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				10A951BE1F4AC0E200A83A78 /* UIImage+Extension.swift in Sources */,
 				10F3C6F01F23D984006D42EF /* DiskTests.swift in Sources */,
 				10F3C7081F23DAF2006D42EF /* Message.swift in Sources */,
 			);

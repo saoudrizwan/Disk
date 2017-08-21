@@ -12,7 +12,7 @@ import Disk
 class ViewController: UIViewController {
     
     // MARK: Properties
-    
+
     var posts = [Post]()
     
     // MARK: IBOutlets
@@ -23,7 +23,9 @@ class ViewController: UIViewController {
     
     @IBAction func getTapped(_ sender: Any) {
         // Be sure to check out the comments in the networking function below
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
         getPostsFromWeb { (posts) in
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
             print("Posts retrieved from network request successfully!")
             self.posts = posts
         }
@@ -31,12 +33,7 @@ class ViewController: UIViewController {
     
     @IBAction func saveTapped(_ sender: Any) {
         // Disk is thorough when it comes to error handling, so make sure you understand why an error occurs when it does.
-        // An easy mistake to make is writing data to a file location where a file already exists.
-        // To prevent this from happening, first check if a file exists, and then write to that location:
         do {
-            if Disk.exists("posts.json", in: .documents) {
-                try Disk.remove("posts.json", from: .documents)
-            }
             try Disk.save(self.posts, to: .documents, as: "posts.json")
         } catch let error as NSError {
             fatalError("""
@@ -52,12 +49,16 @@ class ViewController: UIViewController {
         // errors come with a lot of information like a description, failure reason, and recover suggestions.
         
         // You could alternatively use try! or try? instead of do, catch, try blocks
-        try? Disk.save(self.posts, to: .documents, as: "posts.json") // this will fail since posts.json already exists in this location, and will return a discardable result of nil
-        // try! Disk.save(self.posts, to: .documents, as: "posts.json") // this would fail for the same reason, and crash the app during run time
+        // try? Disk.save(self.posts, to: .documents, as: "posts.json") // returns a discardable result of nil
+        // try! Disk.save(self.posts, to: .documents, as: "posts.json") // will crash the app during runtime if this fails
         
-        // One more thing - you can save files in folder hierarchies, for example:
+        // You can also save files in folder hierarchies, for example:
         // try? Disk.save(self.posts, to: .caches, as: "Posts/MyCoolPosts/1.json")
         // This will automatically create the Posts and MyCoolPosts folders
+        
+        // If you want to save new data to a file location, you can treat the file as an array and simply append to it as well.
+        let newPost = Post(userId: 0, id: 0, title: "Appended Post", body: "...")
+        try? Disk.append(newPost, to: "posts.json", in: .documents)
         
         print("Saved posts to disk!")
     }
