@@ -221,7 +221,7 @@ let files = try Disk.retrieve("Nature", from: .documents, as: [Data].self)
 
 **Appending `Data`**
 
-Appending `Data` or an array of `Data` is similar to appending an image or array of images—new files are created and added to the specified folder.
+Appending `Data` or an array of `Data` is similar to appending an image or array of images—new files are created with auto-generated names and added to the specified folder.
 ```swift
 try Disk.append(newDataObject, to: "Folder/", in: .documents)
 ```
