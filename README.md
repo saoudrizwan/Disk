@@ -345,7 +345,7 @@ Disk uses the MIT license. Please file an issue if you have any questions or if 
 
 ## Contribute
 
-Disk is in its infancy, but v0.2.1 provides the barebones of the simplest way to persist data in iOS. Please feel free to send pull requests of any features you think would add to Disk and its philosophy.
+Please feel free to create issues for feature requests or send pull requests of any additions you think would complement Disk and its philosophy.
 
 ## Questions?
 
