@@ -135,7 +135,7 @@ let retrievedMessages = try Disk.retrieve("messages.json", from: .caches, as: [M
 
 Disk also allows you to append a struct or array of structs to an existing file with data of the same type.
 ```swift
-try Disk.append(newMessage, to: "messages.json", in: .documents)
+try Disk.append(newMessage, to: "messages.json", in: .caches)
 ```
 
 ### Images
