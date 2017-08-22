@@ -44,6 +44,7 @@ end
  ```ruby
  github "saoudrizwan/Disk"
  ```
+ *(make sure Xcode 9 is [set as your system's default Xcode](https://stackoverflow.com/a/28901378/3502608) before using Carthage with Swift 4 frameworks)*
 
 * Or embed the Disk framework into your project
 
