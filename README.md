@@ -322,8 +322,8 @@ let _ = URLSession.shared.dataTask(with: request) { (data, response, error) in
     }
 }.resume()
 ```
+... and retrieve it later as `[Post]`...
 ```swift
-// ... and retrieve it later as [Post]...
 let posts = try Disk.retrieve("posts.json", from: .caches, as: [Post].self)
 ```
 
