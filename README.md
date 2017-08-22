@@ -15,6 +15,7 @@
   • <a href="#usage">Usage</a>
   • <a href="#debugging">Debugging</a>
   • <a href="#a-word-from-the-developer">A Word</a>
+  • <a href="#documentation">Documentation</a>
   • <a href="#license">License</a>
   • <a href="#contribute">Contribute</a>
 </p>
@@ -114,7 +115,7 @@ let retrievedMessage = try Disk.retrieve("Folder/message.json", from: .caches, a
 If you Alt + click `retrievedMessage`, then Xcode will show its type as `Message`. Pretty neat, huh?
 <img src="https://user-images.githubusercontent.com/7799382/28643842-0ab38230-720c-11e7-8bf4-33ce329068d1.png" alt="example">
 
-So what happened in the background? Disk first converts `message` to JSON data and [atomically writes](https://stackoverflow.com/a/8548318/3502608) that data to a newly created file at `/Library/Caches/Folder/message.json`. Then when we retrieve the `message`, Disk automatically converts the JSON data to our `Codable` struct type.
+So what happened in the background? Disk first converts `message` to JSON data and [atomically writes](https://stackoverflow.com/a/8548318/3502608) that data to a newly created file at `<Application_Home>/Library/Caches/Folder/message.json`. Then when we retrieve the `message`, Disk automatically converts the JSON data to our `Codable` struct type.
 
 **What about arrays of structs?**
 
@@ -138,7 +139,7 @@ Disk also allows you to append a struct or array of structs to a file with data 
 ```swift
 try Disk.append(newMessage, to: "messages.json", in: .caches)
 ```
-**Note:** you may append a struct to an empty file, but then in order to properly retrieve that struct again, you must retrieve it as an array.
+**Note:** you may append a single struct to an empty file, but then in order to properly retrieve that struct again, you must retrieve it as an array.
 
 ### Images
 ```swift
