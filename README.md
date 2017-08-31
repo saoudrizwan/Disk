@@ -39,6 +39,7 @@ use_frameworks!
 
 end
 ```
+*(if you run into problems, `pod repo update` and try again)*
 
 * Installation for <a href="https://github.com/Carthage/Carthage" target="_blank">Carthage</a>:
 
