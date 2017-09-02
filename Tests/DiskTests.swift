@@ -49,6 +49,18 @@ class DiskTests: XCTestCase {
     let images = [
         UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
         UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
+        UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
         UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
     ]
     

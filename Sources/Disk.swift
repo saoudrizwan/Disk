@@ -191,4 +191,12 @@ extension Disk {
             throw error
         }
     }
+    
+    /// Get Int from a file name
+    static func fileNameInt(_ url: URL) -> Int? {
+        let fileExtension = url.pathExtension
+        let filePath = url.lastPathComponent
+        let fileName = filePath.replacingOccurrences(of: fileExtension, with: "")
+        return Int(String(fileName.characters.filter { "0123456789".characters.contains($0) }))
+    }
 }

@@ -75,10 +75,7 @@ public extension Disk {
                 var largestFileNameInt = -1
                 for i in 0..<fileUrls.count {
                     let fileUrl = fileUrls[i]
-                    let fileExtension = fileUrl.pathExtension
-                    let filePath = fileUrl.lastPathComponent
-                    let fileName = filePath.replacingOccurrences(of: fileExtension, with: "").replacingOccurrences(of: ".", with: "")
-                    if let fileNameInt = Int(String(fileName.characters.filter { "0123456789".characters.contains($0) })) {
+                    if let fileNameInt = fileNameInt(fileUrl) {
                         if fileNameInt > largestFileNameInt {
                             largestFileNameInt = fileNameInt
                         }
@@ -145,9 +142,15 @@ public extension Disk {
         do {
             let url = try getExistingFileURL(for: path, in: directory)
             let fileUrls = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [])
+            let sortedFileUrls = fileUrls.sorted(by: { (url1, url2) -> Bool in
+                if let fileNameInt1 = fileNameInt(url1), let fileNameInt2 = fileNameInt(url2) {
+                    return fileNameInt1 <= fileNameInt2
+                }
+                return true
+            })
             var images = [UIImage]()
-            for i in 0..<fileUrls.count {
-                let fileUrl = fileUrls[i]
+            for i in 0..<sortedFileUrls.count {
+                let fileUrl = sortedFileUrls[i]
                 let data = try Data(contentsOf: fileUrl)
                 if let image = UIImage(data: data) {
                     images.append(image)
@@ -158,5 +161,6 @@ public extension Disk {
             throw error
         }
     }
+
 }
 
