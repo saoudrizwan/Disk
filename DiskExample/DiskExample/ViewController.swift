@@ -57,7 +57,7 @@ class ViewController: UIViewController {
         // This will automatically create the Posts and MyCoolPosts folders
         
         // If you want to save new data to a file location, you can treat the file as an array and simply append to it as well.
-        let newPost = Post(userId: 0, id: 0, title: "Appended Post", body: "...")
+        let newPost = Post(userId: 0, id: self.posts.count + 1, title: "Appended Post", body: "...")
         try? Disk.append(newPost, to: "posts.json", in: .documents)
         
         print("Saved posts to disk!")
