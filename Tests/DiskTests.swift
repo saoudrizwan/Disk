@@ -49,18 +49,6 @@ class DiskTests: XCTestCase {
     let images = [
         UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
         UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
-        UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
-        UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
-        UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
-        UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
-        UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
-        UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
-        UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
-        UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
-        UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
-        UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
-        UIImage(named: "Deku", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
-        UIImage(named: "AllMight", in: Bundle(for: DiskTests.self), compatibleWith: nil)!,
         UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
     ]
     
@@ -664,6 +652,24 @@ class DiskTests: XCTestCase {
             
             let album = try Disk.retrieve("Folder", from: .documents, as: [UIImage].self)
             XCTAssert(album.count == 3)
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
+    }
+    
+    // Test sorting of many files saved to folder as array
+    func testFilesRetrievalSorting() {
+        do {
+            let manyObjects = data + data + data + data + data
+            try Disk.save(manyObjects, to: .documents, as: "Folder/")
+            
+            let retrievedFiles = try Disk.retrieve("Folder", from: .documents, as: [Data].self)
+            
+            for i in 0..<manyObjects.count {
+                let object = manyObjects[i]
+                let file = retrievedFiles[i]
+                XCTAssert(object == file)
+            }
         } catch {
             fatalError(convertErrorToString(error))
         }
