@@ -55,7 +55,7 @@ And `import Disk` in the files you'd like to use it.
 
 ## Usage
 
-Disk currently supports file management of the following types:
+Disk currently supports persistence of the following types:
 
 * `Codable`
 * `[Codable]`
@@ -64,7 +64,7 @@ Disk currently supports file management of the following types:
 * `Data`
 * `[Data]`
 
-*These are generally the only types you'll ever need to deal with when persisting data on iOS.*
+*These are generally the only types you'll ever need to deal with on iOS.*
 
 Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) and therefore allows you to save files in three primary directories:
 
