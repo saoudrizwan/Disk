@@ -16,6 +16,7 @@
   • <a href="#debugging">Debugging</a>
   • <a href="#a-word-from-the-developer">A Word</a>
   • <a href="#documentation">Documentation</a>
+  • <a href="#apps-using-disk">Apps Using Disk</a>
   • <a href="#license">License</a>
   • <a href="#contribute">Contribute</a>
   • <a href="#questions">Questions?</a>
@@ -342,6 +343,10 @@ Best of all, Disk is thorough when it comes to throwing errors, ensuring that yo
 ## Documentation
 Option + click on any of Disk's methods for detailed documentation.
 <img src="https://user-images.githubusercontent.com/7799382/29153708-e49f0842-7d43-11e7-8eb3-4b2d13b56b70.png" alt="documentation">
+
+## Apps Using Disk
+
+* [AudioKit Synth One](https://audiokitpro.com/audiokit-synth-one/)
 
 ## License
 
