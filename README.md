@@ -115,7 +115,7 @@ try Disk.save(message, to: .caches, as: "Folder/message.json")
 ```swift
 let retrievedMessage = try Disk.retrieve("Folder/message.json", from: .caches, as: Message.self)
 ```
-If you Alt + click `retrievedMessage`, then Xcode will show its type as `Message`. Pretty neat, huh?
+If you Option + click `retrievedMessage`, then Xcode will show its type as `Message`. Pretty neat, huh?
 <img src="https://user-images.githubusercontent.com/7799382/28643842-0ab38230-720c-11e7-8bf4-33ce329068d1.png" alt="example">
 
 So what happened in the background? Disk first converts `message` to JSON data and [atomically writes](https://stackoverflow.com/a/8548318/3502608) that data to a newly created file at `<Application_Home>/Library/Caches/Folder/message.json`. Then when we retrieve the `message`, Disk automatically converts the JSON data to our `Codable` struct type.
