@@ -65,7 +65,7 @@ Disk currently supports persistence of the following types:
 * `Data`
 * `[Data]`
 
-*These are generally the only types you'll ever need to deal with on iOS.*
+*These are generally the only types you'll ever need to persist on iOS.*
 
 Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) and therefore allows you to save files in three primary directories:
 
