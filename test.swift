@@ -1,2 +1,2 @@
-let a = 0
+let a = 32
 var x:String =""
