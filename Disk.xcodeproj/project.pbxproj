@@ -21,6 +21,7 @@
 		10F3C7041F23D9C9006D42EF /* Disk+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F3C7031F23D9C9006D42EF /* Disk+Data.swift */; };
 		10F3C7061F23D9E0006D42EF /* Disk+[Data].swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F3C7051F23D9E0006D42EF /* Disk+[Data].swift */; };
 		10F3C7081F23DAF2006D42EF /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F3C7071F23DAF2006D42EF /* Message.swift */; };
+		EA85F2B11F65B79600E9654E /* Disk_tvOS.h in Headers */ = {isa = PBXBuildFile; fileRef = EA85F2AF1F65B79600E9654E /* Disk_tvOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,9 @@
 		10F3C7031F23D9C9006D42EF /* Disk+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Disk+Data.swift"; sourceTree = "<group>"; };
 		10F3C7051F23D9E0006D42EF /* Disk+[Data].swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Disk+[Data].swift"; sourceTree = "<group>"; };
 		10F3C7071F23DAF2006D42EF /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		EA85F2AD1F65B79500E9654E /* Disk_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Disk_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA85F2AF1F65B79600E9654E /* Disk_tvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Disk_tvOS.h; sourceTree = "<group>"; };
+		EA85F2B01F65B79600E9654E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +73,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EA85F2A91F65B79500E9654E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -77,6 +88,7 @@
 			children = (
 				10F3C6E31F23D984006D42EF /* Sources */,
 				10F3C6EE1F23D984006D42EF /* Tests */,
+				EA85F2AE1F65B79600E9654E /* Disk_tvOS */,
 				10F3C6E21F23D984006D42EF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -86,6 +98,7 @@
 			children = (
 				10F3C6E11F23D984006D42EF /* Disk.framework */,
 				10F3C6EA1F23D984006D42EF /* DiskTests.xctest */,
+				EA85F2AD1F65B79500E9654E /* Disk_tvOS.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -119,6 +132,15 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		EA85F2AE1F65B79600E9654E /* Disk_tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				EA85F2AF1F65B79600E9654E /* Disk_tvOS.h */,
+				EA85F2B01F65B79600E9654E /* Info.plist */,
+			);
+			path = Disk_tvOS;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -127,6 +149,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				10F3C6F21F23D984006D42EF /* Disk.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EA85F2AA1F65B79500E9654E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EA85F2B11F65B79600E9654E /* Disk_tvOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,6 +199,24 @@
 			productReference = 10F3C6EA1F23D984006D42EF /* DiskTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		EA85F2AC1F65B79500E9654E /* Disk_tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EA85F2B41F65B79600E9654E /* Build configuration list for PBXNativeTarget "Disk_tvOS" */;
+			buildPhases = (
+				EA85F2A81F65B79500E9654E /* Sources */,
+				EA85F2A91F65B79500E9654E /* Frameworks */,
+				EA85F2AA1F65B79500E9654E /* Headers */,
+				EA85F2AB1F65B79500E9654E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Disk_tvOS;
+			productName = Disk_tvOS;
+			productReference = EA85F2AD1F65B79500E9654E /* Disk_tvOS.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -187,6 +235,10 @@
 						CreatedOnToolsVersion = 9.0;
 						ProvisioningStyle = Manual;
 					};
+					EA85F2AC1F65B79500E9654E = {
+						CreatedOnToolsVersion = 9.0;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 10F3C6DB1F23D984006D42EF /* Build configuration list for PBXProject "Disk" */;
@@ -202,6 +254,7 @@
 			projectRoot = "";
 			targets = (
 				10F3C6E01F23D984006D42EF /* Disk */,
+				EA85F2AC1F65B79500E9654E /* Disk_tvOS */,
 				10F3C6E91F23D984006D42EF /* DiskTests */,
 			);
 		};
@@ -220,6 +273,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				109256561F24576700B3C32A /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EA85F2AB1F65B79500E9654E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,6 +308,13 @@
 				10A951BE1F4AC0E200A83A78 /* UIImage+Extension.swift in Sources */,
 				10F3C6F01F23D984006D42EF /* DiskTests.swift in Sources */,
 				10F3C7081F23DAF2006D42EF /* Message.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EA85F2A81F65B79500E9654E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -452,6 +519,52 @@
 			};
 			name = Release;
 		};
+		EA85F2B21F65B79600E9654E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = SV6W498A95;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Disk_tvOS/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = saoudrizwan.Disk;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		EA85F2B31F65B79600E9654E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = SV6W498A95;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Disk_tvOS/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = saoudrizwan.Disk;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -478,6 +591,15 @@
 			buildConfigurations = (
 				10F3C6F91F23D984006D42EF /* Debug */,
 				10F3C6FA1F23D984006D42EF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EA85F2B41F65B79600E9654E /* Build configuration list for PBXNativeTarget "Disk_tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EA85F2B21F65B79600E9654E /* Debug */,
+				EA85F2B31F65B79600E9654E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
