@@ -629,7 +629,7 @@ class DiskTests: XCTestCase {
     
     func testInvalidName() {
         do {
-            try Disk.save(messages, to: .documents, as: "//////messages.json/")
+            try Disk.save(messages, to: .documents, as: "//////messages.json")
             XCTAssert(Disk.exists("messages.json", in: .documents))
         } catch {
             fatalError(convertErrorToString(error))
@@ -672,6 +672,21 @@ class DiskTests: XCTestCase {
             }
         } catch {
             fatalError(convertErrorToString(error))
+        }
+    }
+    
+    // Test saving struct/structs as a folder
+    func testExpectedErrorForSavingStructsAsFilesInAFolder() {
+        do {
+            let oneMessage = messages[0]
+            let multipleMessages = messages
+            
+            try Disk.save(oneMessage, to: .documents, as: "Folder/")
+            try Disk.save(multipleMessages, to: .documents, as: "Folder/")
+            try Disk.append(oneMessage, to: "Folder/", in: .documents)
+            let _ = try Disk.retrieve("Folder/", from: .documents, as: [Message].self)
+        } catch let error as NSError {
+            XCTAssert(error.code == Disk.ErrorCode.invalidFileName.rawValue)
         }
     }
 }
