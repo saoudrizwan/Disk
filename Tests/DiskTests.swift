@@ -29,6 +29,7 @@ class DiskTests: XCTestCase {
         do {
             try Disk.clear(.documents)
             try Disk.clear(.caches)
+            try Disk.clear(.applicationSupport)
             try Disk.clear(.temporary)
         } catch {
             fatalError(convertErrorToString(error))
@@ -395,6 +396,39 @@ class DiskTests: XCTestCase {
         }
     }
     
+    func testApplicationSupport() {
+        do {
+            // json
+            try Disk.save(messages, to: .applicationSupport, as: "messages.json")
+            XCTAssert(Disk.exists("messages.json", in: .applicationSupport))
+            
+            // 1 image
+            try Disk.save(images[0], to: .applicationSupport, as: "image.png")
+            XCTAssert(Disk.exists("image.png", in: .applicationSupport))
+            let retrievedImage = try Disk.retrieve("image.png", from: .applicationSupport, as: UIImage.self)
+            XCTAssert(images[0].dataEquals(retrievedImage))
+            
+            // ... in folder hierarchy
+            try Disk.save(images[0], to: .applicationSupport, as: "Folder1/Folder2/Folder3/image.png")
+            XCTAssert(Disk.exists("Folder1", in: .applicationSupport))
+            XCTAssert(Disk.exists("Folder1/Folder2/", in: .applicationSupport))
+            XCTAssert(Disk.exists("Folder1/Folder2/Folder3/", in: .applicationSupport))
+            XCTAssert(Disk.exists("Folder1/Folder2/Folder3/image.png", in: .applicationSupport))
+            let retrievedImageInFolders = try Disk.retrieve("Folder1/Folder2/Folder3/image.png", from: .applicationSupport, as: UIImage.self)
+            XCTAssert(images[0].dataEquals(retrievedImageInFolders))
+            
+            // Array of images
+            try Disk.save(images, to: .applicationSupport, as: "album")
+            XCTAssert(Disk.exists("album", in: .applicationSupport))
+            let retrievedImages = try Disk.retrieve("album", from: .applicationSupport, as: [UIImage].self)
+            for i in 0..<images.count {
+                XCTAssert(images[i].dataEquals(retrievedImages[i]))
+            }
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
+    }
+    
     func testTemporary() {
         do {
             // json
@@ -688,5 +722,21 @@ class DiskTests: XCTestCase {
         } catch let error as NSError {
             XCTAssert(error.code == Disk.ErrorCode.invalidFileName.rawValue)
         }
+    }
+    
+    // Test iOS 11 Volume storage resource values
+    @available(iOS 11.0, *)
+    func testiOS11VolumeStorageResourceValues() {
+        XCTAssert(Disk.totalCapacity != nil && Disk.totalCapacity != 0)
+        XCTAssert(Disk.availableCapacity != nil && Disk.availableCapacity != 0)
+        XCTAssert(Disk.availableCapacityForImportantUsage != nil && Disk.availableCapacityForImportantUsage != 0)
+        XCTAssert(Disk.availableCapacityForOpportunisticUsage != nil && Disk.availableCapacityForOpportunisticUsage != 0)
+        
+        print("\n\n============== Disk iOS 11 Volume Information ==============")
+        print("Disk.totalCapacity = \(Disk.totalCapacity!)")
+        print("Disk.availableCapacity = \(Disk.availableCapacity!)")
+        print("Disk.availableCapacityForImportantUsage = \(Disk.availableCapacityForImportantUsage!)")
+        print("Disk.availableCapacityForOpportunisticUsage = \(Disk.availableCapacityForOpportunisticUsage!)")
+        print("============================================================\n\n")
     }
 }
