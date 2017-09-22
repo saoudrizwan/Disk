@@ -265,7 +265,7 @@ DispatchQueue.global(qos: .userInitiated).async {
 *Don't forget to handle these sorts of tasks [being interrupted](https://stackoverflow.com/a/18305715/3502608).*
 
 ### iOS 11 Volume Information
-Apple introduced several great iOS storage practices in [Session 204](https://developer.apple.com/videos/play/fall2017/204/), putting emphasis on several new `NSURL` volume capacity details added in iOS 11. This information allows us to gauge when it's appropriate to store data on the user's disk.
+Apple introduced several great iOS storage practices in [Session 204](https://developer.apple.com/videos/play/fall2017/204/), putting emphasis on several new `NSURL` volume capacity details added in iOS 11. This information allows us to gauge when it's appropriate to store data on the user's disk. 
 
 * Total capacity
 ```swift
