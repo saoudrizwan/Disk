@@ -84,9 +84,9 @@ Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/i
 #### Caches Directory `.caches`
 
 > Data that **can be downloaded again or regenerated** should be stored in the <Application_Home>/Library/Caches directory. Examples of files you should put in the Caches directory include database cache files and downloadable content, such as that used by magazine, newspaper, and map applications.
-
+>
 > Use this directory to write any application-specific support files that you want to persist between launches of the application or during application updates. **Your application is generally responsible for adding and removing these files** (see [Helper Methods](#helper-methods)). It should also be able to re-create these files as needed because iTunes removes them during a full restoration of the device. In iOS 2.2 and later, the contents of this directory are not backed up by iTunes.
-
+>
 > Note that the system may delete the Caches/ directory to free up disk space, so your app must be able to re-create or download these files as needed.
 
 #### Application Support Directory `.applicationSupport`
