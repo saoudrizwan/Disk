@@ -5,7 +5,7 @@
 <p align="center">
     <img src="https://user-images.githubusercontent.com/7799382/28644637-2fe6f818-720f-11e7-89a4-35250b6665ce.png" alt="Platform: iOS 9.0+" />
     <a href="https://developer.apple.com/swift" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28500845-b43a66fa-6f84-11e7-8281-6e689d8aaab9.png" alt="Language: Swift 4" /></a>
-    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/30260444-33f63ae0-967c-11e7-8193-625d41dbcbb6.png" alt="CocoaPods compatible" /></a>
+    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/30745964-eb3fe0fa-9f5c-11e7-986a-e4132b40fa9c.png" alt="CocoaPods compatible" /></a>
     <a href="https://github.com/Carthage/Carthage" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29512091-1e85aacc-8616-11e7-9851-d13dd1700a36.png" alt="Carthage compatible" /></a>
     <img src="https://user-images.githubusercontent.com/7799382/28500847-b6393648-6f84-11e7-9a7a-f6ae78207416.png" alt="License: MIT" />
 </p>
@@ -30,25 +30,33 @@ Disk requires **iOS 9+** and is compatible with **Swift 4** projects. Therefore 
 
 ## Installation
 
-* Installation for <a href="https://guides.cocoapods.org/using/using-cocoapods.html" target="_blank">CocoaPods</a>:
+* <a href="https://guides.cocoapods.org/using/using-cocoapods.html" target="_blank">CocoaPods</a>:
 
 ```ruby
 platform :ios, '9.0'
 target 'ProjectName' do
 use_frameworks!
 
-    pod 'Disk', '~> 0.2.4'
+    pod 'Disk', '~> 0.3.0'
 
 end
 ```
 *(if you run into problems, `pod repo update` and try again)*
 
-* Installation for <a href="https://github.com/Carthage/Carthage" target="_blank">Carthage</a>:
+* <a href="https://github.com/Carthage/Carthage" target="_blank">Carthage</a>:
 
  ```ruby
  github "saoudrizwan/Disk"
  ```
  *(make sure Xcode 9 is [set as your system's default Xcode](https://stackoverflow.com/a/28901378/3502608) before using CocoaPods or Carthage with Swift 4 frameworks)*
+
+* <a href="https://github.com/apple/swift-package-manager" target="_blank">Swift Package Manager</a>:
+
+```
+dependencies: [
+    .Package(url: "https://github.com/saoudrizwan/Disk.git", “0.3.0”)
+]
+```
 
 * Or embed the Disk framework into your project
 
@@ -71,19 +79,23 @@ Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/i
 
 #### Documents Directory `.documents`
 
-"Only documents and other data that is **user-generated, or that cannot otherwise be recreated by your application**, should be stored in the <Application_Home>/Documents directory and will be automatically backed up by iCloud."
+> Only documents and other data that is **user-generated, or that cannot otherwise be recreated by your application**, should be stored in the <Application_Home>/Documents directory and will be automatically backed up by iCloud.
 
 #### Caches Directory `.caches`
 
-"Data that **can be downloaded again or regenerated** should be stored in the <Application_Home>/Library/Caches directory. Examples of files you should put in the Caches directory include database cache files and downloadable content, such as that used by magazine, newspaper, and map applications.
+> Data that **can be downloaded again or regenerated** should be stored in the <Application_Home>/Library/Caches directory. Examples of files you should put in the Caches directory include database cache files and downloadable content, such as that used by magazine, newspaper, and map applications.
 
-Use this directory to write any application-specific support files that you want to persist between launches of the application or during application updates. **Your application is generally responsible for adding and removing these files** (see [Helper Methods](#helper-methods)). It should also be able to re-create these files as needed because iTunes removes them during a full restoration of the device. In iOS 2.2 and later, the contents of this directory are not backed up by iTunes.
+> Use this directory to write any application-specific support files that you want to persist between launches of the application or during application updates. **Your application is generally responsible for adding and removing these files** (see [Helper Methods](#helper-methods)). It should also be able to re-create these files as needed because iTunes removes them during a full restoration of the device. In iOS 2.2 and later, the contents of this directory are not backed up by iTunes.
 
-Note that the system may delete the Caches/ directory to free up disk space, so your app must be able to re-create or download these files as needed."
+> Note that the system may delete the Caches/ directory to free up disk space, so your app must be able to re-create or download these files as needed.
+
+#### Application Support Directory `.applicationSupport`
+
+> Put app-created support files in the <Application_Home>/Library/Application support directory. In general, this directory includes files that the app uses to run but that should remain hidden from the user. This directory can also include data files, configuration files, templates and modified versions of resources loaded from the app bundle.
 
 #### Temporary Directory `.temporary`
 
-"Data that is used only temporarily should be stored in the <Application_Home>/tmp directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device."
+> Data that is used only temporarily should be stored in the <Application_Home>/tmp directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device.
 
 With all these requirements, it can be hard working with the iOS file system appropriately, which is why Disk was born. Disk makes following these tedious rules simple and fun.  
 
@@ -251,6 +263,29 @@ DispatchQueue.global(qos: .userInitiated).async {
 }
 ```
 *Don't forget to handle these sorts of tasks [being interrupted](https://stackoverflow.com/a/18305715/3502608).*
+
+### iOS 11 Volume Information
+Apple introduced several great iOS storage practices in [Session 204](https://developer.apple.com/videos/play/fall2017/204/), putting emphasis on several new NSURL volume capacity details added in iOS 11. This information allows us to gauge when it's appropriate to store data on the user's disk.
+
+* Total capacity
+```swift
+Disk.totalCapacity
+```
+
+* Available capacity
+```swift
+Disk.availableCapacity
+```
+
+* Available capacity for important usage. This indicates the amount of space that can be made available  for things the user has explicitly requested in the app's UI (i.e. downloading a video or new level for a game.)
+```swift
+Disk.availableCapacityForImportantUsage
+```
+
+* Available capacity for opportunistic usage. This indicates the amount of space available for things that the user is likely to want but hasn't explicitly requested (i.e. next episode in video series they're watching, or recently updated documents in a server that they might be likely to open.)
+```swift
+Disk.availableCapacityForOpportunisticUsage
+```
 
 ### Helper Methods
 
