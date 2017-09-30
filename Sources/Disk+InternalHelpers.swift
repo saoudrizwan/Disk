@@ -52,7 +52,26 @@ extension Disk {
                 temporaryUrl = URL(string: fixedUrl)!
             }
             return temporaryUrl
+        case .sharedContainer(let appGroupName):
+            if var url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupName) {
+                if let validPath = validPath {
+                    url = url.appendingPathComponent(validPath, isDirectory: false)
+                }
+                if url.absoluteString.lowercased().prefix(filePrefix.characters.count) != filePrefix {
+                    let fixedUrl = filePrefix + url.absoluteString
+                    url = URL(string: fixedUrl)!
+                }
+                return url
+            } else {
+                throw createError(
+                    .couldNotAccessSharedContainer,
+                    description: "Could not create URL for \(directory.pathDescription)/\(validPath ?? "")",
+                    failureReason: "Could not get access to shared container with app group named \(appGroupName).",
+                    recoverySuggestion: "Check that the app-group name in the entitlement matches the string provided."
+                )
+            }
         }
+        
         if var url = FileManager.default.urls(for: searchPathDirectory, in: .userDomainMask).first {
             if let validPath = validPath {
                 url = url.appendingPathComponent(validPath, isDirectory: false)
@@ -65,7 +84,7 @@ extension Disk {
         } else {
             throw createError(
                 .couldNotAccessUserDomainMask,
-                description: "Could not create URL for \(directory.rawValue)/\(validPath ?? "")",
+                description: "Could not create URL for \(directory.pathDescription)/\(validPath ?? "")",
                 failureReason: "Could not get access to the file system's user domain mask.",
                 recoverySuggestion: "Use a different directory."
             )
