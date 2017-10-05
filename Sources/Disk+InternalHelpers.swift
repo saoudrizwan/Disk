@@ -47,7 +47,7 @@ extension Disk {
             if let validPath = validPath {
                 temporaryUrl = temporaryUrl.appendingPathComponent(validPath, isDirectory: false)
             }
-            if temporaryUrl.absoluteString.lowercased().prefix(filePrefix.characters.count) != filePrefix {
+            if temporaryUrl.absoluteString.lowercased().prefix(filePrefix.count) != filePrefix {
                 let fixedUrl = filePrefix + temporaryUrl.absoluteString
                 temporaryUrl = URL(string: fixedUrl)!
             }
@@ -76,7 +76,7 @@ extension Disk {
             if let validPath = validPath {
                 url = url.appendingPathComponent(validPath, isDirectory: false)
             }
-            if url.absoluteString.lowercased().prefix(filePrefix.characters.count) != filePrefix {
+            if url.absoluteString.lowercased().prefix(filePrefix.count) != filePrefix {
                 let fixedUrl = filePrefix + url.absoluteString
                 url = URL(string: fixedUrl)!
             }
@@ -119,7 +119,7 @@ extension Disk {
             .components(separatedBy: invalidCharacters)
             .joined(separator: "")
         let validFileName = removeSlashesAtBeginning(of: pathWithoutIllegalCharacters)
-        guard validFileName.characters.count > 0  && validFileName != "." else {
+        guard validFileName.count > 0  && validFileName != "." else {
             throw createError(
                 .invalidFileName,
                 description: "\(originalString) is an invalid file name.",
@@ -190,6 +190,6 @@ extension Disk {
         let fileExtension = url.pathExtension
         let filePath = url.lastPathComponent
         let fileName = filePath.replacingOccurrences(of: fileExtension, with: "")
-        return Int(String(fileName.characters.filter { "0123456789".characters.contains($0) }))
+        return Int(String(fileName.filter { "0123456789".contains($0) }))
     }
 }
