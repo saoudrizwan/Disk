@@ -5,7 +5,7 @@
 <p align="center">
     <img src="https://user-images.githubusercontent.com/7799382/28644637-2fe6f818-720f-11e7-89a4-35250b6665ce.png" alt="Platform: iOS 9.0+" />
     <a href="https://developer.apple.com/swift" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28500845-b43a66fa-6f84-11e7-8281-6e689d8aaab9.png" alt="Language: Swift 4" /></a>
-    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/30745964-eb3fe0fa-9f5c-11e7-986a-e4132b40fa9c.png" alt="CocoaPods compatible" /></a>
+    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/31215475-79423dba-a964-11e7-874e-d50d48d03a2a.png" alt="CocoaPods compatible" /></a>
     <a href="https://github.com/Carthage/Carthage" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29512091-1e85aacc-8616-11e7-9851-d13dd1700a36.png" alt="Carthage compatible" /></a>
     <img src="https://user-images.githubusercontent.com/7799382/28500847-b6393648-6f84-11e7-9a7a-f6ae78207416.png" alt="License: MIT" />
 </p>
@@ -37,7 +37,7 @@ platform :ios, '9.0'
 target 'ProjectName' do
 use_frameworks!
 
-    pod 'Disk', '~> 0.3.0'
+    pod 'Disk', '~> 0.3.1'
 
 end
 ```
@@ -97,7 +97,15 @@ Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/i
 
 > Data that is used only temporarily should be stored in the <Application_Home>/tmp directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device.
 
-With all these requirements, it can be hard working with the iOS file system appropriately, which is why Disk was born. Disk makes following these tedious rules simple and fun.  
+#### Application Group Shared Container `.sharedContainer(appGroupName: "app.group.identifier")`
+
+Multiple applications on a single device can access a shared directory, as long as these apps have the same `groupIdentifier` in the `com.apple.security.application-groups` entitlements array, as described in [Adding an App to an App Group](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/EnablingAppSandbox.html#//apple_ref/doc/uid/TP40011195-CH4-SW19) in [Entitlement Key Reference](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/AboutEntitlements.html#//apple_ref/doc/uid/TP40011195).
+
+For more information, visit the documentation: [https://developer.apple.com/documentation/foundation/nsfilemanager/1412643-containerurlforsecurityapplicati](https://developer.apple.com/documentation/foundation/nsfilemanager/1412643-containerurlforsecurityapplicati).
+
+---
+
+With all these requirements and best practices, it can be hard working with the iOS file system appropriately, which is why Disk was born. Disk makes following these tedious rules simple and fun.
 
 ### Using Disk is easy.
 
