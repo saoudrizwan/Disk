@@ -97,11 +97,11 @@ Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/i
 
 > Data that is used only temporarily should be stored in the <Application_Home>/tmp directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device.
 
-#### Application Group Shared Container `.sharedContainer(appGroupName: "app.group.identifier")`
+#### Application Group Shared Container `.sharedContainer(appGroupName: String)`
 
 Multiple applications on a single device can access a shared directory, as long as these apps have the same `groupIdentifier` in the `com.apple.security.application-groups` entitlements array, as described in [Adding an App to an App Group](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/EnablingAppSandbox.html#//apple_ref/doc/uid/TP40011195-CH4-SW19) in [Entitlement Key Reference](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/AboutEntitlements.html#//apple_ref/doc/uid/TP40011195).
 
-For more information, visit the documentation: [https://developer.apple.com/documentation/foundation/nsfilemanager/1412643-containerurlforsecurityapplicati](https://developer.apple.com/documentation/foundation/nsfilemanager/1412643-containerurlforsecurityapplicati).
+For more information, visit the documentation: [https://developer.apple.com/documentation/foundation/nsfilemanager/1412643-containerurlforsecurityapplicati](https://developer.apple.com/documentation/foundation/nsfilemanager/1412643-containerurlforsecurityapplicati)
 
 ---
 
