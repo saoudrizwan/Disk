@@ -28,8 +28,9 @@ extension Disk {
         case serialization = 1
         case deserialization = 2
         case invalidFileName = 3
-        case couldNotAccessUserDomainMask = 4
-        case couldNotAccessSharedContainer = 5
+        case couldNotAccessTemporaryDirectory = 4
+        case couldNotAccessUserDomainMask = 5
+        case couldNotAccessSharedContainer = 6
     }
     
     public static let errorDomain = "DiskErrorDomain"

@@ -43,15 +43,23 @@ extension Disk {
         case .applicationSupport:
             searchPathDirectory = .applicationSupportDirectory
         case .temporary:
-            var temporaryUrl = URL(string: NSTemporaryDirectory())!
-            if let validPath = validPath {
-                temporaryUrl = temporaryUrl.appendingPathComponent(validPath, isDirectory: false)
+            if var url = URL(string: NSTemporaryDirectory()) {
+                if let validPath = validPath {
+                    url = url.appendingPathComponent(validPath, isDirectory: false)
+                }
+                if url.absoluteString.lowercased().prefix(filePrefix.count) != filePrefix {
+                    let fixedUrlString = filePrefix + url.absoluteString
+                    url = URL(string: fixedUrlString)!
+                }
+                return url
+            } else {
+                throw createError(
+                    .couldNotAccessTemporaryDirectory,
+                    description: "Could not create URL for \(directory.pathDescription)/\(validPath ?? "")",
+                    failureReason: "Could not get access to the application's temporary directory.",
+                    recoverySuggestion: "Use a different directory."
+                )
             }
-            if temporaryUrl.absoluteString.lowercased().prefix(filePrefix.count) != filePrefix {
-                let fixedUrl = filePrefix + temporaryUrl.absoluteString
-                temporaryUrl = URL(string: fixedUrl)!
-            }
-            return temporaryUrl
         case .sharedContainer(let appGroupName):
             if var url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupName) {
                 if let validPath = validPath {
@@ -71,14 +79,13 @@ extension Disk {
                 )
             }
         }
-        
         if var url = FileManager.default.urls(for: searchPathDirectory, in: .userDomainMask).first {
             if let validPath = validPath {
                 url = url.appendingPathComponent(validPath, isDirectory: false)
             }
             if url.absoluteString.lowercased().prefix(filePrefix.count) != filePrefix {
-                let fixedUrl = filePrefix + url.absoluteString
-                url = URL(string: fixedUrl)!
+                let fixedUrlString = filePrefix + url.absoluteString
+                url = URL(string: fixedUrlString)!
             }
             return url
         } else {
