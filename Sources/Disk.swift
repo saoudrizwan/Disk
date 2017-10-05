@@ -52,8 +52,9 @@ public class Disk {
         /// The system will periodically purge these files when your app is not running; therefore, you cannot rely on these files persisting after your app terminates.
         case temporary
         
-        /// Sandboxed apps in macOS and all apps in iOS that need to share files with other apps from the same developer on a given device can use a shared container along with the com.apple.security.application-groups entitlement.
+        /// Sandboxed apps that need to share files with other apps from the same developer on a given device can use a shared container along with the com.apple.security.application-groups entitlement.
         /// The shared container or "app group" identifier string is used to locate the corresponding group's shared directory.
+        /// For more details, visit https://developer.apple.com/documentation/foundation/nsfilemanager/1412643-containerurlforsecurityapplicati
         case sharedContainer(appGroupName: String)
         
         public var pathDescription: String {
