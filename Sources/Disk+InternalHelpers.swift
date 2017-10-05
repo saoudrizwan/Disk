@@ -57,7 +57,7 @@ extension Disk {
                 if let validPath = validPath {
                     url = url.appendingPathComponent(validPath, isDirectory: false)
                 }
-                if url.absoluteString.lowercased().prefix(filePrefix.characters.count) != filePrefix {
+                if url.absoluteString.lowercased().prefix(filePrefix.count) != filePrefix {
                     let fixedUrl = filePrefix + url.absoluteString
                     url = URL(string: fixedUrl)!
                 }
