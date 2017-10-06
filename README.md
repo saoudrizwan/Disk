@@ -54,7 +54,7 @@ end
 
 ```
 dependencies: [
-    .Package(url: "https://github.com/saoudrizwan/Disk.git", "0.3.0")
+    .Package(url: "https://github.com/saoudrizwan/Disk.git", "0.3.1")
 ]
 ```
 
