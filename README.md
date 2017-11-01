@@ -381,6 +381,8 @@ Disk takes out a lot of the tedious handy work required in coding data to the de
 try Disk.clear(.temporary)
 ```
 
+Since Disk works directly with the file system, it's also [significantly faster than alternative persistence solutions like `NSKeyedArchiver`](https://twitter.com/JStheoriginal/status/924810983360434176).
+
 Best of all, Disk is thorough when it comes to throwing errors, ensuring that you understand why a problem occurs when it does.
 
 ## Documentation
@@ -390,6 +392,7 @@ Option + click on any of Disk's methods for detailed documentation.
 ## Apps Using Disk
 
 * [AudioKit Synth One](https://audiokitpro.com/audiokit-synth-one/)
+* [BB Links](http://www.bblinksapp.com/)
 
 ## License
 
