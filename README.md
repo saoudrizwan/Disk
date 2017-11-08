@@ -304,7 +304,7 @@ try Disk.getURL(for: "album/", in: .documents)
 ```swift
 try Disk.doNotBackup("album", in: .documents)
 ```
-"Everything in your app’s home directory is backed up, **with the exception of the application bundle itself, the caches directory, and temporary directory.**"
+>Everything in your app’s home directory is backed up, **with the exception of the application bundle itself, the caches directory, and temporary directory.**
 ```swift
 try Disk.backup("album", in: .documents)
 ```
