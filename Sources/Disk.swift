@@ -60,9 +60,9 @@ public class Disk {
         public var pathDescription: String {
             switch self {
             case .documents: return "<Application_Home>/Documents"
-            case .caches: return "<Application_Home>/Documents"
-            case .applicationSupport: return "<Application_Home>/Documents"
-            case .temporary: return "<Application_Home>/Documents"
+            case .caches: return "<Application_Home>/Library/Caches"
+            case .applicationSupport: return "<Application_Home>/Library/Application"
+            case .temporary: return "<Application_Home>/tmp"
             case .sharedContainer(let appGroupName): return "\(appGroupName)/"
             }
         }
