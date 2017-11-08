@@ -255,7 +255,7 @@ try Disk.append(newDataObject, to: "Folder/", in: .documents)
 ### Large files
 It's important to know when to work with the file system on the background thread. Disk is **synchronous**, giving you more control over read/write operations on the file system. [Apple says](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/TechniquesforReadingandWritingCustomFiles/TechniquesforReadingandWritingCustomFiles.html) that *"because file operations involve accessing the disk, performing those operations **asynchronously** is almost always preferred."*
 
-[Grand Central Dispatch](https://developer.apple.com/documentation/dispatch) is the best way to work with Disk asynchronously. Here's an example:
+Using [Grand Central Dispatch](https://developer.apple.com/documentation/dispatch) is the best way to work with Disk asynchronously. Here's an example:
 ```swift
 activityIndicator.startAnimating()
 DispatchQueue.global(qos: .userInitiated).async {
@@ -271,29 +271,6 @@ DispatchQueue.global(qos: .userInitiated).async {
 }
 ```
 *Don't forget to handle these sorts of tasks [being interrupted](https://stackoverflow.com/a/18305715/3502608).*
-
-### iOS 11 Volume Information
-Apple reviewed some great iOS storage practices in [Session 204](https://developer.apple.com/videos/play/fall2017/204/), putting emphasis on several new `NSURL` volume capacity details added in iOS 11. This information allows us to gauge when it's appropriate to store data on the user's disk.
-
-* Total capacity
-```swift
-Disk.totalCapacity
-```
-
-* Available capacity
-```swift
-Disk.availableCapacity
-```
-
-* Available capacity for important usage. This indicates the amount of space that can be made available  for things the user has explicitly requested in the app's UI (i.e. downloading a video or new level for a game.)
-```swift
-Disk.availableCapacityForImportantUsage
-```
-
-* Available capacity for opportunistic usage. This indicates the amount of space available for things that the user is likely to want but hasn't explicitly requested (i.e. next episode in video series they're watching, or recently updated documents in a server that they might be likely to open.)
-```swift
-Disk.availableCapacityForOpportunisticUsage
-```
 
 ### Helper Methods
 
@@ -332,6 +309,29 @@ try Disk.doNotBackup("album", in: .documents)
 try Disk.backup("album", in: .documents)
 ```
 You should generally never use the `.doNotBackup(:in:)` and `.backup(:in:)` methods unless you're absolutely positive you want to persist data no matter what state the user's device is in.
+
+### iOS 11 Volume Information
+Apple reviewed some great iOS storage practices in [Session 204](https://developer.apple.com/videos/play/fall2017/204/), putting emphasis on several new `NSURL` volume capacity details added in iOS 11. This information allows us to gauge when it's appropriate to store data on the user's disk.
+
+* Total capacity
+```swift
+Disk.totalCapacity
+```
+
+* Available capacity
+```swift
+Disk.availableCapacity
+```
+
+* Available capacity for important usage. This indicates the amount of space that can be made available  for things the user has explicitly requested in the app's UI (i.e. downloading a video or new level for a game.)
+```swift
+Disk.availableCapacityForImportantUsage
+```
+
+* Available capacity for opportunistic usage. This indicates the amount of space available for things that the user is likely to want but hasn't explicitly requested (i.e. next episode in video series they're watching, or recently updated documents in a server that they might be likely to open.)
+```swift
+Disk.availableCapacityForOpportunisticUsage
+```
 
 ## Debugging
 
