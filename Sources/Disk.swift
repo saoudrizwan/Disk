@@ -63,7 +63,7 @@ public class Disk {
             case .caches: return "<Application_Home>/Library/Caches"
             case .applicationSupport: return "<Application_Home>/Library/Application"
             case .temporary: return "<Application_Home>/tmp"
-            case .sharedContainer(let appGroupName): return "\(appGroupName)/"
+            case .sharedContainer(let appGroupName): return "\(appGroupName)"
             }
         }
     }
