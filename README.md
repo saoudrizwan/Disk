@@ -355,7 +355,7 @@ The example above takes care of the most common error when dealing with the file
 
 ## A Word from the Developer
 
-After developing for iOS for 8+ years, I've come across almost every method of data persistence there is to offer (Core Data, Realm, `NSCoding`, `UserDefaults`, etc.) Nothing really fit the bill except `NSCoding`, but there were too many hoops to jump through. After Swift 4 was released, I was really excited about the `Codable` protocol because I knew what it had to offer in terms of JSON coding. Working with network responses' JSON data and converting them to usable structures has never been easier. **Disk aims to extend that simplicity of working with data to the file system.**
+After developing for iOS for 8+ years, I've come across almost every method of data persistence there is to offer (Core Data, Realm, `NSKeyedArchiver`, `UserDefaults`, etc.) Nothing really fit the bill except `NSKeyedArchiver`, but there were too many hoops to jump through. After Swift 4 was released, I was really excited about the `Codable` protocol because I knew what it had to offer in terms of JSON coding. Working with network responses' JSON data and converting them to usable structures has never been easier. **Disk aims to extend that simplicity of working with data to the file system.**
 
 Let's say we get some data back from a network request...
 ```swift
@@ -380,7 +380,7 @@ Disk takes out a lot of the tedious handy work required in coding data to the de
 ```swift
 try Disk.clear(.temporary)
 ```
-
+Disk is also [significantly faster than alternative persistence solutions like `NSKeyedArchiver`](https://twitter.com/JStheoriginal/status/924810983360434176), since it works directly with the file system.
 Best of all, Disk is thorough when it comes to throwing errors, ensuring that you understand why a problem occurs when it does.
 
 ## Documentation
@@ -390,6 +390,7 @@ Option + click on any of Disk's methods for detailed documentation.
 ## Apps Using Disk
 
 * [AudioKit Synth One](https://audiokitpro.com/audiokit-synth-one/)
+* [BB Links - Your Coaching Links](http://www.bblinksapp.com/)
 
 ## License
 
