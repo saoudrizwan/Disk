@@ -295,7 +295,7 @@ Disk.availableCapacityForImportantUsage
 Disk.availableCapacityForOpportunisticUsage
 ```
 
-**Note:** These variables return Optional `Int`s since retrieving file system resource values may fail and return `nil`. However this is very unlikely to happen, and this behavior exists for safety purposes.
+**Note:** These variables return Optional `Int`s since retrieving file system resource values may fail and return `nil`. However this is very unlikely to happen, and this behavior exists solely for safety purposes.
 
 ### Helper Methods
 
