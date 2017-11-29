@@ -5,7 +5,7 @@
 <p align="center">
     <img src="https://user-images.githubusercontent.com/7799382/28644637-2fe6f818-720f-11e7-89a4-35250b6665ce.png" alt="Platform: iOS 9.0+" />
     <a href="https://developer.apple.com/swift" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28500845-b43a66fa-6f84-11e7-8281-6e689d8aaab9.png" alt="Language: Swift 4" /></a>
-    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/32578926-f2e6f01c-c493-11e7-966e-f5d901ad7aed.png" alt="CocoaPods compatible" /></a>
+    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/33380673-bb6c8802-d4d0-11e7-9edf-529825e29229.png" alt="CocoaPods compatible" /></a>
     <a href="https://github.com/Carthage/Carthage" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29512091-1e85aacc-8616-11e7-9851-d13dd1700a36.png" alt="Carthage compatible" /></a>
     <img src="https://user-images.githubusercontent.com/7799382/28500847-b6393648-6f84-11e7-9a7a-f6ae78207416.png" alt="License: MIT" />
 </p>
@@ -37,7 +37,7 @@ platform :ios, '9.0'
 target 'ProjectName' do
 use_frameworks!
 
-    pod 'Disk', '~> 0.3.2'
+    pod 'Disk', '~> 0.3.3'
 
 end
 ```
@@ -54,7 +54,7 @@ end
 
 ```
 dependencies: [
-    .Package(url: "https://github.com/saoudrizwan/Disk.git", "0.3.2")
+    .Package(url: "https://github.com/saoudrizwan/Disk.git", "0.3.3")
 ]
 ```
 
@@ -299,16 +299,15 @@ Disk.availableCapacityForOpportunisticUsage
 
 ### Helper Methods
 
+* Clear an entire directory
+```swift
+try Disk.clear(.caches)
+```
+
 * Remove a file/folder
 ```swift
 try Disk.remove("video.mp4", from: .documents)
 ```
-
-* Clear an entire directory
-```swift
-try Disk.clear(.documents)
-```
-**Note:** In [some cases](https://github.com/saoudrizwan/Disk/issues/24) this method will fail since iOS creates undeletable folders/files in some directories (i.e. the Caches directory.) In this scenario, it is best to store your data in a folder inside of the desired directory, and remove that folder whenever you want to "clear" that data.
 
 * Check if file/folder exists
 ```swift
