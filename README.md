@@ -299,14 +299,17 @@ Disk.availableCapacityForOpportunisticUsage
 
 ### Helper Methods
 
-* Clear an entire directory
-```swift
-try Disk.clear(.caches)
-```
 * Remove a file/folder
 ```swift
 try Disk.remove("video.mp4", from: .documents)
 ```
+
+* Clear an entire directory
+```swift
+try Disk.clear(.documents)
+```
+**Note:** In [some cases](https://github.com/saoudrizwan/Disk/issues/24) this method will fail since iOS creates undeletable folders/files in some directories (i.e. the Caches directory.) In this scenario, it is best to store your data in a folder inside of the desired directory, and remove that folder whenever you want to "clear" that data.
+
 * Check if file/folder exists
 ```swift
 if Disk.exists("album", in: .documents) {
