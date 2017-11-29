@@ -295,16 +295,21 @@ Disk.availableCapacityForImportantUsage
 Disk.availableCapacityForOpportunisticUsage
 ```
 
+**Note:** These variables return Optional `Int`s since retrieving file system resource values may fail and return `nil`. However this is very unlikely to happen, and this behavior exists solely for safety purposes.
+
 ### Helper Methods
 
-* Clear an entire directory
-```swift
-try Disk.clear(.caches)
-```
 * Remove a file/folder
 ```swift
 try Disk.remove("video.mp4", from: .documents)
 ```
+
+* Clear an entire directory
+```swift
+try Disk.clear(.documents)
+```
+**Note:** In [some cases](https://github.com/saoudrizwan/Disk/issues/24) this method will fail since iOS creates undeletable folders/files in some directories (i.e. the Caches directory.) In this scenario, it is best to store your data in a folder inside of the desired directory, and remove that folder whenever you want to "clear" that data.
+
 * Check if file/folder exists
 ```swift
 if Disk.exists("album", in: .documents) {
@@ -327,7 +332,7 @@ try Disk.getURL(for: "album/", in: .documents)
 ```swift
 try Disk.doNotBackup("album", in: .documents)
 ```
-"Everything in your app’s home directory is backed up, **with the exception of the application bundle itself, the caches directory, and temporary directory.**"
+> Everything in your app’s home directory is backed up, **with the exception of the application bundle itself, the caches directory, and temporary directory.**
 ```swift
 try Disk.backup("album", in: .documents)
 ```
@@ -355,7 +360,7 @@ The example above takes care of the most common error when dealing with the file
 
 ## A Word from the Developer
 
-After developing for iOS for 8+ years, I've come across almost every method of data persistence there is to offer (Core Data, Realm, `NSCoding`, `UserDefaults`, etc.) Nothing really fit the bill except `NSCoding`, but there were too many hoops to jump through. After Swift 4 was released, I was really excited about the `Codable` protocol because I knew what it had to offer in terms of JSON coding. Working with network responses' JSON data and converting them to usable structures has never been easier. **Disk aims to extend that simplicity of working with data to the file system.**
+After developing for iOS for 8+ years, I've come across almost every method of data persistence there is to offer (Core Data, Realm, `NSKeyedArchiver`, `UserDefaults`, etc.) Nothing really fit the bill except `NSKeyedArchiver`, but there were too many hoops to jump through. After Swift 4 was released, I was really excited about the `Codable` protocol because I knew what it had to offer in terms of JSON coding. Working with network responses' JSON data and converting them to usable structures has never been easier. **Disk aims to extend that simplicity of working with data to the file system.**
 
 Let's say we get some data back from a network request...
 ```swift
@@ -380,7 +385,7 @@ Disk takes out a lot of the tedious handy work required in coding data to the de
 ```swift
 try Disk.clear(.temporary)
 ```
-
+Disk is also [significantly faster than alternative persistence solutions like `NSKeyedArchiver`](https://twitter.com/JStheoriginal/status/924810983360434176), since it works directly with the file system.
 Best of all, Disk is thorough when it comes to throwing errors, ensuring that you understand why a problem occurs when it does.
 
 ## Documentation
@@ -390,6 +395,7 @@ Option + click on any of Disk's methods for detailed documentation.
 ## Apps Using Disk
 
 * [AudioKit Synth One](https://audiokitpro.com/audiokit-synth-one/)
+* [BB Links - Your Coaching Links](http://www.bblinksapp.com/)
 
 ## License
 
