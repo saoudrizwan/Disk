@@ -42,13 +42,13 @@ public extension Disk {
     /// Clear directory by removing all files
     ///
     /// - Parameter directory: directory to clear
-    /// - Throws: Error if FileManager cannot remove a file
+    /// - Throws: Error if FileManager cannot access a directory
     static func clear(_ directory: Directory) throws {
         do {
             let url = try createURL(for: nil, in: directory)
             let contents = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [])
             for fileUrl in contents {
-                try FileManager.default.removeItem(at: fileUrl)
+                try? FileManager.default.removeItem(at: fileUrl)
             }
         } catch {
             throw error
