@@ -393,6 +393,7 @@ Option + click on any of Disk's methods for detailed documentation.
 
 ## Apps Using Disk
 
+* [FM Player: Classic DX Synths](https://audiokitpro.com/fm-player-classic-dx-released/)
 * [AudioKit Synth One](https://audiokitpro.com/audiokit-synth-one/)
 * [BB Links - Your Coaching Links](http://www.bblinksapp.com/)
 
