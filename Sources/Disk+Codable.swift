@@ -30,13 +30,12 @@ public extension Disk {
     ///   - directory: user directory to store the file in
     ///   - path: file location to store the data (i.e. "Folder/file.json")
     /// - Throws: Error if there were any issues encoding the struct or writing it to disk
-    static func save<T: Encodable>(_ value: T, to directory: Directory, as path: String) throws {
+    static func save<T: Encodable>(_ value: T, to directory: Directory, as path: String, with encoder: JSONEncoder = .init()) throws {
         if path.hasSuffix("/") {
             throw createInvalidFileNameForStructsError()
         }
         do {
             let url = try createURL(for: path, in: directory)
-            let encoder = JSONEncoder()
             let data = try encoder.encode(value)
             try createSubfoldersBeforeCreatingFile(at: url)
             try data.write(to: url, options: .atomic)
@@ -52,7 +51,7 @@ public extension Disk {
     ///   - path: file location to store the data (i.e. "Folder/file.json")
     ///   - directory: user directory to store the file in
     /// - Throws: Error if there were any issues with encoding/decoding or writing the encoded struct to disk
-    static func append<T: Codable>(_ value: T, to path: String, in directory: Directory) throws {
+    static func append<T: Codable>(_ value: T, to path: String, in directory: Directory, with encoder: JSONEncoder = .init(), and decoder: JSONDecoder = .init()) throws {
         if path.hasSuffix("/") {
             throw createInvalidFileNameForStructsError()
         }
@@ -62,7 +61,6 @@ public extension Disk {
                 if !(oldData.count > 0) {
                     try save([value], to: directory, as: path)
                 } else {
-                    let decoder = JSONDecoder()
                     let new: [T]
                     if let old = try? decoder.decode(T.self, from: oldData) {
                         new = [old, value]
@@ -72,7 +70,6 @@ public extension Disk {
                     } else {
                         throw createDeserializationErrorForAppendingStructToInvalidType(url: url, type: value)
                     }
-                    let encoder = JSONEncoder()
                     let newData = try encoder.encode(new)
                     try newData.write(to: url, options: .atomic)
                 }
@@ -91,7 +88,7 @@ public extension Disk {
     ///   - path: file location to store the data (i.e. "Folder/file.json")
     ///   - directory: user directory to store the file in
     /// - Throws: Error if there were any issues writing the encoded struct array to disk
-    static func append<T: Codable>(_ value: [T], to path: String, in directory: Directory) throws {
+    static func append<T: Codable>(_ value: [T], to path: String, in directory: Directory, with encoder: JSONEncoder = .init(), and decoder: JSONDecoder = .init()) throws {
         if path.hasSuffix("/") {
             throw createInvalidFileNameForStructsError()
         }
@@ -101,7 +98,6 @@ public extension Disk {
                 if !(oldData.count > 0) {
                     try save(value, to: directory, as: path)
                 } else {
-                    let decoder = JSONDecoder()
                     let new: [T]
                     if let old = try? decoder.decode(T.self, from: oldData) {
                         new = [old] + value
@@ -111,7 +107,6 @@ public extension Disk {
                     } else {
                         throw createDeserializationErrorForAppendingStructToInvalidType(url: url, type: value)
                     }
-                    let encoder = JSONEncoder()
                     let newData = try encoder.encode(new)
                     try newData.write(to: url, options: .atomic)
                 }
@@ -131,14 +126,13 @@ public extension Disk {
     ///   - type: struct type (i.e. Message.self or [Message].self)
     /// - Returns: decoded structs of data
     /// - Throws: Error if there were any issues retrieving the data or decoding it to the specified type
-    static func retrieve<T: Decodable>(_ path: String, from directory: Directory, as type: T.Type) throws -> T {
+    static func retrieve<T: Decodable>(_ path: String, from directory: Directory, as type: T.Type, with decoder: JSONDecoder) throws -> T {
         if path.hasSuffix("/") {
             throw createInvalidFileNameForStructsError()
         }
         do {
             let url = try getExistingFileURL(for: path, in: directory)
             let data = try Data(contentsOf: url)
-            let decoder = JSONDecoder()
             let value = try decoder.decode(type, from: data)
             return value
         } catch {
