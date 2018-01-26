@@ -34,7 +34,7 @@ import Foundation
 public class Disk {
     fileprivate init() { }
     
-    public enum Directory {
+    public enum Directory: Equatable {
         /// Only documents and other data that is user-generated, or that cannot otherwise be recreated by your application, should be stored in the <Application_Home>/Documents directory.
         /// Files in this directory are automatically backed up by iCloud. To disable this feature for a specific file, use the .doNotBackup(:in:) method.
         case documents
@@ -66,5 +66,17 @@ public class Disk {
             case .sharedContainer(let appGroupName): return "\(appGroupName)"
             }
         }
+     
+        static public func ==(lhs: Directory, rhs: Directory) -> Bool {
+            switch (lhs, rhs) {
+            case (.documents, .documents), (.caches, .caches), (.applicationSupport, .applicationSupport), (.temporary, .temporary):
+                return true
+            case (let .sharedContainer(appGroupName: name1), let .sharedContainer(appGroupName: name2)):
+                return name1 == name2
+            default:
+                return false
+            }
+        }
+     
     }
 }
