@@ -23,6 +23,23 @@
 import Foundation
 
 public extension Disk {
+    
+    /// Get URL for file
+    ///
+    /// - Parameters:
+    ///   - path: path of file relative to directory (set nil for entire directory)
+    ///   - directory: directory the file is saved in
+    /// - Returns: URL
+    /// - Throws: Error if create url failed
+    static func url(for path: String?, in directory: Directory) throws -> URL {
+        do {
+            let url = try getFileURL(for: path, in: directory)
+            return url
+        } catch {
+            throw error
+        }
+    }
+    
     /// Get URL for existing file
     ///
     /// - Parameters:
