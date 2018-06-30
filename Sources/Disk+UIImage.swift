@@ -34,7 +34,7 @@ public extension Disk {
         do {
             var imageData: Data
             if path.suffix(4).lowercased() == ".png" {
-                if let data = UIImagePNGRepresentation(value) {
+                if let data = value.pngData() {
                     imageData = data
                 } else {
                     throw createError(
@@ -45,7 +45,7 @@ public extension Disk {
                     )
                 }
             } else if path.suffix(4).lowercased() == ".jpg" || path.suffix(5).lowercased() == ".jpeg" {
-                if let data = UIImageJPEGRepresentation(value, 1) {
+                if let data = value.jpegData(compressionQuality: 1) {
                     imageData = data
                 } else {
                     throw createError(
@@ -56,9 +56,9 @@ public extension Disk {
                     )
                 }
             } else {
-                if let data = UIImagePNGRepresentation(value) {
+                if let data = value.pngData() {
                     imageData = data
-                } else if let data = UIImageJPEGRepresentation(value, 1) {
+                } else if let data = value.jpegData(compressionQuality: 1) {
                     imageData = data
                 } else {
                     throw createError(
