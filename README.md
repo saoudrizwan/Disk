@@ -5,7 +5,7 @@
 <p align="center">
     <img src="https://user-images.githubusercontent.com/7799382/28644637-2fe6f818-720f-11e7-89a4-35250b6665ce.png" alt="Platform: iOS 9.0+" />
     <a href="https://developer.apple.com/swift" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28500845-b43a66fa-6f84-11e7-8281-6e689d8aaab9.png" alt="Language: Swift 4" /></a>
-    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/33380673-bb6c8802-d4d0-11e7-9edf-529825e29229.png" alt="CocoaPods compatible" /></a>
+    <a href="https://cocoapods.org/pods/Disk" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/45259308-9b722380-b37e-11e8-8eae-75b333b5245f.png" alt="CocoaPods compatible" /></a>
     <a href="https://github.com/Carthage/Carthage" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29512091-1e85aacc-8616-11e7-9851-d13dd1700a36.png" alt="Carthage compatible" /></a>
     <img src="https://user-images.githubusercontent.com/7799382/28500847-b6393648-6f84-11e7-9a7a-f6ae78207416.png" alt="License: MIT" />
 </p>
@@ -37,7 +37,7 @@ platform :ios, '9.0'
 target 'ProjectName' do
 use_frameworks!
 
-    pod 'Disk', '~> 0.3.3'
+    pod 'Disk', '~> 0.4.0'
 
 end
 ```
@@ -54,7 +54,7 @@ end
 
 ```
 dependencies: [
-    .Package(url: "https://github.com/saoudrizwan/Disk.git", "0.3.3")
+    .Package(url: "https://github.com/saoudrizwan/Disk.git", "0.4.0")
 ]
 ```
 
@@ -111,7 +111,7 @@ With all these requirements and best practices, it can be hard working with the 
 
 Disk handles errors by `throw`ing them. See [Handling Errors Using Do-Catch](https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/ErrorHandling.html).
 
-### Structs (must conform to [Codable](https://developer.apple.com/documentation/swift/codable))
+### Structs (must conform to [`Codable`](https://developer.apple.com/documentation/swift/codable))
 
 Let's say we have a data model called `Message`...
 ```swift
@@ -163,6 +163,24 @@ Disk also allows you to append a struct or array of structs to a file with data 
 try Disk.append(newMessage, to: "messages.json", in: .caches)
 ```
 **Note:** you may append a single struct to an empty file, but then in order to properly retrieve that struct again, you must retrieve it as an array.
+
+**Using custom `JSONEncoder` or `JSONDecoder`** *(Thank you [@nixzhu](https://github.com/saoudrizwan/Disk/pull/16) and [@mecid](https://github.com/saoudrizwan/Disk/pull/28))*
+
+Behind the scenes, Disk uses Apple's [`JSONEncoder`](https://developer.apple.com/documentation/foundation/jsonencoder) and [`JSONDecoder`](https://developer.apple.com/documentation/foundation/jsondecoder) classes to encode and decode raw JSON data. You can use custom instances of these classes if you require special encoding or decoding strategies for example.
+```swift
+let encoder = JSONEncoder()
+encoder.keyEncodingStrategy = .convertToSnakeCase
+try Disk.save(messages, to: .caches, as: "messages.json", encoder: encoder)
+```
+```swift
+let decoder = JSONDecoder()
+decoder.keyDecodingStrategy = .convertFromSnakeCase
+let retrievedMessages = try Disk.retrieve("messages.json", from: .caches, as: [Message].self, decoder: decoder)
+```
+**Note:** appending a `Codable` structure requires Disk to first decode any existing values at the file location, append the new value, then encode the resulting structure to that location.
+```swift
+try Disk.append(newMessage, to: "messages.json", in: .caches, decoder: decoder, encoder: encoder)
+```
 
 ### Images
 ```swift
@@ -323,9 +341,9 @@ try Disk.move("album/", in: .documents, to: .caches)
 ```swift
 try Disk.rename("currentName.json", in: .documents, to: "newName.json")
 ```
-* Get URL for an existing file/folder
+* Get URL for a file/folder
 ```swift
-try Disk.getURL(for: "album/", in: .documents)
+try Disk.url(for: "album/", in: .documents)
 ```
 * Mark a file/folder with the `do not backup` attribute (this keeps the file/folder on disk even in low storage situations, but prevents it from being backed up by iCloud or iTunes.)
 ```swift
@@ -335,7 +353,9 @@ try Disk.doNotBackup("album", in: .documents)
 ```swift
 try Disk.backup("album", in: .documents)
 ```
-You should generally never use the `.doNotBackup(:in:)` and `.backup(:in:)` methods unless you're absolutely positive you want to persist data no matter what state the user's device is in.
+(You should generally never use the `.doNotBackup(:in:)` and `.backup(:in:)` methods unless you're absolutely positive you want to persist data no matter what state the user's device is in.)
+
+*Note:* Most of these helper methods have `URL` counterparts. For example, with a file's local file system URL, you could use `Disk.exists(fileUrl)` to see if it exists at that location.
 
 ## Debugging
 
