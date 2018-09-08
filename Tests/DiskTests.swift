@@ -32,6 +32,10 @@ class DiskTests: XCTestCase {
             try Disk.clear(.applicationSupport)
             try Disk.clear(.temporary)
         } catch {
+            // NOTE: If you get a NSCocoaErrorDomain with code 260, this means one of the above directories could not be found.
+            // On some of the newer simulators, not all these default directories are initialized at first, but will be created
+            // after you save something within it. To fix this, run each of the test[directory] test functions below to get each
+            // respective directory initialized, before running other tests.
             fatalError(convertErrorToString(error))
         }
     }
@@ -738,5 +742,28 @@ class DiskTests: XCTestCase {
         print("Disk.availableCapacityForImportantUsage = \(Disk.availableCapacityForImportantUsage!)")
         print("Disk.availableCapacityForOpportunisticUsage = \(Disk.availableCapacityForOpportunisticUsage!)")
         print("============================================================\n\n")
+    }
+    
+    // Test Equitability for Directory enum
+    func testDirectoryEquitability() {
+        let directories: [Disk.Directory] = [.documents, .caches, .applicationSupport, .temporary]
+        for directory in directories {
+            XCTAssert(directory == directory)
+        }
+        for directory in directories {
+            let otherDirectories = directories.filter { $0 != directory }
+            otherDirectories.forEach {
+                XCTAssert($0 != directory)
+            }
+        }
+        
+        let sameAppGroupName = "SameName"
+        let sharedDirectory1 = Disk.Directory.sharedContainer(appGroupName: sameAppGroupName)
+        let sharedDirectory2 = Disk.Directory.sharedContainer(appGroupName: sameAppGroupName)
+        XCTAssert(sharedDirectory1 == sharedDirectory2)
+        
+        let sharedDirectory3 = Disk.Directory.sharedContainer(appGroupName: "Another Name")
+        let sharedDirectory4 = Disk.Directory.sharedContainer(appGroupName: "Different Name")
+        XCTAssert(sharedDirectory3 != sharedDirectory4)
     }
 }
