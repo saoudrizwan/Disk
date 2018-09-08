@@ -66,7 +66,7 @@ class DiskTests: XCTestCase {
             // 1 struct
             try Disk.save(messages[0], to: .documents, as: "message.json")
             XCTAssert(Disk.exists("message.json", in: .documents))
-            let messageUrl = try Disk.getURL(for: "message.json", in: .documents)
+            let messageUrl = try Disk.url(for: "message.json", in: .documents)
             print("A message was saved as \(messageUrl.absoluteString)")
             let retrievedMessage = try Disk.retrieve("message.json", from: .documents, as: Message.self)
             XCTAssert(messages[0] == retrievedMessage)
@@ -74,7 +74,7 @@ class DiskTests: XCTestCase {
             // ... in folder hierarchy
             try Disk.save(messages[0], to: .documents, as: "Messages/Bob/message.json")
             XCTAssert(Disk.exists("Messages/Bob/message.json", in: .documents))
-            let messageInFolderUrl = try Disk.getURL(for: "Messages/Bob/message.json", in: .documents)
+            let messageInFolderUrl = try Disk.url(for: "Messages/Bob/message.json", in: .documents)
             print("A message was saved as \(messageInFolderUrl.absoluteString)")
             let retrievedMessageInFolder = try Disk.retrieve("Messages/Bob/message.json", from: .documents, as: Message.self)
             XCTAssert(messages[0] == retrievedMessageInFolder)
@@ -82,7 +82,7 @@ class DiskTests: XCTestCase {
             // Array of structs
             try Disk.save(messages, to: .documents, as: "messages.json")
             XCTAssert(Disk.exists("messages.json", in: .documents))
-            let messagesUrl = try Disk.getURL(for: "messages.json", in: .documents)
+            let messagesUrl = try Disk.url(for: "messages.json", in: .documents)
             print("Messages were saved as \(messagesUrl.absoluteString)")
             let retrievedMessages = try Disk.retrieve("messages.json", from: .documents, as: [Message].self)
             XCTAssert(messages == retrievedMessages)
@@ -151,7 +151,7 @@ class DiskTests: XCTestCase {
             // 1 image
             try Disk.save(images[0], to: .documents, as: "image.png")
             XCTAssert(Disk.exists("image.png", in: .documents))
-            let imageUrl = try Disk.getURL(for: "image.png", in: .documents)
+            let imageUrl = try Disk.url(for: "image.png", in: .documents)
             print("An image was saved as \(imageUrl.absoluteString)")
             let retrievedImage = try Disk.retrieve("image.png", from: .documents, as: UIImage.self)
             XCTAssert(images[0].dataEquals(retrievedImage))
@@ -159,7 +159,7 @@ class DiskTests: XCTestCase {
             // ... in folder hierarchy
             try Disk.save(images[0], to: .documents, as: "Photos/image.png")
             XCTAssert(Disk.exists("Photos/image.png", in: .documents))
-            let imageInFolderUrl = try Disk.getURL(for: "Photos/image.png", in: .documents)
+            let imageInFolderUrl = try Disk.url(for: "Photos/image.png", in: .documents)
             print("An image was saved as \(imageInFolderUrl.absoluteString)")
             let retrievedInFolderImage = try Disk.retrieve("Photos/image.png", from: .documents, as: UIImage.self)
             XCTAssert(images[0].dataEquals(retrievedInFolderImage))
@@ -167,7 +167,7 @@ class DiskTests: XCTestCase {
             // Array of images
             try Disk.save(images, to: .documents, as: "album/")
             XCTAssert(Disk.exists("album/", in: .documents))
-            let imagesFolderUrl = try Disk.getURL(for: "album/", in: .documents)
+            let imagesFolderUrl = try Disk.url(for: "album/", in: .documents)
             print("Images were saved as \(imagesFolderUrl.absoluteString)")
             let retrievedImages = try Disk.retrieve("album/", from: .documents, as: [UIImage].self)
             for i in 0..<images.count {
@@ -177,7 +177,7 @@ class DiskTests: XCTestCase {
             // ... in folder hierarchy
             try Disk.save(images, to: .documents, as: "Photos/summer-album/")
             XCTAssert(Disk.exists("Photos/summer-album/", in: .documents))
-            let imagesInFolderUrl = try Disk.getURL(for: "Photos/summer-album/", in: .documents)
+            let imagesInFolderUrl = try Disk.url(for: "Photos/summer-album/", in: .documents)
             print("Images were saved as \(imagesInFolderUrl.absoluteString)")
             let retrievedInFolderImages = try Disk.retrieve("Photos/summer-album/", from: .documents, as: [UIImage].self)
             for i in 0..<images.count {
@@ -232,7 +232,7 @@ class DiskTests: XCTestCase {
             // 1 data object
             try Disk.save(data[0], to: .documents, as: "file")
             XCTAssert(Disk.exists("file", in: .documents))
-            let fileUrl = try Disk.getURL(for: "file", in: .documents)
+            let fileUrl = try Disk.url(for: "file", in: .documents)
             print("A file was saved to \(fileUrl.absoluteString)")
             let retrievedFile = try Disk.retrieve("file", from: .documents, as: Data.self)
             XCTAssert(data[0] == retrievedFile)
@@ -240,7 +240,7 @@ class DiskTests: XCTestCase {
             // ... in folder hierarchy
             try Disk.save(data[0], to: .documents, as: "Folder/file")
             XCTAssert(Disk.exists("Folder/file", in: .documents))
-            let fileInFolderUrl = try Disk.getURL(for: "Folder/file", in: .documents)
+            let fileInFolderUrl = try Disk.url(for: "Folder/file", in: .documents)
             print("A file was saved as \(fileInFolderUrl.absoluteString)")
             let retrievedInFolderFile = try Disk.retrieve("Folder/file", from: .documents, as: Data.self)
             XCTAssert(data[0] == retrievedInFolderFile)
@@ -248,7 +248,7 @@ class DiskTests: XCTestCase {
             // Array of data
             try Disk.save(data, to: .documents, as: "several-files/")
             XCTAssert(Disk.exists("several-files/", in: .documents))
-            let folderUrl = try Disk.getURL(for: "several-files/", in: .documents)
+            let folderUrl = try Disk.url(for: "several-files/", in: .documents)
             print("Files were saved to \(folderUrl.absoluteString)")
             let retrievedFiles = try Disk.retrieve("several-files/", from: .documents, as: [Data].self)
             XCTAssert(data == retrievedFiles)
@@ -256,7 +256,7 @@ class DiskTests: XCTestCase {
             // ... in folder hierarchy
             try Disk.save(data, to: .documents, as: "Folder/Files/")
             XCTAssert(Disk.exists("Folder/Files/", in: .documents))
-            let filesInFolderUrl = try Disk.getURL(for: "Folder/Files/", in: .documents)
+            let filesInFolderUrl = try Disk.url(for: "Folder/Files/", in: .documents)
             print("Files were saved to \(filesInFolderUrl.absoluteString)")
             let retrievedInFolderFiles = try Disk.retrieve("Folder/Files/", from: .documents, as: [Data].self)
             XCTAssert(data == retrievedInFolderFiles)
@@ -310,7 +310,7 @@ class DiskTests: XCTestCase {
             let imageData = UIImagePNGRepresentation(image)!
             try Disk.save(imageData, to: .documents, as: "file")
             XCTAssert(Disk.exists("file", in: .documents))
-            let fileUrl = try Disk.getURL(for: "file", in: .documents)
+            let fileUrl = try Disk.url(for: "file", in: .documents)
             print("A file was saved to \(fileUrl.absoluteString)")
             
             // Retrieve as image
@@ -321,7 +321,7 @@ class DiskTests: XCTestCase {
             let arrayOfImagesData = images.map { UIImagePNGRepresentation($0)! } // -> [Data]
             try Disk.save(arrayOfImagesData, to: .documents, as: "data-folder/")
             XCTAssert(Disk.exists("data-folder/", in: .documents))
-            let folderUrl = try Disk.getURL(for: "data-folder/", in: .documents)
+            let folderUrl = try Disk.url(for: "data-folder/", in: .documents)
             print("Files were saved to \(folderUrl.absoluteString)")
             // Retrieve the files as [UIImage]
             let retrievedFilesAsImages = try Disk.retrieve("data-folder/", from: .documents, as: [UIImage].self)
@@ -473,13 +473,13 @@ class DiskTests: XCTestCase {
             try Disk.clear(.documents)
             // 1 struct
             try Disk.save(messages[0], to: .documents, as: "message.json")
-            let messageUrlPath = try Disk.getURL(for: "message.json", in: .documents).path.replacingOccurrences(of: "file://", with: "")
+            let messageUrlPath = try Disk.url(for: "message.json", in: .documents).path.replacingOccurrences(of: "file://", with: "")
             XCTAssert(FileManager.default.fileExists(atPath: messageUrlPath))
             
             // Array of images (folder)
             try Disk.save(images, to: .documents, as: "album")
             XCTAssert(Disk.exists("album", in: .documents))
-            let folderUrlPath = try Disk.getURL(for: "album/", in: .documents).path.replacingOccurrences(of: "file://", with: "")
+            let folderUrlPath = try Disk.url(for: "album/", in: .documents).path.replacingOccurrences(of: "file://", with: "")
             var isDirectory: ObjCBool = false
             if FileManager.default.fileExists(atPath: folderUrlPath, isDirectory: &isDirectory) {
                 XCTAssert(isDirectory.boolValue)
@@ -508,6 +508,13 @@ class DiskTests: XCTestCase {
             XCTAssert(Disk.exists("message.json", in: .caches))
             try Disk.remove("message.json", from: .caches)
             XCTAssertFalse(Disk.exists("message.json", in: .caches))
+            
+            try Disk.save(messages[0], to: .caches, as: "message2.json")
+            XCTAssert(Disk.exists("message2.json", in: .caches))
+            let message2Url = try Disk.url(for: "message2.json", in: .caches)
+            try Disk.remove(message2Url)
+            XCTAssertFalse(Disk.exists("message2.json", in: .caches))
+            XCTAssertFalse(Disk.exists(message2Url))
         } catch {
             fatalError(convertErrorToString(error))
         }
@@ -517,13 +524,14 @@ class DiskTests: XCTestCase {
         do {
             try Disk.save(messages[0], to: .caches, as: "message.json")
             XCTAssert(Disk.exists("message.json", in: .caches))
-            let messageUrl = try Disk.getURL(for: "message.json", in: .caches)
-            XCTAssert(FileManager.default.fileExists(atPath: messageUrl.path))
+            let messageUrl = try Disk.url(for: "message.json", in: .caches)
+            XCTAssert(Disk.exists(messageUrl))
             
             // folder
             try Disk.save(images, to: .documents, as: "album/")
             XCTAssert(Disk.exists("album/", in: .documents))
-            XCTAssert(Disk.exists("album", in: .documents))
+            let albumUrl = try Disk.url(for: "album/", in: .documents)
+            XCTAssert(Disk.exists(albumUrl))
         } catch {
             fatalError(convertErrorToString(error))
         }
@@ -534,7 +542,7 @@ class DiskTests: XCTestCase {
             // Do not backup
             try Disk.save(messages[0], to: .documents, as: "Messages/message.json")
             try Disk.doNotBackup("Messages/message.json", in: .documents)
-            let messageUrl = try Disk.getURL(for: "Messages/message.json", in: .documents)
+            let messageUrl = try Disk.url(for: "Messages/message.json", in: .documents)
             if let resourceValues = try? messageUrl.resourceValues(forKeys: [.isExcludedFromBackupKey]),
                 let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
                 XCTAssert(isExcludedFromBackup)
@@ -544,9 +552,31 @@ class DiskTests: XCTestCase {
             
             // test on entire directory
             try Disk.save(images, to: .documents, as: "photos/")
-            try Disk.doNotBackup("photos", in: .documents)
-            let albumUrl = try Disk.getURL(for: "photos", in: .documents)
+            try Disk.doNotBackup("photos/", in: .documents)
+            let albumUrl = try Disk.url(for: "photos/", in: .documents)
             if let resourceValues = try? albumUrl.resourceValues(forKeys: [.isExcludedFromBackupKey]),
+                let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
+                XCTAssert(isExcludedFromBackup)
+            } else {
+                XCTFail()
+            }
+            
+            // Do not backup (URL)
+            try Disk.save(messages[0], to: .documents, as: "Messages/message2.json")
+            let message2Url = try Disk.url(for: "Messages/message2.json", in: .documents)
+            try Disk.doNotBackup(message2Url)
+            if let resourceValues = try? message2Url.resourceValues(forKeys: [.isExcludedFromBackupKey]),
+                let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
+                XCTAssert(isExcludedFromBackup)
+            } else {
+                XCTFail()
+            }
+            
+            // test on entire directory
+            try Disk.save(images, to: .documents, as: "photos2/")
+            let album2Url = try Disk.url(for: "photos2", in: .documents)
+            try Disk.doNotBackup(album2Url)
+            if let resourceValues = try? album2Url.resourceValues(forKeys: [.isExcludedFromBackupKey]),
                 let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
                 XCTAssert(isExcludedFromBackup)
             } else {
@@ -555,7 +585,7 @@ class DiskTests: XCTestCase {
             
             // Backup
             try Disk.backup("Messages/message.json", in: .documents)
-            let newMessageUrl = try Disk.getURL(for: "Messages/message.json", in: .documents) // we have to create a new url to access its new resource values
+            let newMessageUrl = try Disk.url(for: "Messages/message.json", in: .documents) // we have to create a new url to access its new resource values
             if let resourceValues = try? newMessageUrl.resourceValues(forKeys: [.isExcludedFromBackupKey]),
                 let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
                 XCTAssertFalse(isExcludedFromBackup)
@@ -565,8 +595,28 @@ class DiskTests: XCTestCase {
             
             // test on entire directory
             try Disk.backup("photos/", in: .documents)
-            let newAlbumUrl = try Disk.getURL(for: "photos/", in: .documents)
+            let newAlbumUrl = try Disk.url(for: "photos/", in: .documents)
             if let resourceValues = try? newAlbumUrl.resourceValues(forKeys: [.isExcludedFromBackupKey]),
+                let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
+                XCTAssertFalse(isExcludedFromBackup)
+            } else {
+                XCTFail()
+            }
+            
+            // Backup (URL)
+            try Disk.backup(message2Url)
+            let newMessage2Url = try Disk.url(for: "Messages/message2.json", in: .documents) // we have to create a new url to access its new resource values
+            if let resourceValues = try? newMessage2Url.resourceValues(forKeys: [.isExcludedFromBackupKey]),
+                let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
+                XCTAssertFalse(isExcludedFromBackup)
+            } else {
+                XCTFail()
+            }
+            
+            // test on entire directory
+            try Disk.backup(album2Url)
+            let newAlbum2Url = try Disk.url(for: "photos2/", in: .documents)
+            if let resourceValues = try? newAlbum2Url.resourceValues(forKeys: [.isExcludedFromBackupKey]),
                 let isExcludedFromBackup = resourceValues.isExcludedFromBackup {
                 XCTAssertFalse(isExcludedFromBackup)
             } else {
@@ -584,11 +634,23 @@ class DiskTests: XCTestCase {
             XCTAssertFalse(Disk.exists("message.json", in: .caches))
             XCTAssert(Disk.exists("message.json", in: .documents))
             
+            let existingFileUrl = try Disk.url(for: "message.json", in: .documents)
+            let newFileUrl = try Disk.url(for: "message.json", in: .caches)
+            try Disk.move(existingFileUrl, to: newFileUrl)
+            XCTAssertFalse(Disk.exists("message.json", in: .documents))
+            XCTAssert(Disk.exists("message.json", in: .caches))
+            
             // Array of images in folder hierarchy
             try Disk.save(images, to: .caches, as: "album/")
             try Disk.move("album/", in: .caches, to: .documents)
             XCTAssertFalse(Disk.exists("album/", in: .caches))
             XCTAssert(Disk.exists("album/", in: .documents))
+            
+            let existingFolderUrl = try Disk.url(for: "album/", in: .documents)
+            let newFolderUrl = try Disk.url(for: "album/", in: .caches)
+            try Disk.move(existingFolderUrl, to: newFolderUrl)
+            XCTAssertFalse(Disk.exists("album/", in: .documents))
+            XCTAssert(Disk.exists("album/", in: .caches))
         } catch {
             fatalError(convertErrorToString(error))
         }
@@ -611,6 +673,25 @@ class DiskTests: XCTestCase {
             fatalError(convertErrorToString(error))
         }
     }
+    
+    func testIsFolder() {
+        do {
+            try Disk.clear(.caches)
+            try Disk.save(messages[0], to: .caches, as: "message.json")
+            let messageUrl = try Disk.url(for: "message.json", in: .caches)
+            XCTAssertFalse(Disk.isFolder(messageUrl))
+            
+            // Array of images in folder
+            try Disk.clear(.caches)
+            try Disk.save(images, to: .caches, as: "album/")
+            let albumUrl = try Disk.url(for: "album", in: .caches)
+            XCTAssertTrue(Disk.isFolder(albumUrl))
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
+    }
+    
+    // MARK: Edge cases
     
     func testWorkingWithFolderWithoutBackSlash() {
         do {
