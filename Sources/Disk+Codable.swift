@@ -29,9 +29,9 @@ public extension Disk {
     ///   - value: the Encodable struct to store
     ///   - directory: user directory to store the file in
     ///   - path: file location to store the data (i.e. "Folder/file.json")
-    ///   - useEncoder: encoder to encode value
+    ///   - encoder: custom JSONEncoder to encode value
     /// - Throws: Error if there were any issues encoding the struct or writing it to disk
-    static func save<T: Encodable>(_ value: T, to directory: Directory, as path: String, useEncoder encoder: JSONEncoder = JSONEncoder()) throws {
+    static func save<T: Encodable>(_ value: T, to directory: Directory, as path: String, encoder: JSONEncoder = JSONEncoder()) throws {
         if path.hasSuffix("/") {
             throw createInvalidFileNameForStructsError()
         }
@@ -51,10 +51,10 @@ public extension Disk {
     ///   - value: the struct to store to disk
     ///   - path: file location to store the data (i.e. "Folder/file.json")
     ///   - directory: user directory to store the file in
-    ///   - useDecoder: decoder to decode value
-    ///   - useEncoder: encoder to encode value
+    ///   - decoder: custom JSONDecoder to decode existing values
+    ///   - encoder: custom JSONEncoder to encode new value
     /// - Throws: Error if there were any issues with encoding/decoding or writing the encoded struct to disk
-    static func append<T: Codable>(_ value: T, to path: String, in directory: Directory, useDecoder decoder: JSONDecoder = JSONDecoder(), useEncoder encoder: JSONEncoder = JSONEncoder()) throws {
+    static func append<T: Codable>(_ value: T, to path: String, in directory: Directory, decoder: JSONDecoder = JSONDecoder(), encoder: JSONEncoder = JSONEncoder()) throws {
         if path.hasSuffix("/") {
             throw createInvalidFileNameForStructsError()
         }
@@ -90,10 +90,10 @@ public extension Disk {
     ///   - value: the Codable struct array to store
     ///   - path: file location to store the data (i.e. "Folder/file.json")
     ///   - directory: user directory to store the file in
-    ///   - useDecoder: decoder to decode value
-    ///   - useEncoder: encoder to encode value
+    ///   - decoder: custom JSONDecoder to decode existing values
+    ///   - encoder: custom JSONEncoder to encode new value
     /// - Throws: Error if there were any issues writing the encoded struct array to disk
-    static func append<T: Codable>(_ value: [T], to path: String, in directory: Directory, useDecoder decoder: JSONDecoder = JSONDecoder(), useEncoder encoder: JSONEncoder = JSONEncoder()) throws {
+    static func append<T: Codable>(_ value: [T], to path: String, in directory: Directory, decoder: JSONDecoder = JSONDecoder(), encoder: JSONEncoder = JSONEncoder()) throws {
         if path.hasSuffix("/") {
             throw createInvalidFileNameForStructsError()
         }
@@ -129,10 +129,10 @@ public extension Disk {
     ///   - path: path of the file holding desired data
     ///   - directory: user directory to retrieve the file from
     ///   - type: struct type (i.e. Message.self or [Message].self)
-    ///   - useDecoder: decoder to decode value
+    ///   - decoder: custom JSONDecoder to decode existing values
     /// - Returns: decoded structs of data
     /// - Throws: Error if there were any issues retrieving the data or decoding it to the specified type
-    static func retrieve<T: Decodable>(_ path: String, from directory: Directory, as type: T.Type, useDecoder decoder: JSONDecoder = JSONDecoder()) throws -> T {
+    static func retrieve<T: Decodable>(_ path: String, from directory: Directory, as type: T.Type, decoder: JSONDecoder = JSONDecoder()) throws -> T {
         if path.hasSuffix("/") {
             throw createInvalidFileNameForStructsError()
         }
