@@ -379,6 +379,14 @@ let newUrl = try Disk.url(for: "Folder/newFileName.json", in: .documents)
 try Disk.move(fileUrl, to: newUrl)
 ```
 
+* Mark a file/folder with the `do not backup` attribute
+```swift
+try Disk.doNotBackup(fileUrl)
+```
+```swift
+try Disk.backup(fileUrl)
+```
+
 * Check if URL is of a folder
 ```swift
 if Disk.isFolder(fileUrl) {
