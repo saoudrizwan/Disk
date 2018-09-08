@@ -98,6 +98,16 @@ extension Disk {
         }
     }
     
+    /// Get a file's URL or throw an error if create failed
+    static func getFileURL(for path: String?, in directory: Directory) throws -> URL {
+        do {
+            let url = try createURL(for: path, in: directory)
+            return url
+        } catch {
+            throw error
+        }
+    }
+    
     /// Find an existing file's URL or throw an error if it doesn't exist
     static func getExistingFileURL(for path: String?, in directory: Directory) throws -> URL {
         do {
