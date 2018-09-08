@@ -356,7 +356,7 @@ try Disk.backup("album", in: .documents)
 (You should generally never use the `.doNotBackup(:in:)` and `.backup(:in:)` methods unless you're absolutely positive you want to persist data no matter what state the user's device is in.)
 
 #### `URL` Counterparts
-Most of these helper methods have `URL` counterparts, in case you want to work with files directly with their file system URL.
+Most of these helper methods have `URL` counterparts, in case you want to work with files directly with their file system URLs.
 
 ```swift
 let fileUrl = try Disk.url(for: "file.json", in: .documents)
