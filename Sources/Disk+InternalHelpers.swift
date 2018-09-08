@@ -98,16 +98,6 @@ extension Disk {
         }
     }
     
-    /// Get a file's URL or throw an error if create failed
-    static func getFileURL(for path: String?, in directory: Directory) throws -> URL {
-        do {
-            let url = try createURL(for: path, in: directory)
-            return url
-        } catch {
-            throw error
-        }
-    }
-    
     /// Find an existing file's URL or throw an error if it doesn't exist
     static func getExistingFileURL(for path: String?, in directory: Directory) throws -> URL {
         do {
@@ -172,15 +162,16 @@ extension Disk {
         }
     }
     
-    /// Check if file at a URL is a folder
-    static func isFolder(_ url: URL) -> Bool {
-        var isDirectory: ObjCBool = false
-        if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) {
-            if isDirectory.boolValue {
-                return true
-            }
+    /// Set 'isExcludedFromBackup' BOOL property of a file or directory in the file system
+    static func setIsExcludedFromBackup(to isExcludedFromBackup: Bool, for url: URL) throws {
+        do {
+            var resourceUrl = url
+            var resourceValues = URLResourceValues()
+            resourceValues.isExcludedFromBackup = isExcludedFromBackup
+            try resourceUrl.setResourceValues(resourceValues)
+        } catch {
+            throw error
         }
-        return false
     }
     
     /// Create necessary sub folders before creating a file
