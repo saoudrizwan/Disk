@@ -39,10 +39,25 @@ public extension Disk {
                 let image = value[i]
                 var imageData: Data
                 var imageName = "\(i)"
+                var pngData: Data?
+                var jpegData: Data?
+                #if swift(>=4.2)
                 if let data = image.pngData() {
+                    pngData = data
+                } else if let data = image.jpegData(compressionQuality: 1) {
+                    jpegData = data
+                }
+                #else
+                if let data = UIImagePNGRepresentation(image) {
+                    pngData = data
+                } else if let data = UIImageJPEGRepresentation(image, 1) {
+                    jpegData = data
+                }
+                #endif
+                if let data = pngData {
                     imageData = data
                     imageName = imageName + ".png"
-                } else if let data = image.jpegData(compressionQuality: 1) {
+                } else if let data = jpegData {
                     imageData = data
                     imageName = imageName + ".jpg"
                 } else {
@@ -84,10 +99,25 @@ public extension Disk {
                 let newFileNameInt = largestFileNameInt + 1
                 var imageData: Data
                 var imageName = "\(newFileNameInt)"
+                var pngData: Data?
+                var jpegData: Data?
+                #if swift(>=4.2)
                 if let data = value.pngData() {
+                    pngData = data
+                } else if let data = value.jpegData(compressionQuality: 1) {
+                    jpegData = data
+                }
+                #else
+                if let data = UIImagePNGRepresentation(value) {
+                    pngData = data
+                } else if let data = UIImageJPEGRepresentation(value, 1) {
+                    jpegData = data
+                }
+                #endif
+                if let data = pngData {
                     imageData = data
                     imageName = imageName + ".png"
-                } else if let data = value.jpegData(compressionQuality: 1) {
+                } else if let data = jpegData {
                     imageData = data
                     imageName = imageName + ".jpg"
                 } else {

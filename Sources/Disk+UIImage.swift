@@ -34,7 +34,13 @@ public extension Disk {
         do {
             var imageData: Data
             if path.suffix(4).lowercased() == ".png" {
-                if let data = value.pngData() {
+                let pngData: Data?
+                #if swift(>=4.2)
+                pngData = value.pngData()
+                #else
+                pngData = UIImagePNGRepresentation(value)
+                #endif
+                if let data = pngData {
                     imageData = data
                 } else {
                     throw createError(
@@ -45,7 +51,13 @@ public extension Disk {
                     )
                 }
             } else if path.suffix(4).lowercased() == ".jpg" || path.suffix(5).lowercased() == ".jpeg" {
-                if let data = value.jpegData(compressionQuality: 1) {
+                let jpegData: Data?
+                #if swift(>=4.2)
+                jpegData = value.jpegData(compressionQuality: 1)
+                #else
+                jpegData = UIImageJPEGRepresentation(value, 1)
+                #endif
+                if let data = jpegData {
                     imageData = data
                 } else {
                     throw createError(
@@ -56,9 +68,21 @@ public extension Disk {
                     )
                 }
             } else {
-                if let data = value.pngData() {
-                    imageData = data
-                } else if let data = value.jpegData(compressionQuality: 1) {
+                var data: Data?
+                #if swift(>=4.2)
+                if let pngData = value.pngData() {
+                    data = pngData
+                } else if let jpegData = value.jpegData(compressionQuality: 1) {
+                    data = jpegData
+                }
+                #else
+                if let pngData = UIImagePNGRepresentation(value) {
+                    data = pngData
+                } else if let jpegData = UIImageJPEGRepresentation(value, 1) {
+                    data = jpegData
+                }
+                #endif
+                if let data = data {
                     imageData = data
                 } else {
                     throw createError(
