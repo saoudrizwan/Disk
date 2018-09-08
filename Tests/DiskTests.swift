@@ -847,4 +847,37 @@ class DiskTests: XCTestCase {
         let sharedDirectory4 = Disk.Directory.sharedContainer(appGroupName: "Different Name")
         XCTAssert(sharedDirectory3 != sharedDirectory4)
     }
+    
+    // Test custom JSONEncoder and JSONDecoder
+    func testCustomEncoderDecoder() {
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        do {
+            // 1 struct
+            try Disk.save(messages[0], to: .documents, as: "message.json", encoder: encoder)
+            XCTAssert(Disk.exists("message.json", in: .documents))
+            let messageUrl = try Disk.url(for: "message.json", in: .documents)
+            print("A message was saved as \(messageUrl.absoluteString)")
+            
+            let retrievedMessage = try Disk.retrieve("message.json", from: .documents, as: Message.self, decoder: decoder)
+            XCTAssert(messages[0] == retrievedMessage)
+            
+            // Array of structs
+            try Disk.save(messages, to: .documents, as: "messages.json", encoder: encoder)
+            XCTAssert(Disk.exists("messages.json", in: .documents))
+            let messagesUrl = try Disk.url(for: "messages.json", in: .documents)
+            print("Messages were saved as \(messagesUrl.absoluteString)")
+            let retrievedMessages = try Disk.retrieve("messages.json", from: .documents, as: [Message].self, decoder: decoder)
+            XCTAssert(messages == retrievedMessages)
+            
+            // Append
+            try Disk.append(messages[0], to: "messages.json", in: .documents, decoder: decoder, encoder: encoder)
+            let retrievedUpdatedMessages = try Disk.retrieve("messages.json", from: .documents, as: [Message].self, decoder: decoder)
+            XCTAssert((messages + [messages[0]]) == retrievedUpdatedMessages)
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
+    }
 }
