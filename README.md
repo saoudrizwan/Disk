@@ -341,9 +341,9 @@ try Disk.move("album/", in: .documents, to: .caches)
 ```swift
 try Disk.rename("currentName.json", in: .documents, to: "newName.json")
 ```
-* Get URL for a file/folder
+* Get file system URL for a file/folder
 ```swift
-try Disk.url(for: "album/", in: .documents)
+let url = try Disk.url(for: "album/", in: .documents)
 ```
 * Mark a file/folder with the `do not backup` attribute (this keeps the file/folder on disk even in low storage situations, but prevents it from being backed up by iCloud or iTunes.)
 ```swift
@@ -355,7 +355,36 @@ try Disk.backup("album", in: .documents)
 ```
 (You should generally never use the `.doNotBackup(:in:)` and `.backup(:in:)` methods unless you're absolutely positive you want to persist data no matter what state the user's device is in.)
 
-*Note:* Most of these helper methods have `URL` counterparts. For example, with a file's local file system URL, you could use `Disk.exists(fileUrl)` to see if it exists at that location.
+#### `URL` Counterparts
+Most of these helper methods have `URL` counterparts, in case you want to work with files directly with their file system URL.
+
+```swift
+let fileUrl = try Disk.url(for: "file.json", in: .documents)
+```
+
+* Remove a file/folder
+```swift
+try Disk.remove(fileUrl)
+```
+
+* Check if file/folder exists
+```swift
+if Disk.exists(fileUrl) {
+    // ...
+}
+```
+* Move a file/folder to another directory
+```swift
+let newUrl = try Disk.url(for: "Folder/newFileName.json", in: .documents)
+try Disk.move(fileUrl, to: newUrl)
+```
+
+* Check if URL is of a folder
+```swift
+if Disk.isFolder(fileUrl) {
+    // ...
+}
+```
 
 ## Debugging
 
