@@ -39,10 +39,10 @@ public extension Disk {
                 let image = value[i]
                 var imageData: Data
                 var imageName = "\(i)"
-                if let data = UIImagePNGRepresentation(image) {
+                if let data = image.pngData() {
                     imageData = data
                     imageName = imageName + ".png"
-                } else if let data = UIImageJPEGRepresentation(image, 1) {
+                } else if let data = image.jpegData(compressionQuality: 1) {
                     imageData = data
                     imageName = imageName + ".jpg"
                 } else {
@@ -84,10 +84,10 @@ public extension Disk {
                 let newFileNameInt = largestFileNameInt + 1
                 var imageData: Data
                 var imageName = "\(newFileNameInt)"
-                if let data = UIImagePNGRepresentation(value) {
+                if let data = value.pngData() {
                     imageData = data
                     imageName = imageName + ".png"
-                } else if let data = UIImageJPEGRepresentation(value, 1) {
+                } else if let data = value.jpegData(compressionQuality: 1) {
                     imageData = data
                     imageName = imageName + ".jpg"
                 } else {
