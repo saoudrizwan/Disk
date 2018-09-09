@@ -26,7 +26,7 @@ Disk is a **powerful** and **simple** file management library built with Apple's
 
 ## Compatibility
 
-Disk requires **iOS 9+** and is compatible with **Swift 4** projects. Therefore you must use at least Xcode 9 when working with Disk.
+Disk requires **iOS 9+** and is compatible with projects using at least **Swift 4.0**. Therefore you must use at least Xcode 9 when working with Disk.
 
 ## Installation
 
@@ -48,7 +48,6 @@ end
  ```ruby
  github "saoudrizwan/Disk"
  ```
- *(make sure Xcode 9 is [set as your system's default Xcode](https://stackoverflow.com/a/28901378/3502608) before using CocoaPods or Carthage with Swift 4 frameworks)*
 
 * <a href="https://github.com/apple/swift-package-manager" target="_blank">Swift Package Manager</a>:
 
