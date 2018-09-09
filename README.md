@@ -26,7 +26,7 @@ Disk is a **powerful** and **simple** file management library built with Apple's
 
 ## Compatibility
 
-Disk requires **iOS 9+** and is compatible with projects using at least **Swift 4.0**. Therefore you must use at least Xcode 9 when working with Disk.
+Disk requires **iOS 9+** and is compatible with projects using **Swift 4.0** and above. Therefore you must use at least Xcode 9 when working with Disk.
 
 ## Installation
 
