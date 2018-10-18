@@ -28,4 +28,4 @@ FOUNDATION_EXPORT double DiskVersionNumber;
 //! Project version string for Disk.
 FOUNDATION_EXPORT const unsigned char DiskVersionString[];
 
-
+#import "DiskErrors.h"

@@ -66,7 +66,8 @@ class ViewController: UIViewController {
     @IBAction func retrieveTapped(_ sender: Any) {
         // We'll keep things simple here by using try?, but it's good practice to handle Disk with do, catch, try blocks
         // so you can make sure everything is going according to plan.
-        if let retrievedPosts = try? Disk.retrieve("posts.json", from: .documents, as: [Post].self) {
+        do {
+            let retrievedPosts = try Disk.retrieve("posts.json", from: .documents, as: [Post].self)
             // If you Option+Click 'retrievedPosts' above, you'll notice that its type is [Post]
             // Pretty neat, huh?
             
@@ -77,6 +78,17 @@ class ViewController: UIViewController {
             self.resultsTextView.text = result
             
             print("Retrieved posts from disk!")
+        } catch DiskError.noFileFound {
+            self.resultsTextView.text = "No file saved to disk yet!"
+            print ("No file found to retrieve posts from.")
+        } catch let error as NSError {
+            fatalError("""
+                Domain: \(error.domain)
+                Code: \(error.code)
+                Description: \(error.localizedDescription)
+                Failure Reason: \(error.localizedFailureReason ?? "")
+                Suggestions: \(error.localizedRecoverySuggestion ?? "")
+                """)
         }
     }
     

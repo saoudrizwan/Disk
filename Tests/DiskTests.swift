@@ -805,7 +805,8 @@ class DiskTests: XCTestCase {
             try Disk.append(oneMessage, to: "Folder/", in: .documents)
             let _ = try Disk.retrieve("Folder/", from: .documents, as: [Message].self)
         } catch let error as NSError {
-            XCTAssert(error.code == Disk.ErrorCode.invalidFileName.rawValue)
+            XCTAssert(error is DiskError)
+            XCTAssert(error.code == DiskError.invalidFileName.rawValue)
         }
     }
     
