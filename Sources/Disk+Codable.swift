@@ -145,6 +145,36 @@ public extension Disk {
             throw error
         }
     }
+    
+    static func retrieve<T: Decodable>(_ path: String, from directory: Directory, as type: [T].Type, decoder: JSONDecoder = JSONDecoder()) throws -> [T] {
+        if path.hasSuffix("/") {
+            throw createInvalidFileNameForStructsError()
+        }
+        do {
+            let url = try getExistingFileURL(for: path, in: directory)
+            
+            // If url points to a directory, iterate the files inside the directory
+            if let fileUrls = try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: []) {
+                var objects = [T]()
+                
+                for i in 0..<fileUrls.count {
+                    let fileUrl = fileUrls[i]
+                    let data = try Data(contentsOf: fileUrl)
+                    if let value = try? decoder.decode(T.self, from: data) {
+                        objects.append(value)
+                    }
+                }
+                
+                return objects
+            } else {
+                let data = try Data(contentsOf: url)
+                let value = try decoder.decode(type, from: data)
+                return value
+            }
+        } catch {
+            throw error
+        }
+    }
 }
 
 extension Disk {
@@ -166,4 +196,3 @@ extension Disk {
             recoverySuggestion: "Save your struct or array of structs as one file that encapsulates all the data (i.e. \"multiple-messages.json\")")
     }
 }
-
