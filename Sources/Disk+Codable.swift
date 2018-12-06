@@ -155,12 +155,19 @@ public extension Disk {
             
             // If url points to a directory, iterate the files inside the directory
             if let fileUrls = try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: []) {
+                let sortedFileUrls = fileUrls.sorted(by: { (url1, url2) -> Bool in
+                    if let fileNameInt1 = fileNameInt(url1), let fileNameInt2 = fileNameInt(url2) {
+                        return fileNameInt1 <= fileNameInt2
+                    }
+                    return true
+                })
+                
                 var objects = [T]()
                 
-                for i in 0..<fileUrls.count {
-                    let fileUrl = fileUrls[i]
-                    let data = try Data(contentsOf: fileUrl)
-                    if let value = try? decoder.decode(T.self, from: data) {
+                for i in 0..<sortedFileUrls.count {
+                    let fileUrl = sortedFileUrls[i]
+                    if let data = try? Data(contentsOf: fileUrl),
+                        let value = try? decoder.decode(T.self, from: data) {
                         objects.append(value)
                     }
                 }

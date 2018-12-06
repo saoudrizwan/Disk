@@ -86,6 +86,19 @@ class DiskTests: XCTestCase {
             print("Messages were saved as \(messagesUrl.absoluteString)")
             let retrievedMessages = try Disk.retrieve("messages.json", from: .documents, as: [Message].self)
             XCTAssert(messages == retrievedMessages)
+            
+            // Separate structs in same folder
+            try messages.enumerated().forEach({ (index, message) in
+                try Disk.save(message, to: .documents, as: "Messages/\(index).json")
+            })
+            for i in 0..<messages.count {
+                XCTAssert(Disk.exists("Messages/\(i).json", in: .documents))
+            }
+            let messagesInFolderUrl = try Disk.url(for: "Messages", in: .documents)
+            print("Messages were saved in folder \(messagesInFolderUrl.absoluteString)")
+            let retrievedMessagesInFolder = try Disk.retrieve("Messages", from: .documents, as: [Message].self)
+            XCTAssertEqual(messages, retrievedMessagesInFolder)
+            
         } catch {
             fatalError(convertErrorToString(error))
         }
