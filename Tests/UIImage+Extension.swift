@@ -11,7 +11,7 @@ import UIKit
 // UIImage's current Equatable implementation is buggy, this is a simply workaround to compare images' Data
 extension UIImage {
     func dataEquals(_ otherImage: UIImage) -> Bool {
-        if let selfData = UIImagePNGRepresentation(self), let otherData = UIImagePNGRepresentation(otherImage) {
+        if let selfData = self.pngData(), let otherData = otherImage.pngData() {
             return selfData == otherData
         } else {
             print("Could not convert images to PNG")

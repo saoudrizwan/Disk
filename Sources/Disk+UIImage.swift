@@ -38,7 +38,7 @@ public extension Disk {
                 #if swift(>=4.2)
                 pngData = value.pngData()
                 #else
-                pngData = UIImagePNGRepresentation(value)
+                pngData = value.pngData()
                 #endif
                 if let data = pngData {
                     imageData = data
@@ -55,7 +55,7 @@ public extension Disk {
                 #if swift(>=4.2)
                 jpegData = value.jpegData(compressionQuality: 1)
                 #else
-                jpegData = UIImageJPEGRepresentation(value, 1)
+                jpegData = value.jpegData(compressionQuality: 1)
                 #endif
                 if let data = jpegData {
                     imageData = data
@@ -76,9 +76,9 @@ public extension Disk {
                     data = jpegData
                 }
                 #else
-                if let pngData = UIImagePNGRepresentation(value) {
+                if let pngData = value.pngData() {
                     data = pngData
-                } else if let jpegData = UIImageJPEGRepresentation(value, 1) {
+                } else if let jpegData = value.jpegData(compressionQuality: 1) {
                     data = jpegData
                 }
                 #endif

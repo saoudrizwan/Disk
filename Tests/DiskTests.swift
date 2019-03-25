@@ -57,7 +57,7 @@ class DiskTests: XCTestCase {
         UIImage(named: "Bakugo", in: Bundle(for: DiskTests.self), compatibleWith: nil)!
     ]
     
-    lazy var data: [Data] = self.images.map { UIImagePNGRepresentation($0)! }
+    lazy var data: [Data] = self.images.map { $0.pngData()! }
     
     // MARK: Tests
     
@@ -307,7 +307,7 @@ class DiskTests: XCTestCase {
         do {
             // save as data
             let image = images[0]
-            let imageData = UIImagePNGRepresentation(image)!
+            let imageData = image.pngData()!
             try Disk.save(imageData, to: .documents, as: "file")
             XCTAssert(Disk.exists("file", in: .documents))
             let fileUrl = try Disk.url(for: "file", in: .documents)
@@ -318,7 +318,7 @@ class DiskTests: XCTestCase {
             XCTAssert(image.dataEquals(retrievedFileAsImage))
             
             // Array of data
-            let arrayOfImagesData = images.map { UIImagePNGRepresentation($0)! } // -> [Data]
+            let arrayOfImagesData = images.map { $0.pngData()! } // -> [Data]
             try Disk.save(arrayOfImagesData, to: .documents, as: "data-folder/")
             XCTAssert(Disk.exists("data-folder/", in: .documents))
             let folderUrl = try Disk.url(for: "data-folder/", in: .documents)
