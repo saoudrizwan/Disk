@@ -8,6 +8,9 @@
       location = "group:LICENSE">
    </FileRef>
    <FileRef
+      location = "group:Disk.podspec">
+   </FileRef>
+   <FileRef
       location = "group:Disk.xcodeproj">
    </FileRef>
    <FileRef
