@@ -31,7 +31,7 @@ public extension Disk {
     ///   - directory: directory the file is saved in
     /// - Returns: URL pointing to file
     /// - Throws: Error if no file could be found
-    @available(*, deprecated: 0.4.0, message: "Use Disk.url(for:in:) instead, it does not throw an error if the file does not exist.")
+    @available(*, deprecated, message: "Use Disk.url(for:in:) instead, it does not throw an error if the file does not exist.")
     static func getURL(for path: String?, in directory: Directory) throws -> URL {
         do {
             let url = try getExistingFileURL(for: path, in: directory)
