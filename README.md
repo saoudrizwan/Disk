@@ -36,7 +36,7 @@ platform :ios, '9.0'
 target 'ProjectName' do
 use_frameworks!
 
-    pod 'Disk', '~> 0.5.0'
+    pod 'Disk', '~> 0.6.1'
 
 end
 ```
@@ -52,7 +52,7 @@ end
 
 ```
 dependencies: [
-    .Package(url: "https://github.com/saoudrizwan/Disk.git", "0.5.0")
+    .Package(url: "https://github.com/saoudrizwan/Disk.git", "0.6.1")
 ]
 ```
 
