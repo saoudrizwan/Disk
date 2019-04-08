@@ -31,7 +31,7 @@ Disk requires **iOS 9+** and is compatible with projects using **Swift 4.0** and
 
 * <a href="https://guides.cocoapods.org/using/using-cocoapods.html" target="_blank">CocoaPods</a>:
 
-Disk supports [CocoaPods 1.7.0's new multi-Swift support](http://blog.cocoapods.org/CocoaPods-1.7.0-beta/) for Swift 4.0, 4.2, and 5.0. Simply specify `supports_swift_versions` in your Podfile.
+Disk supports [CocoaPods 1.7.0's new multi-Swift feature](http://blog.cocoapods.org/CocoaPods-1.7.0-beta/) for Swift 4.0, 4.2, and 5.0. Simply specify `supports_swift_versions` in your Podfile.
 
 ```ruby
 platform :ios, '9.0'
