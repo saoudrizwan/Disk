@@ -21,6 +21,7 @@
 // THE SOFTWARE.
 
 import Foundation
+import UIKit
 
 public extension Disk {
     /// Save an array of images to disk
