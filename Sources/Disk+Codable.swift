@@ -134,14 +134,14 @@ public extension Disk {
     ///   - decoder: custom JSONDecoder to decode existing values
     /// - Returns: decoded structs of data
     /// - Throws: Error if there were any issues retrieving the data or decoding it to the specified type
-    static func retrieve<T: Decodable>(_ path: String, from directory: Directory, decoder: JSONDecoder = JSONDecoder()) throws -> T {
+    static func retrieve<T: Decodable>(_ path: String, from directory: Directory, as type: T.Type, decoder: JSONDecoder = JSONDecoder()) throws -> T {
         if path.hasSuffix("/") {
             throw createInvalidFileNameForStructsError()
         }
         do {
             let url = try getExistingFileURL(for: path, in: directory)
             let data = try Data(contentsOf: url)
-            let value = try decoder.decode(T.self, from: data)
+            let value = try decoder.decode(type, from: data)
             return value
         } catch {
             throw error
