@@ -31,18 +31,20 @@ public extension Disk {
     ///   - path: folder location to store the data files (i.e. "Folder/")
     /// - Throws: Error if there were any issues creating a folder and writing the given [Data] to files in it
     @discardableResult
-    static func save(_ value: [Data], to directory: Directory, as path: String) throws -> URL? {
+    static func save(_ value: [Data], to directory: Directory, as path: String) throws -> [URL] {
         do {
             let folderUrl = try createURL(for: path, in: directory)
             try createSubfoldersBeforeCreatingFile(at: folderUrl)
             try FileManager.default.createDirectory(at: folderUrl, withIntermediateDirectories: false, attributes: nil)
+            var urls: [URL] = []
             for i in 0..<value.count {
                 let data = value[i]
                 let dataName = "\(i)"
                 let dataUrl = folderUrl.appendingPathComponent(dataName, isDirectory: false)
                 try data.write(to: dataUrl, options: .atomic)
+                urls.append(dataUrl)
             }
-            return folderUrl
+            return urls
         } catch {
             throw error
         }

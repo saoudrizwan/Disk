@@ -32,7 +32,7 @@ public extension Disk {
     ///   - encoder: custom JSONEncoder to encode value
     /// - Throws: Error if there were any issues encoding the struct or writing it to disk
     @discardableResult
-    static func save<T: Encodable>(_ value: T, to directory: Directory, as path: String, encoder: JSONEncoder = JSONEncoder()) throws -> URL? {
+    static func save<T: Encodable>(_ value: T, to directory: Directory, as path: String, encoder: JSONEncoder = JSONEncoder()) throws -> URL {
         if path.hasSuffix("/") {
             throw createInvalidFileNameForStructsError()
         }

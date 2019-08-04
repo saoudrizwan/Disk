@@ -31,7 +31,7 @@ public extension Disk {
     ///   - path: file location to store the data (i.e. "Folder/file.mp4")
     /// - Throws: Error if there were any issues writing the given data to disk
     @discardableResult
-    static func save(_ value: Data, to directory: Directory, as path: String) throws -> URL? {
+    static func save(_ value: Data, to directory: Directory, as path: String) throws -> URL {
         do {
             let url = try createURL(for: path, in: directory)
             try createSubfoldersBeforeCreatingFile(at: url)

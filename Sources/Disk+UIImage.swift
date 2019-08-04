@@ -32,7 +32,7 @@ public extension Disk {
     ///   - path: file location to store the data (i.e. "Folder/file.png")
     /// - Throws: Error if there were any issues writing the image to disk
     @discardableResult
-    static func save(_ value: UIImage, to directory: Directory, as path: String) throws -> URL? {
+    static func save(_ value: UIImage, to directory: Directory, as path: String) throws -> URL {
         do {
             var imageData: Data
             if path.suffix(4).lowercased() == ".png" {

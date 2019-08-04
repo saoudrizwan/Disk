@@ -32,11 +32,12 @@ public extension Disk {
     ///   - path: folder location to store the images (i.e. "Folder/")
     /// - Throws: Error if there were any issues creating a folder and writing the given images to it
     @discardableResult
-    static func save(_ value: [UIImage], to directory: Directory, as path: String) throws -> URL? {
+    static func save(_ value: [UIImage], to directory: Directory, as path: String) throws -> [URL] {
         do {
             let folderUrl = try createURL(for: path, in: directory)
             try createSubfoldersBeforeCreatingFile(at: folderUrl)
             try FileManager.default.createDirectory(at: folderUrl, withIntermediateDirectories: false, attributes: nil)
+            var urls: [URL] = []
             for i in 0..<value.count {
                 let image = value[i]
                 var imageData: Data
@@ -72,12 +73,12 @@ public extension Disk {
                 }
                 let imageUrl = folderUrl.appendingPathComponent(imageName, isDirectory: false)
                 try imageData.write(to: imageUrl, options: .atomic)
-                return imageUrl
+                urls.append(imageUrl)
             }
+            return urls
         } catch {
             throw error
         }
-        return nil
     }
     
     /// Append an image to a folder
