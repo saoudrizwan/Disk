@@ -39,7 +39,7 @@ target 'ProjectName' do
 use_frameworks!
 supports_swift_versions '< 5.0' # configure this for your project
 
-    pod 'Disk', '~> 0.6.3'
+    pod 'Disk', '~> 0.6.4'
 
 end
 ```
@@ -55,7 +55,7 @@ end
 
 ```
 dependencies: [
-    .Package(url: "https://github.com/saoudrizwan/Disk.git", "0.6.3")
+    .Package(url: "https://github.com/saoudrizwan/Disk.git", "0.6.4")
 ]
 ```
 
