@@ -28,7 +28,7 @@ Disk is a **powerful** and **simple** file management library built with Apple's
 
 Disk requires **iOS 9+** and is compatible with projects using **Swift 4.0** and above. Therefore you must use at least Xcode 9 when working with Disk.
 
-## Installation
+## Support
 
 Support Disk's contributors with a monthly subscription on https://gitroyalty.com/saoudrizwan/Disk to install this package.
 
@@ -36,6 +36,39 @@ Support Disk's contributors with a monthly subscription on https://gitroyalty.co
 <br/>
 <sub>* comes with a 2 week free trial and can be cancelled anytime</sub>
 
+## Installation
+
+Disk supports [CocoaPods 1.7.0's new multi-Swift feature](http://blog.cocoapods.org/CocoaPods-1.7.0-beta/) for Swift 4.0, 4.2, and 5.0. Simply specify `supports_swift_versions` in your Podfile.
+
+ ```ruby
+ platform :ios, '9.0'
+ target 'ProjectName' do
+ use_frameworks!
+ supports_swift_versions '< 5.0' # configure this for your project
+
+     pod 'Disk', '~> 0.6.4'
+
+ end
+ ```
+ *(if you run into problems, `pod repo update` and try again)*
+
+ * <a href="https://github.com/Carthage/Carthage" target="_blank">Carthage</a>:
+
+  ```ruby
+  github "saoudrizwan/Disk"
+  ```
+
+ * <a href="https://github.com/apple/swift-package-manager" target="_blank">Swift Package Manager</a>:
+
+ ```
+ dependencies: [
+     .Package(url: "https://github.com/saoudrizwan/Disk.git", "0.6.4")
+ ]
+ ```
+
+ * Or embed the Disk framework into your project
+
+ And `import Disk` in the files you'd like to use it.
 ## Usage
 
 Disk currently supports persistence of the following types:
