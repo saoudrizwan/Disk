@@ -3,7 +3,6 @@
 </p>
 
 <p align="center">
-    <a href="https://gitroyalty.com/saoudrizwan/Disk" target="_blank"><img src="https://img.shields.io/endpoint?url=https://gitroyalty.com/saoudrizwan/Disk/badge.json" alt="GitRoyalty" /></a>
     <img src="https://user-images.githubusercontent.com/7799382/28644637-2fe6f818-720f-11e7-89a4-35250b6665ce.png" alt="Platform: iOS 9.0+" />
     <a href="https://developer.apple.com/swift" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28500845-b43a66fa-6f84-11e7-8281-6e689d8aaab9.png" alt="Language: Swift 4" /></a>
     <a href="https://github.com/Carthage/Carthage" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29512091-1e85aacc-8616-11e7-9851-d13dd1700a36.png" alt="Carthage compatible" /></a>
@@ -30,11 +29,39 @@ Disk requires **iOS 9+** and is compatible with projects using **Swift 4.0** and
 
 ## Installation
 
-Support Disk's contributors with a monthly subscription on https://gitroyalty.com/saoudrizwan/Disk to install this package.
+* <a href="https://guides.cocoapods.org/using/using-cocoapods.html" target="_blank">CocoaPods</a>:
 
-[![Subscribe on GitRoyalty](https://gitroyalty.com/saoudrizwan/Disk/subscribe.svg)](https://gitroyalty.com/saoudrizwan/Disk)
-<br/>
-<sub>* comes with a 2 week free trial and can be cancelled anytime</sub>
+Disk supports [CocoaPods 1.7.0's new multi-Swift feature](http://blog.cocoapods.org/CocoaPods-1.7.0-beta/) for Swift 4.0, 4.2, and 5.0. Simply specify `supports_swift_versions` in your Podfile.
+
+```ruby
+platform :ios, '9.0'
+target 'ProjectName' do
+use_frameworks!
+supports_swift_versions '< 5.0' # configure this for your project
+
+    pod 'Disk', '~> 0.6.4'
+
+end
+```
+*(if you run into problems, `pod repo update` and try again)*
+
+* <a href="https://github.com/Carthage/Carthage" target="_blank">Carthage</a>:
+
+ ```ruby
+ github "saoudrizwan/Disk"
+ ```
+
+* <a href="https://github.com/apple/swift-package-manager" target="_blank">Swift Package Manager</a>:
+
+```
+dependencies: [
+    .Package(url: "https://github.com/saoudrizwan/Disk.git", "0.6.4")
+]
+```
+
+* Or embed the Disk framework into your project
+
+And `import Disk` in the files you'd like to use it.
 
 ## Usage
 
