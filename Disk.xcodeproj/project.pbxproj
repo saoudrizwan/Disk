@@ -23,6 +23,8 @@
 		10F3C7041F23D9C9006D42EF /* Disk+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F3C7031F23D9C9006D42EF /* Disk+Data.swift */; };
 		10F3C7061F23D9E0006D42EF /* Disk+[Data].swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F3C7051F23D9E0006D42EF /* Disk+[Data].swift */; };
 		10F3C7081F23DAF2006D42EF /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F3C7071F23DAF2006D42EF /* Message.swift */; };
+		261E777E2178916800B7DFB6 /* DiskErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 261E777D2178916800B7DFB6 /* DiskErrors.m */; };
+		261E777F21789EB900B7DFB6 /* DiskErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 261E777C2178912C00B7DFB6 /* DiskErrors.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +57,8 @@
 		10F3C7031F23D9C9006D42EF /* Disk+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Disk+Data.swift"; sourceTree = "<group>"; };
 		10F3C7051F23D9E0006D42EF /* Disk+[Data].swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Disk+[Data].swift"; sourceTree = "<group>"; };
 		10F3C7071F23DAF2006D42EF /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		261E777C2178912C00B7DFB6 /* DiskErrors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DiskErrors.h; sourceTree = "<group>"; };
+		261E777D2178916800B7DFB6 /* DiskErrors.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DiskErrors.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +107,8 @@
 				103FA3761F713332004C600F /* Disk+InternalHelpers.swift */,
 				103FA3781F713340004C600F /* Disk+VolumeInformation.swift */,
 				104611771F27B27E00BBDB3A /* Disk+Errors.swift */,
+				261E777C2178912C00B7DFB6 /* DiskErrors.h */,
+				261E777D2178916800B7DFB6 /* DiskErrors.m */,
 				109256591F247F7700B3C32A /* Disk+Helpers.swift */,
 				10F3C6FD1F23D9A4006D42EF /* Disk+Codable.swift */,
 				10F3C6FF1F23D9B1006D42EF /* Disk+UIImage.swift */,
@@ -132,6 +138,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				261E777F21789EB900B7DFB6 /* DiskErrors.h in Headers */,
 				10F3C6F21F23D984006D42EF /* Disk.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -187,7 +194,7 @@
 				TargetAttributes = {
 					10F3C6E01F23D984006D42EF = {
 						CreatedOnToolsVersion = 9.0;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 1010;
 					};
 					10F3C6E91F23D984006D42EF = {
 						CreatedOnToolsVersion = 9.0;
@@ -246,6 +253,7 @@
 				10F3C7041F23D9C9006D42EF /* Disk+Data.swift in Sources */,
 				103FA3791F713340004C600F /* Disk+VolumeInformation.swift in Sources */,
 				10F3C7001F23D9B1006D42EF /* Disk+UIImage.swift in Sources */,
+				261E777E2178916800B7DFB6 /* DiskErrors.m in Sources */,
 				104611781F27B27E00BBDB3A /* Disk+Errors.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -405,12 +413,17 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = saoudrizwan.Disk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos watchsimulator appletvsimulator watchos appletvos macosx";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
 			};
 			name = Debug;
 		};
@@ -429,11 +442,16 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = saoudrizwan.Disk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos watchsimulator appletvsimulator watchos appletvos macosx";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
 			};
 			name = Release;
 		};

@@ -3,7 +3,10 @@
 </p>
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/7799382/28644637-2fe6f818-720f-11e7-89a4-35250b6665ce.png" alt="Platform: iOS 9.0+" />
+    <img src=https://img.shields.io/badge/Platform-iOS%209.0%2B-blue.svg alt="Platform: iOS 9.0+" />    
+    <img src=https://img.shields.io/badge/Platform-tvOS%209.0%2B-blue.svg alt="Platform: tvOS 9.0+" />    
+    <img src=https://img.shields.io/badge/Platform-watchOS%203.0%2B-blue.svg alt="Platform: watchOS 3.0+" />    
+    <img src=https://img.shields.io/badge/Platform-macOS%2010.10%2B-blue.svg alt="Platform: macOS 10.10+" />    
     <a href="https://developer.apple.com/swift" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/28500845-b43a66fa-6f84-11e7-8281-6e689d8aaab9.png" alt="Language: Swift 4" /></a>
     <a href="https://github.com/Carthage/Carthage" target="_blank"><img src="https://user-images.githubusercontent.com/7799382/29512091-1e85aacc-8616-11e7-9851-d13dd1700a36.png" alt="Carthage compatible" /></a>
     <img src="https://user-images.githubusercontent.com/7799382/28500847-b6393648-6f84-11e7-9a7a-f6ae78207416.png" alt="License: MIT" />
@@ -21,11 +24,11 @@
   • <a href="#questions">Questions?</a>
 </p>
 
-Disk is a **powerful** and **simple** file management library built with Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) in mind. Disk uses the new `Codable` protocol introduced in Swift 4 to its utmost advantage and gives you the power to persist structs without ever having to worry about encoding/decoding. Disk also helps you save images and other data types to disk with as little as one line of code.
+Disk is a **powerful** and **simple** file management library originally built with Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) in mind. It now additionally supports tvOS, watchOS and macOS through the same simple API. Disk uses the new `Codable` protocol introduced in Swift 4 to its utmost advantage and gives you the power to persist structs without ever having to worry about encoding/decoding. Disk also helps you save images and other data types to disk with as little as one line of code.
 
 ## Compatibility
 
-Disk requires **iOS 9+** and is compatible with projects using **Swift 4.0** and above. Therefore you must use at least Xcode 9 when working with Disk.
+Disk requires **iOS 9+**, **macOS 10.10+**, **tvOS 9+**, or **watchOS 3+** and is compatible with projects using **Swift 4.0** and above. Therefore you must use at least Xcode 9 when working with Disk.
 
 ## Installation
 
@@ -79,6 +82,7 @@ Disk currently supports persistence of the following types:
 Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/icloud/documentation/data-storage/index.html) and therefore allows you to save files in four primary directories and shared containers:
 
 #### Documents Directory `.documents`
+_**Not supported on tvOS**_
 
 > Only documents and other data that is **user-generated, or that cannot otherwise be recreated by your application**, should be stored in the <Application_Home>/Documents directory and will be automatically backed up by iCloud.
 
@@ -91,6 +95,7 @@ Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/i
 > Note that the system may delete the Caches/ directory to free up disk space, so your app must be able to re-create or download these files as needed.
 
 #### Application Support Directory `.applicationSupport`
+_**Not supported on tvOS**_
 
 > Put app-created support files in the <Application_Home>/Library/Application support directory. In general, this directory includes files that the app uses to run but that should remain hidden from the user. This directory can also include data files, configuration files, templates and modified versions of resources loaded from the app bundle.
 
@@ -99,6 +104,7 @@ Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/i
 > Data that is used only temporarily should be stored in the <Application_Home>/tmp directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device.
 
 #### Application Group Shared Container `.sharedContainer(appGroupName: String)`
+_**Not supported on tvOS**_
 
 Multiple applications on a single device can access a shared directory, as long as these apps have the same `groupIdentifier` in the `com.apple.security.application-groups` entitlements array, as described in [Adding an App to an App Group](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/EnablingAppSandbox.html#//apple_ref/doc/uid/TP40011195-CH4-SW19) in [Entitlement Key Reference](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/AboutEntitlements.html#//apple_ref/doc/uid/TP40011195).
 
@@ -106,7 +112,7 @@ For more information, visit the documentation: [https://developer.apple.com/docu
 
 ---
 
-With all these requirements and best practices, it can be hard working with the iOS file system appropriately, which is why Disk was born. Disk makes following these tedious rules simple and fun.
+With all these requirements and best practices, it can be hard working with the various file systems appropriately, which is why Disk was born. Disk makes following these tedious rules simple and fun.
 
 ### Using Disk is easy.
 
@@ -291,7 +297,7 @@ DispatchQueue.global(qos: .userInitiated).async {
 ```
 *Don't forget to handle these sorts of tasks [being interrupted](https://stackoverflow.com/a/18305715/3502608).*
 
-### iOS 11 Volume Information
+### Volume Information
 Apple introduced several great iOS storage practices in [Session 204](https://developer.apple.com/videos/play/fall2017/204/), putting emphasis on several new `NSURL` volume capacity details added in iOS 11. This information allows us to gauge when it's appropriate to store data on the user's disk.
 
 * Total capacity
@@ -303,6 +309,8 @@ Disk.totalCapacity
 ```swift
 Disk.availableCapacity
 ```
+
+_**The following properties are available on iOS only**_
 
 * Available capacity for important usage. This indicates the amount of space that can be made available  for things the user has explicitly requested in the app's UI (i.e. downloading a video or new level for a game.)
 ```swift
@@ -403,6 +411,8 @@ do {
     if Disk.exists("posts.json", in: .documents) {
         try Disk.remove("posts.json", from: .documents)
     }
+} catch DiskError.noFileFound {
+    // Pattern matching to catch specific errors.
 } catch let error as NSError {
     fatalError("""
         Domain: \(error.domain)
