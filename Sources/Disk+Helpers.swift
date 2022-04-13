@@ -223,6 +223,40 @@ public extension Disk {
             throw error
         }
     }
+
+    /// Copy file to a new directory
+    ///
+    /// - Parameters:
+    ///   - path: path of file relative to directory
+    ///   - directory: directory the file is currently in
+    ///   - newFilePath: path to the new copy
+    ///   - newDirectory: new directory to copy file in
+    /// - Throws: Error if file could not be copied
+    static func copy(_ path: String, from directory: Directory, to newFilePath: String, in newDirectory: Directory) throws {
+        do {
+            let currentUrl = try getExistingFileURL(for: path, in: directory)
+            let newUrl = try createURL(for: newFilePath, in: newDirectory)
+            try createSubfoldersBeforeCreatingFile(at: newUrl)
+            try FileManager.default.copyItem(at: currentUrl, to: newUrl)
+        } catch {
+            throw error
+        }
+    }
+
+    /// Copy file to a new directory
+    ///
+    /// - Parameters:
+    ///   - originalURL: url of file
+    ///   - newURL: new url for the copy
+    /// - Throws: Error if file could not be moved
+    static func copy(_ originalURL: URL, to newURL: URL) throws {
+        do {
+            try createSubfoldersBeforeCreatingFile(at: newURL)
+            try FileManager.default.copyItem(at: originalURL, to: newURL)
+        } catch {
+            throw error
+        }
+    }
     
     /// Rename a file
     ///

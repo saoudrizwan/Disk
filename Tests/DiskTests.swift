@@ -880,4 +880,34 @@ class DiskTests: XCTestCase {
             fatalError(convertErrorToString(error))
         }
     }
+
+    func testCopy() {
+        do {
+            try Disk.save(messages[0], to: .caches, as: "message.json")
+            XCTAssert(Disk.exists("message.json", in: .caches))
+            try Disk.copy("message.json", from: .caches, to: "message-copy.json", in: .documents)
+            XCTAssert(Disk.exists("message-copy.json", in: .documents))
+
+            let existingFileUrl = try Disk.url(for: "message.json", in: .caches)
+            let newFileUrl = try Disk.url(for: "message-copy.json", in: .temporary)
+            try Disk.copy(existingFileUrl, to: newFileUrl)
+            XCTAssert(Disk.exists("message.json", in: .caches))
+            XCTAssert(Disk.exists("message-copy.json", in: .temporary))
+
+            // ... in folder hierarchy
+            try Disk.save(messages[0], to: .caches, as: "Messages/Bob/message.json")
+            XCTAssert(Disk.exists("Messages/Bob/message.json", in: .caches))
+            try Disk.copy("Messages/Bob/message.json", from: .caches, to: "Messages/Joe/message.json", in: .caches)
+            XCTAssert(Disk.exists("Messages/Joe/message.json", in: .caches))
+
+            // Array of structs
+            try Disk.save(messages, to: .caches, as: "messages.json")
+            XCTAssert(Disk.exists("messages.json", in: .caches))
+            try Disk.copy("messages.json", from: .caches, to: "messages.json", in: .documents)
+            XCTAssert(Disk.exists("messages.json", in: .documents))
+
+        } catch {
+            fatalError(convertErrorToString(error))
+        }
+    }
 }
