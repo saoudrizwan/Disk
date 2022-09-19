@@ -31,7 +31,8 @@ public extension Disk {
     ///   - path: file location to store the data (i.e. "Folder/file.json")
     ///   - encoder: custom JSONEncoder to encode value
     /// - Throws: Error if there were any issues encoding the struct or writing it to disk
-    static func save<T: Encodable>(_ value: T, to directory: Directory, as path: String, encoder: JSONEncoder = JSONEncoder()) throws {
+    @discardableResult
+    static func save<T: Encodable>(_ value: T, to directory: Directory, as path: String, encoder: JSONEncoder = JSONEncoder()) throws -> URL {
         if path.hasSuffix("/") {
             throw createInvalidFileNameForStructsError()
         }
@@ -40,6 +41,7 @@ public extension Disk {
             let data = try encoder.encode(value)
             try createSubfoldersBeforeCreatingFile(at: url)
             try data.write(to: url, options: .atomic)
+            return url
         } catch {
             throw error
         }
