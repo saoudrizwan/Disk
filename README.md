@@ -403,6 +403,8 @@ do {
     if Disk.exists("posts.json", in: .documents) {
         try Disk.remove("posts.json", from: .documents)
     }
+} catch DiskError.noFileFound {
+    // Pattern matching to catch specific errors.
 } catch let error as NSError {
     fatalError("""
         Domain: \(error.domain)
