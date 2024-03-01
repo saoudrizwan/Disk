@@ -23,6 +23,7 @@
 		10F3C7041F23D9C9006D42EF /* Disk+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F3C7031F23D9C9006D42EF /* Disk+Data.swift */; };
 		10F3C7061F23D9E0006D42EF /* Disk+[Data].swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F3C7051F23D9E0006D42EF /* Disk+[Data].swift */; };
 		10F3C7081F23DAF2006D42EF /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F3C7071F23DAF2006D42EF /* Message.swift */; };
+		7948F3CA2B8DD848006F61A7 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7948F3C92B8DD848006F61A7 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 		10F3C7031F23D9C9006D42EF /* Disk+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Disk+Data.swift"; sourceTree = "<group>"; };
 		10F3C7051F23D9E0006D42EF /* Disk+[Data].swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Disk+[Data].swift"; sourceTree = "<group>"; };
 		10F3C7071F23DAF2006D42EF /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		7948F3C92B8DD848006F61A7 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 				10F3C7011F23D9C1006D42EF /* Disk+[UIImage].swift */,
 				10F3C7031F23D9C9006D42EF /* Disk+Data.swift */,
 				10F3C7051F23D9E0006D42EF /* Disk+[Data].swift */,
+				7948F3C92B8DD848006F61A7 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -219,6 +222,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7948F3CA2B8DD848006F61A7 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

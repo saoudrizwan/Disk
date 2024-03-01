@@ -13,4 +13,5 @@ Pod::Spec.new do |s|
   s.platform     = :ios, "9.0"
   s.source       = { :git => "https://github.com/saoudrizwan/Disk.git", :tag => "#{s.version}" }
   s.source_files  = "Sources/**/*.{h,m,swift}"
+  s.resource_bundles = {"Disk" => ["Sources/PrivacyInfo.xcprivacy"]}
 end
