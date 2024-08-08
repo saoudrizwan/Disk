@@ -61,7 +61,7 @@ public class Disk {
             switch self {
             case .documents: return "<Application_Home>/Documents"
             case .caches: return "<Application_Home>/Library/Caches"
-            case .applicationSupport: return "<Application_Home>/Library/Application"
+            case .applicationSupport: return "<Application_Home>/Library/Application Support"
             case .temporary: return "<Application_Home>/tmp"
             case .sharedContainer(let appGroupName): return "\(appGroupName)"
             }
