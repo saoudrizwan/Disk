@@ -80,11 +80,11 @@ Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/i
 
 #### Documents Directory `.documents`
 
-> Only documents and other data that is **user-generated, or that cannot otherwise be recreated by your application**, should be stored in the <Application_Home>/Documents directory and will be automatically backed up by iCloud.
+> Only documents and other data that is **user-generated, or that cannot otherwise be recreated by your application**, should be stored in the `<Application_Home>/Documents` directory and will be automatically backed up by iCloud.
 
 #### Caches Directory `.caches`
 
-> Data that **can be downloaded again or regenerated** should be stored in the <Application_Home>/Library/Caches directory. Examples of files you should put in the Caches directory include database cache files and downloadable content, such as that used by magazine, newspaper, and map applications.
+> Data that **can be downloaded again or regenerated** should be stored in the `<Application_Home>/Library/Caches` directory. Examples of files you should put in the Caches directory include database cache files and downloadable content, such as that used by magazine, newspaper, and map applications.
 >
 > Use this directory to write any application-specific support files that you want to persist between launches of the application or during application updates. **Your application is generally responsible for adding and removing these files** (see [Helper Methods](#helper-methods)). It should also be able to re-create these files as needed because iTunes removes them during a full restoration of the device. In iOS 2.2 and later, the contents of this directory are not backed up by iTunes.
 >
@@ -92,11 +92,11 @@ Disk follows Apple's [iOS Data Storage Guidelines](https://developer.apple.com/i
 
 #### Application Support Directory `.applicationSupport`
 
-> Put app-created support files in the <Application_Home>/Library/Application support directory. In general, this directory includes files that the app uses to run but that should remain hidden from the user. This directory can also include data files, configuration files, templates and modified versions of resources loaded from the app bundle.
+> Put app-created support files in the `<Application_Home>/Library/Application Support` directory. In general, this directory includes files that the app uses to run but that should remain hidden from the user. This directory can also include data files, configuration files, templates and modified versions of resources loaded from the app bundle.
 
 #### Temporary Directory `.temporary`
 
-> Data that is used only temporarily should be stored in the <Application_Home>/tmp directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device.
+> Data that is used only temporarily should be stored in the `<Application_Home>/tmp` directory. Although these files are not backed up to iCloud, remember to delete those files when you are done with them so that they do not continue to consume space on the user’s device.
 
 #### Application Group Shared Container `.sharedContainer(appGroupName: String)`
 
