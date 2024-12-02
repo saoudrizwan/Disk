@@ -100,20 +100,16 @@ extension Disk {
     
     /// Find an existing file's URL or throw an error if it doesn't exist
     static func getExistingFileURL(for path: String?, in directory: Directory) throws -> URL {
-        do {
-            let url = try createURL(for: path, in: directory)
-            if FileManager.default.fileExists(atPath: url.path) {
-                return url
-            }
+        let url = try createURL(for: path, in: directory)
+        guard FileManager.default.fileExists(atPath: url.path) else {
             throw createError(
                 .noFileFound,
                 description: "Could not find an existing file or folder at \(url.path).",
                 failureReason: "There is no existing file or folder at \(url.path)",
                 recoverySuggestion: "Check if a file or folder exists before trying to commit an operation on it."
             )
-        } catch {
-            throw error
         }
+        return url
     }
     
     /// Convert a user generated name to a valid file name
